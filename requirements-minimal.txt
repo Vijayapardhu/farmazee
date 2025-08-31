@@ -1,0 +1,10 @@
+# Minimal requirements for Farmazee - Core functionality only
+Django>=4.2.7
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.1
+django-crispy-forms>=2.1
+crispy-bootstrap5>=0.7
+Pillow>=10.0.0
+python-decouple>=3.8
+python-dotenv>=1.0.0
+requests>=2.31.0

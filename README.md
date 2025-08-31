@@ -1,354 +1,187 @@
-# 🚀 Farmazee Enterprise Platform
+# 🌾 Farmazee - Smart Farming Solutions
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Django](https://img.shields.io/badge/Django-4.2.7-green.svg)](https://www.djangoproject.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/farmazee/farmazee)
-[![Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen.svg)](https://github.com/farmazee/farmazee)
+A comprehensive Django-based platform providing smart farming solutions, crop management, weather forecasting, and agricultural tools for modern farmers.
 
-> **Next-Generation Agricultural Technology Platform**  
-> Empowering farmers with AI/ML, IoT, and advanced analytics for sustainable agriculture
+## 🚀 Features
 
-## 🌟 **What is Farmazee?**
+### Core Functionality
+- **Crop Management**: Plan, track, and manage crops with AI-powered recommendations
+- **Weather Integration**: Real-time weather forecasts and alerts
+- **Soil Health Monitoring**: Soil analysis and improvement recommendations
+- **Marketplace**: E-commerce platform for agricultural inputs and products
+- **Community**: Farmer forums and knowledge sharing
+- **AI Chatbot**: Intelligent farming assistant
+- **Government Schemes**: Information about agricultural subsidies and schemes
 
-Farmazee is a comprehensive, enterprise-grade agricultural technology platform that combines cutting-edge AI/ML capabilities, real-time monitoring, and intelligent recommendations to revolutionize farming practices. Built with modern microservices architecture, it provides farmers with actionable insights, predictive analytics, and digital tools for better decision-making.
+### Admin Panel
+- **Complete Customization**: Control every aspect of the application through admin interface
+- **Feature Toggles**: Enable/disable features without code changes
+- **Dynamic Styling**: Real-time color scheme and theme customization
+- **Content Management**: Update site content, legal pages, and branding
+- **SEO Management**: Meta tags, analytics, and social media integration
 
-### **🎯 Key Features**
+## 🛠️ Technology Stack
 
-- 🤖 **Advanced AI/ML Engine** - Computer vision, predictive analytics, and intelligent recommendations
-- 📊 **Real-time Analytics** - Comprehensive dashboards and data visualization
-- 🌦️ **Smart Weather Integration** - Hyperlocal weather forecasting and crop-specific insights
-- 📱 **Multi-platform Access** - Web, mobile, and IoT device support
-- 🔒 **Enterprise Security** - Role-based access control, encryption, and compliance
-- 🌍 **Multi-language Support** - English, Telugu, Hindi, and extensible
-- 📈 **Scalable Architecture** - Microservices, containerization, and cloud-native design
+- **Backend**: Django 4.2.7, Python 3.8+
+- **Database**: SQLite (development), PostgreSQL (production)
+- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
+- **AI/ML**: OpenCV, scikit-learn, pandas, numpy
+- **Real-time**: Django Channels, WebSockets
+- **Background Tasks**: Celery, Redis
+- **Authentication**: Django Allauth, JWT
 
-## 🏗️ **Architecture Overview**
+## 📋 Prerequisites
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Farmazee Enterprise Platform              │
-├─────────────────────────────────────────────────────────────┤
-│  Frontend Layer (React + Progressive Web App)              │
-├─────────────────────────────────────────────────────────────┤
-│  API Gateway (Kong/Apache APISIX)                          │
-├─────────────────────────────────────────────────────────────┤
-│  Microservices Layer                                       │
-│  ├── Core Service (User Management, Authentication)        │
-│  ├── AI/ML Service (Predictions, Computer Vision)         │
-│  ├── Analytics Service (Data Processing, Insights)         │
-│  ├── Weather Service (Forecasting, Alerts)                 │
-│  ├── Crop Management Service (Planning, Monitoring)        │
-│  ├── Marketplace Service (E-commerce, Supply Chain)        │
-│  └── Financial Services (Loans, Insurance, Payments)       │
-├─────────────────────────────────────────────────────────────┤
-│  Data Layer                                                │
-│  ├── PostgreSQL (Primary Database)                         │
-│  ├── Redis (Caching & Session Management)                  │
-│  ├── Elasticsearch (Search & Analytics)                    │
-│  └── MinIO (Object Storage)                                │
-├─────────────────────────────────────────────────────────────┤
-│  Infrastructure Layer                                      │
-│  ├── Docker & Kubernetes                                   │
-│  ├── Monitoring (Prometheus, Grafana)                      │
-│  ├── Logging (ELK Stack)                                   │
-│  └── CI/CD (GitHub Actions, ArgoCD)                        │
-└─────────────────────────────────────────────────────────────┘
-```
+- Python 3.8 or higher
+- pip (Python package installer)
+- Git
 
-## 🚀 **Quick Start**
+## 🚀 Installation
 
-### **Prerequisites**
-
-- Python 3.11+
-- Docker & Docker Compose
-- PostgreSQL 15+
-- Redis 7+
-- Node.js 18+ (for frontend development)
-
-### **1. Clone the Repository**
-
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/farmazee/farmazee.git
-cd farmazee
+git clone https://github.com/Vijayapardhu/farmaazee.git
+cd farmaazee
 ```
 
-### **2. Environment Setup**
+### 2. Create Virtual Environment
+```bash
+python -m venv venv
+# On Windows
+venv\Scripts\activate
+# On macOS/Linux
+source venv/bin/activate
+```
 
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Environment Setup
 ```bash
 # Copy environment template
 cp env.example .env
 
 # Edit .env file with your configuration
-nano .env
+# Update API keys, database settings, etc.
 ```
 
-### **3. Development Setup**
-
+### 5. Database Setup
 ```bash
-# Make deployment script executable
-chmod +x deploy.sh
-
-# Setup development environment
-./deploy.sh dev
+python manage.py makemigrations
+python manage.py migrate
 ```
 
-### **4. Production Deployment**
-
+### 6. Create Admin User
 ```bash
-# Setup production environment (requires root)
-sudo ./deploy.sh prod
-
-# Deploy services
-./deploy.sh deploy start
+python manage.py create_admin_user
 ```
 
-### **5. Access the Platform**
-
-- **Main Application**: http://localhost:8000
-- **Admin Panel**: http://localhost:8000/admin
-- **API Documentation**: http://localhost:8000/api/docs/
-- **Monitoring Dashboards**:
-  - Grafana: http://localhost:3000 (admin/admin)
-  - Prometheus: http://localhost:9090
-  - Kibana: http://localhost:5601
-  - Celery Flower: http://localhost:5555
-
-## 🛠️ **Technology Stack**
-
-### **Backend**
-- **Framework**: Django 4.2.7 + Django REST Framework
-- **Database**: PostgreSQL 15 + TimescaleDB
-- **Cache**: Redis 7 + Django Redis
-- **Message Queue**: Celery + Redis
-- **Authentication**: JWT + OAuth2 + Django Allauth
-- **API**: REST + GraphQL + WebSocket
-
-### **AI/ML**
-- **Computer Vision**: OpenCV, TensorFlow, PyTorch
-- **Machine Learning**: Scikit-learn, XGBoost, LightGBM
-- **Data Processing**: Pandas, NumPy, Apache Spark
-- **Model Serving**: TensorFlow Serving, MLflow
-
-### **Frontend**
-- **Framework**: React 18 + TypeScript
-- **UI Library**: Material-UI + Tailwind CSS
-- **State Management**: Redux Toolkit + RTK Query
-- **Real-time**: WebSocket + Server-Sent Events
-
-### **Infrastructure**
-- **Containerization**: Docker + Kubernetes
-- **Orchestration**: Docker Compose + Helm
-- **Monitoring**: Prometheus + Grafana + ELK Stack
-- **CI/CD**: GitHub Actions + ArgoCD
-- **Cloud**: AWS/GCP/Azure ready
-
-## 📱 **Core Modules**
-
-### **1. AI/ML Services** 🤖
-- **Crop Disease Detection**: Computer vision-based plant health analysis
-- **Yield Prediction**: ML models for crop yield forecasting
-- **Weather Prediction**: Advanced weather modeling and forecasting
-- **Market Analysis**: Price prediction and market trend analysis
-- **Soil Health Assessment**: AI-powered soil quality evaluation
-
-### **2. Smart Farming** 🌾
-- **Crop Planning**: AI-optimized crop selection and rotation
-- **Irrigation Management**: Smart irrigation scheduling and optimization
-- **Fertilizer Recommendations**: Data-driven fertilization strategies
-- **Pest Management**: Early detection and prevention systems
-- **Harvest Optimization**: Optimal harvesting time recommendations
-
-### **3. Financial Services** 💰
-- **Agricultural Loans**: Digital loan application and processing
-- **Crop Insurance**: AI-powered risk assessment and claims
-- **Marketplace**: E-commerce platform for agricultural inputs
-- **Payment Processing**: Secure payment gateway integration
-- **Financial Analytics**: Farm financial health monitoring
-
-### **4. Community & Support** 👥
-- **Expert Consultation**: Connect with agricultural experts
-- **Knowledge Base**: Comprehensive farming guides and tutorials
-- **Community Forum**: Farmer-to-farmer knowledge sharing
-- **Government Schemes**: Information and application assistance
-- **Training Programs**: Digital literacy and skill development
-
-## 🔧 **Configuration**
-
-### **Environment Variables**
-
+### 7. Initialize System Settings
 ```bash
-# Core Settings
-ENVIRONMENT=production
-DEBUG=False
-SECRET_KEY=your-super-secret-key
-
-# Database
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=farmazee_db
-DB_USER=farmazee_user
-DB_PASSWORD=farmazee_password
-
-# Redis
-REDIS_URL=redis://localhost:6379
-
-# AI/ML
-AI_ML_ENABLED=True
-MODEL_PATH=./ai_ml/models
-
-# External APIs
-OPENWEATHER_API_KEY=your-key
-TWILIO_ACCOUNT_SID=your-sid
+python manage.py init_system_settings
 ```
 
-### **Docker Configuration**
-
+### 8. Run the Development Server
 ```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Scale services
-docker-compose up -d --scale web=3 --scale celery_worker=2
-```
-
-## 📊 **API Documentation**
-
-### **Authentication**
-
-```bash
-# JWT Token
-curl -X POST http://localhost:8000/api/auth/login/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "user", "password": "password"}'
-```
-
-### **AI Predictions**
-
-```bash
-# Crop Yield Prediction
-curl -X POST http://localhost:8000/api/ai/predict/ \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prediction_type": "crop_yield",
-    "input_data": {
-      "crop": "rice",
-      "soil_type": "clay",
-      "rainfall": 1200,
-      "temperature": 28
-    }
-  }'
-```
-
-### **Computer Vision Analysis**
-
-```bash
-# Image Analysis
-curl -X POST http://localhost:8000/api/ai/analyze-image/ \
-  -H "Authorization: Bearer <token>" \
-  -F "image=@plant_image.jpg" \
-  -F "analysis_type=crop_health"
-```
-
-## 🧪 **Testing**
-
-### **Run Tests**
-
-```bash
-# All tests
-python manage.py test
-
-# Specific app
-python manage.py test ai_ml
-
-# With coverage
-coverage run --source='.' manage.py test
-coverage report
-coverage html
-```
-
-### **Test Configuration**
-
-```bash
-# Test database
-TEST_DATABASE_URL=postgresql://test_user:test_pass@localhost:5432/test_db
-
-# Test settings
-python manage.py test --settings=farmazee.test_settings
-```
-
-## 📈 **Performance & Scaling**
-
-### **Optimization Features**
-
-- **Database**: Connection pooling, query optimization, read replicas
-- **Caching**: Multi-level caching (Redis, database, application)
-- **CDN**: Static file delivery optimization
-- **Load Balancing**: Horizontal scaling with multiple workers
-- **Async Processing**: Background task processing with Celery
-
-### **Monitoring & Metrics**
-
-- **Application Metrics**: Response times, error rates, throughput
-- **Infrastructure Metrics**: CPU, memory, disk, network usage
-- **Business Metrics**: User engagement, feature usage, conversion rates
-- **AI/ML Metrics**: Model performance, prediction accuracy, training metrics
-
-## 🔒 **Security Features**
-
-- **Authentication**: Multi-factor authentication, OAuth2, JWT
-- **Authorization**: Role-based access control (RBAC)
-- **Data Protection**: Encryption at rest and in transit
-- **API Security**: Rate limiting, input validation, SQL injection prevention
-- **Compliance**: GDPR, HIPAA, SOC 2 ready
-
-## 🌍 **Deployment Options**
-
-### **1. Local Development**
-
-```bash
-./deploy.sh dev
 python manage.py runserver
 ```
 
-### **2. Docker Production**
+Visit [http://localhost:8000](http://localhost:8000) to access the application.
 
-```bash
-./deploy.sh deploy start
+## 🔧 Configuration
+
+### Environment Variables
+The application uses environment variables for configuration. Copy `env.example` to `.env` and update the values:
+
+- **Database**: Configure database connection settings
+- **API Keys**: Add your OpenRouter, Weather, and Google Maps API keys
+- **Email**: Configure SMTP settings for notifications
+- **Payment**: Set up payment gateway credentials
+- **Analytics**: Add Google Analytics and Facebook Pixel IDs
+
+### Admin Panel Customization
+Access the admin panel at `/admin-panel/` to customize:
+
+- **Site Identity**: Brand name, description, colors
+- **Features**: Enable/disable specific functionality
+- **Content**: Update legal pages, about content
+- **SEO**: Meta tags, social media links
+- **Performance**: Caching, compression settings
+
+## 📱 Usage
+
+### For Farmers
+1. **Register/Login**: Create an account or sign in
+2. **Crop Planning**: Plan your crops with AI recommendations
+3. **Weather Check**: Get daily weather forecasts
+4. **Soil Analysis**: Monitor and improve soil health
+5. **Marketplace**: Buy/sell agricultural products
+6. **Community**: Connect with other farmers
+
+### For Administrators
+1. **Access Admin Panel**: Navigate to `/admin-panel/`
+2. **System Settings**: Customize application behavior
+3. **User Management**: Manage farmer accounts
+4. **Content Management**: Update site content
+5. **Analytics**: Monitor platform usage
+
+## 🏗️ Project Structure
+
+```
+farmazee/
+├── core/                   # Core application (main functionality)
+├── crops/                  # Crop management module
+├── weather/                # Weather forecasting
+├── soil_health/            # Soil analysis and monitoring
+├── marketplace/            # E-commerce platform
+├── community/              # Farmer community features
+├── ai_chatbot/            # AI-powered farming assistant
+├── schemes/                # Government schemes information
+├── templates/              # HTML templates
+├── static/                 # CSS, JavaScript, images
+├── media/                  # User-uploaded files
+├── requirements.txt        # Python dependencies
+├── env.example            # Environment variables template
+└── README.md              # This file
 ```
 
-### **3. Kubernetes**
+## 🔒 Security Features
 
+- **Authentication**: Secure user authentication with Django Allauth
+- **Authorization**: Role-based access control
+- **CSRF Protection**: Cross-site request forgery protection
+- **Rate Limiting**: API rate limiting to prevent abuse
+- **Input Validation**: Comprehensive form and data validation
+- **SQL Injection Protection**: Django ORM protection
+
+## 🚀 Deployment
+
+### Development
 ```bash
-# Apply Kubernetes manifests
-kubectl apply -f k8s/
-
-# Deploy with Helm
-helm install farmazee ./helm/farmazee
+python manage.py runserver
 ```
 
-### **4. Cloud Deployment**
+### Production
+1. Set `DEBUG=False` in environment
+2. Configure production database (PostgreSQL recommended)
+3. Set up static file serving
+4. Configure web server (Nginx + Gunicorn)
+5. Set up SSL certificates
+6. Configure backup and monitoring
 
-- **AWS**: ECS, EKS, RDS, ElastiCache
-- **GCP**: GKE, Cloud SQL, Memorystore
-- **Azure**: AKS, Azure Database, Redis Cache
+## 📊 API Documentation
 
-## 📚 **Documentation**
+The application provides RESTful APIs for:
 
-- [**User Guide**](docs/user-guide.md) - Complete user documentation
-- [**Developer Guide**](docs/developer-guide.md) - Development setup and guidelines
-- [**API Reference**](docs/api-reference.md) - Complete API documentation
-- [**Deployment Guide**](docs/deployment-guide.md) - Production deployment
-- [**Contributing**](docs/contributing.md) - How to contribute to the project
+- **User Management**: Registration, authentication, profiles
+- **Crop Management**: CRUD operations for crops
+- **Weather Data**: Current and forecast weather information
+- **Marketplace**: Product and order management
+- **Community**: Posts, comments, and interactions
 
-## 🤝 **Contributing**
-
-We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for details.
-
-### **Development Workflow**
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -356,38 +189,24 @@ We welcome contributions! Please see our [Contributing Guide](docs/contributing.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### **Code Standards**
-
-- **Python**: PEP 8, Black, Flake8
-- **JavaScript**: ESLint, Prettier
-- **Testing**: Minimum 90% coverage
-- **Documentation**: Comprehensive docstrings and README updates
-
-## 📄 **License**
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 **Acknowledgments**
+## 🆘 Support
 
-- **Farmers**: For inspiring this platform
-- **Open Source Community**: For the amazing tools and libraries
-- **Agricultural Experts**: For domain knowledge and guidance
-- **Contributors**: For their valuable contributions
+- **Documentation**: Check the [ADMIN_CUSTOMIZATION_GUIDE.md](ADMIN_CUSTOMIZATION_GUIDE.md) for admin panel usage
+- **Issues**: Report bugs and feature requests on GitHub
+- **Community**: Join our developer community
 
-## 📞 **Support & Contact**
+## 🙏 Acknowledgments
 
-- **Documentation**: [docs.farmazee.com](https://docs.farmazee.com)
-- **Community**: [community.farmazee.com](https://community.farmazee.com)
-- **Email**: support@farmazee.com
-- **Discord**: [Join our community](https://discord.gg/farmazee)
-- **Twitter**: [@farmazee](https://twitter.com/farmazee)
+- Django community for the excellent framework
+- Bootstrap team for the responsive UI components
+- Open source contributors for various packages
 
 ---
 
-<div align="center">
+**Built with ❤️ for Indian Farmers**
 
-**Made with ❤️ for the farming community**
-
-[![Farmazee](https://img.shields.io/badge/Farmazee-Enterprise%20Platform-brightgreen.svg)](https://farmazee.com)
-
-</div>
+*Farmazee - Empowering Agriculture Through Technology*
