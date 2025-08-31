@@ -16,6 +16,7 @@ django-celery-results>=2.5.1
 
 # Authentication
 django-allauth>=0.57.0
+django-countries>=7.2.1
 django-simple-history>=3.4.0
 
 # API & Forms
