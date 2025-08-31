@@ -1,0 +1,70 @@
+FARMAZEE IMAGE PLACEHOLDER GUIDE
+================================
+
+This file serves as a guide for adding real images to the Farmazee platform.
+
+CURRENT STATUS:
+- All image references in the frontend have been updated to point to this folder
+- Font Awesome icon placeholders have been replaced with proper <img> elements
+- CSS has been updated to handle real images with proper styling
+
+REQUIRED IMAGES:
+================
+
+1. BRANDING & IDENTITY:
+   - logo.png (200x60px) - Main navigation logo
+   - logo-white.png (200x60px) - White version for footer
+   - favicon.ico (32x32px) - Website favicon
+   - og-image.jpg (1200x630px) - Social media sharing
+
+2. HERO SECTION:
+   - hero-farming.jpg (800x600px) - Main hero image showing smart farming
+
+3. FEATURES SECTION:
+   - weather-forecast.jpg (400x300px) - Weather monitoring
+   - crop-management.jpg (400x300px) - Crop tracking
+   - soil-health.jpg (400x300px) - Soil testing
+   - marketplace.jpg (400x300px) - E-commerce platform
+   - community.jpg (400x300px) - Farmer community
+   - government-schemes.jpg (400x300px) - Policy information
+
+4. ABOUT SECTION:
+   - about-farmers.jpg (600x400px) - Farmers using technology
+
+5. FOOTER:
+   - logo-white.png (200x60px) - White logo for dark background
+
+IMAGE SOURCES:
+==============
+- Free stock photos: Unsplash, Pexels, Pixabay
+- Professional photography services
+- AI-generated images (DALL-E, Midjourney)
+- Agricultural organization partnerships
+
+IMAGE REQUIREMENTS:
+==================
+- High quality (minimum 72 DPI for web)
+- Optimized for web (under 500KB for large images)
+- Agriculture/farming related content
+- Professional and trustworthy appearance
+- Natural, earthy color schemes
+- Modern, technology-enabled farming practices
+
+IMPLEMENTATION NOTES:
+====================
+- All images are now properly referenced in frontend/index.html
+- CSS has been updated to handle real images with hover effects
+- Responsive design considerations included
+- Alt text attributes added for accessibility
+- Lazy loading ready for performance optimization
+
+NEXT STEPS:
+===========
+1. Source or create all required images
+2. Optimize images for web use
+3. Add images to this folder with exact filenames
+4. Test image loading and responsiveness
+5. Verify alt text and accessibility features
+
+For detailed specifications, see README.md in this folder.
+

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Experts - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-user-graduate text-success me-2"></i>
+                Agricultural Experts
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if experts %}
+            {% for expert in experts %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card expert-card h-100">
+                    <div class="card-body text-center">
+                        <div class="expert-avatar mb-3">
+                            <i class="fas fa-user-circle fa-4x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">{{ expert.user.get_full_name|default:expert.user.username }}</h5>
+                        <p class="text-muted">{{ expert.specialization }}</p>
+                        <p class="text-muted small">{{ expert.experience_years }} years of experience</p>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'community:expert_detail' expert.id %}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-user me-1"></i>View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-user-graduate fa-5x text-muted mb-3"></i>
+                    <h4 class="text-muted">No experts available</h4>
+                    <p class="text-muted">Check back later for expert consultations.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.expert-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.expert-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.expert-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+</style>
+{% endblock %}
+
+
+

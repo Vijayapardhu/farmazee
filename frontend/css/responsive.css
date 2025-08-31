@@ -1,0 +1,582 @@
+/* =============================================================================
+   FARMazee - Responsive CSS
+   ============================================================================= */
+
+/* Mobile First Approach */
+
+/* Extra Small Devices (phones, 320px and down) */
+@media (max-width: 320px) {
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .feature-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: var(--spacing-lg);
+        margin: 10% auto;
+    }
+}
+
+/* Small Devices (landscape phones, 576px and down) */
+@media (max-width: 576px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--spacing-xl);
+        padding: 0 var(--spacing-md);
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .about-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--spacing-xl);
+    }
+    
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .dashboard-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .crop-grid,
+    .product-grid,
+    .scheme-grid,
+    .soil-health-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .weather-info {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .soil-metrics {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+}
+
+/* Medium Devices (tablets, 768px and down) */
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background-color: var(--white);
+        flex-direction: column;
+        padding: var(--spacing-xl);
+        transition: left var(--transition-normal);
+        box-shadow: var(--shadow-lg);
+        overflow-y: auto;
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-toggle.active .bar:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .nav-toggle.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .nav-toggle.active .bar:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+    }
+    
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--spacing-xl);
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-buttons {
+        justify-content: center;
+    }
+    
+    .about-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .contact-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .dashboard-header {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+    
+    .chart-container {
+        padding: var(--spacing-md);
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+    
+    .chart-controls {
+        flex-wrap: wrap;
+    }
+}
+
+/* Large Devices (desktops, 992px and down) */
+@media (max-width: 992px) {
+    .hero-container {
+        gap: var(--spacing-2xl);
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .crop-grid,
+    .product-grid,
+    .scheme-grid,
+    .soil-health-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .weather-info {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: var(--spacing-md);
+    }
+    
+    .dashboard-stats {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: var(--spacing-md);
+    }
+}
+
+/* Extra Large Devices (large desktops, 1200px and down) */
+@media (max-width: 1200px) {
+    .container {
+        max-width: 100%;
+        padding: 0 var(--spacing-lg);
+    }
+    
+    .nav-container {
+        max-width: 100%;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .hero-container {
+        max-width: 100%;
+        padding: 0 var(--spacing-lg);
+    }
+}
+
+/* Landscape Orientation Adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        padding: 80px 0 40px;
+        min-height: auto;
+    }
+    
+    .hero-container {
+        gap: var(--spacing-lg);
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .modal-content {
+        margin: 2% auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .logo-img,
+    .hero-img,
+    .about-image img {
+        /* High DPI display optimization */
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .footer,
+    .modal,
+    .loading-screen,
+    .btn,
+    .nav-toggle {
+        display: none !important;
+    }
+    
+    .hero-section,
+    .features-section,
+    .about-section,
+    .contact-section {
+        padding: var(--spacing-md) 0;
+        page-break-inside: avoid;
+    }
+    
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        color: var(--black);
+    }
+    
+    .hero-description {
+        color: var(--black);
+    }
+    
+    .feature-card,
+    .dashboard-card,
+    .crop-card,
+    .product-card,
+    .scheme-card,
+    .soil-card {
+        box-shadow: none;
+        border: 1px solid var(--gray);
+        page-break-inside: avoid;
+    }
+    
+    .container {
+        max-width: 100%;
+        padding: 0;
+    }
+    
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+        color: var(--black);
+        background: var(--white);
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--black);
+        page-break-after: avoid;
+    }
+    
+    a {
+        color: var(--black);
+        text-decoration: underline;
+    }
+    
+    a[href^="http"]:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .loading-spinner,
+    .loading-spinner-small {
+        animation: none;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #1a1a1a;
+        --light-gray: #2d2d2d;
+        --gray: #888888;
+        --dark-gray: #cccccc;
+        --black: #ffffff;
+    }
+    
+    body {
+        background-color: var(--white);
+        color: var(--black);
+    }
+    
+    .navbar {
+        background-color: rgba(26, 26, 26, 0.95);
+    }
+    
+    .navbar.scrolled {
+        background-color: rgba(26, 26, 26, 0.98);
+    }
+    
+    .dashboard-container {
+        background-color: var(--light-gray);
+    }
+    
+    .dashboard-card,
+    .feature-card,
+    .crop-card,
+    .product-card,
+    .scheme-card,
+    .soil-card,
+    .post-card {
+        background-color: var(--light-gray);
+        border-color: var(--gray);
+    }
+    
+    .modal-content {
+        background-color: var(--light-gray);
+        color: var(--black);
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        background-color: var(--white);
+        color: var(--black);
+        border-color: var(--gray);
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: var(--primary-color);
+    }
+}
+
+/* Focus Styles for Accessibility */
+@media (prefers-reduced-motion: no-preference) {
+    .btn:focus,
+    .nav-link:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #000000;
+        --primary-light: #000000;
+        --primary-dark: #000000;
+        --secondary-color: #000000;
+        --success: #000000;
+        --warning: #000000;
+        --error: #000000;
+        --info: #000000;
+    }
+    
+    .btn {
+        border: 2px solid var(--black);
+    }
+    
+    .feature-card,
+    .dashboard-card,
+    .crop-card,
+    .product-card,
+    .scheme-card,
+    .soil-card {
+        border: 2px solid var(--black);
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .btn:hover,
+    .nav-link:hover,
+    .feature-card:hover,
+    .dashboard-card:hover,
+    .crop-card:hover,
+    .product-card:hover,
+    .scheme-card:hover,
+    .soil-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-md);
+    }
+    
+    .nav-link:hover,
+    .nav-link.active {
+        background-color: transparent;
+    }
+    
+    .social-links a:hover {
+        transform: none;
+    }
+    
+    /* Increase touch targets */
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .nav-link {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .close {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Large Screen Optimizations */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+    
+    .hero-container {
+        max-width: 1320px;
+    }
+    
+    .nav-container {
+        max-width: 1320px;
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+    }
+    
+    .section-title {
+        font-size: 3rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-2xl);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-xl);
+    }
+}
+
+/* Ultra Wide Screen Support */
+@media (min-width: 2000px) {
+    .container {
+        max-width: 1600px;
+    }
+    
+    .hero-container {
+        max-width: 1600px;
+    }
+    
+    .nav-container {
+        max-width: 1600px;
+    }
+    
+    .hero-title {
+        font-size: 5rem;
+    }
+    
+    .section-title {
+        font-size: 3.5rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-3xl);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: var(--spacing-2xl);
+    }
+}

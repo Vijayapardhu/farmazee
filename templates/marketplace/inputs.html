@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Farming Inputs - Farmazee Marketplace{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-seedling text-success me-2"></i>
+                Farming Inputs
+            </h1>
+            <p class="lead text-muted">Quality seeds, fertilizers, pesticides, and farming tools from verified suppliers</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="search" class="form-label">Search Inputs</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   placeholder="Search by name, description, or brand" value="{{ request.GET.search|default:'' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="sort" class="form-label">Sort By</label>
+                            <select class="form-select" id="sort" name="sort">
+                                <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>Name A-Z</option>
+                                <option value="-name" {% if request.GET.sort == "-name" %}selected{% endif %}>Name Z-A</option>
+                                <option value="price" {% if request.GET.sort == "price" %}selected{% endif %}>Price Low to High</option>
+                                <option value="-price" {% if request.GET.sort == "-price" %}selected{% endif %}>Price High to Low</option>
+                                <option value="-created_at" {% if request.GET.sort == "-created_at" %}selected{% endif %}>Newest First</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-2"></i>Filter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Quick Links -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tags text-primary me-2"></i>
+                        Browse by Category
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for category in categories %}
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:input_category' category.pk %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-{{ category.icon|default:'tag' }} me-2"></i>
+                                {{ category.name }}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inputs Grid -->
+    <div class="row">
+        {% for input_item in inputs %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                {% if input_item.image %}
+                <img src="{{ input_item.image.url }}" class="card-img-top" alt="{{ input_item.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-{{ input_item.category.icon|default:'seedling' }} fa-3x text-white"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ input_item.name }}</h5>
+                    <p class="card-text text-muted">{{ input_item.description|truncatewords:15 }}</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Category:</small><br>
+                            <span class="badge bg-primary">{{ input_item.category.name }}</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Brand:</small><br>
+                            <span class="text-muted">{{ input_item.brand|default:"Generic" }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Price:</small><br>
+                            <span class="fw-bold text-success">₹{{ input_item.price }}</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Stock:</small><br>
+                            <span class="fw-bold {% if input_item.stock_quantity > 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ input_item.stock_quantity|default:"0" }} units
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if input_item.specifications %}
+                    <div class="mb-3">
+                        <small class="text-muted">Specifications:</small><br>
+                        <span class="small">{{ input_item.specifications|truncatewords:8 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'marketplace:input_detail' input_item.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        {% if input_item.stock_quantity > 0 %}
+                        <button class="btn btn-success btn-sm" onclick="addToCart({{ input_item.id }})">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                        {% else %}
+                        <span class="badge bg-danger">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-seedling fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Inputs Found</h4>
+                    <p class="text-muted">No farming inputs match your search criteria.</p>
+                    <a href="{% url 'marketplace:inputs' %}" class="btn btn-primary">
+                        <i class="fas fa-refresh me-2"></i>Clear Filters
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if inputs.has_other_pages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Inputs pagination">
+                <ul class="pagination justify-content-center">
+                    {% if inputs.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ inputs.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in inputs.paginator.page_range %}
+                        {% if inputs.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > inputs.number|add:'-3' and num < inputs.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if inputs.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ inputs.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addToCart(inputId) {
+    // This would typically make an AJAX call to add the input to cart
+    // For now, we'll just show a success message
+    alert('Input added to cart! (Cart functionality coming soon)');
+}
+
+// Auto-submit form when sort or category changes
+document.getElementById('category').addEventListener('change', function() {
+    this.form.submit();
+});
+
+document.getElementById('sort').addEventListener('change', function() {
+    this.form.submit();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Weather - {{ location }} - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'weather:home' %}">Weather</a></li>
+                    <li class="breadcrumb-item active">{{ location }}</li>
+                </ol>
+            </nav>
+            
+            <h1 class="h2 mb-4">
+                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                Weather in {{ location }}
+            </h1>
+        </div>
+    </div>
+
+    <!-- Current Weather -->
+    {% if current_weather %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cloud-sun text-info me-2"></i>
+                        Current Weather
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 text-center">
+                            <div class="display-4 text-primary mb-3">
+                                {{ current_weather.temperature }}°C
+                            </div>
+                            <h4 class="text-muted">{{ current_weather.description }}</h4>
+                            <p class="text-muted mb-0">{{ location }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-tint text-primary fa-2x me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">{{ current_weather.humidity }}%</div>
+                                            <small class="text-muted">Humidity</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-wind text-info fa-2x me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">{{ current_weather.wind_speed|default:"N/A" }} km/h</div>
+                                            <small class="text-muted">Wind Speed</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-eye text-secondary fa-2x me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">{{ current_weather.visibility|default:"N/A" }} km</div>
+                                            <small class="text-muted">Visibility</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-compress-alt text-warning fa-2x me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">{{ current_weather.pressure|default:"N/A" }} hPa</div>
+                                            <small class="text-muted">Pressure</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Weather Forecast -->
+    {% if forecasts %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt text-success me-2"></i>
+                        7-Day Forecast
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for forecast in forecasts %}
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="text-center p-3 border rounded">
+                                <h6 class="mb-2">{{ forecast.date|date:"D, M d" }}</h6>
+                                <div class="mb-2">
+                                    <i class="fas fa-thermometer-half text-danger"></i>
+                                    <span class="fw-bold">{{ forecast.max_temperature }}°C</span>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-thermometer-empty text-info"></i>
+                                    <span>{{ forecast.min_temperature }}°C</span>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-tint text-primary"></i>
+                                    <span>{{ forecast.humidity }}%</span>
+                                </div>
+                                <div class="small text-muted">
+                                    {{ forecast.description }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Weather Alerts -->
+    {% if alerts %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Weather Alerts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for alert in alerts %}
+                        <div class="col-md-6 mb-3">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    {{ alert.title }}
+                                </h6>
+                                <p class="mb-1">{{ alert.description }}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ alert.created_at|date:"M d, Y H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- No Data Message -->
+    {% if not current_weather and not forecasts and not alerts %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-cloud-slash fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Weather Data Available</h4>
+                    <p class="text-muted">Weather information for {{ location }} is not currently available.</p>
+                    <a href="{% url 'weather:home' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Weather
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

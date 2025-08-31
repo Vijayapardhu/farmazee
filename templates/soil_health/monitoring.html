@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Monitoring - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-chart-line text-warning me-2"></i>
+                Soil Monitoring Dashboard
+            </h1>
+            <p class="lead text-muted">Track soil health trends and get real-time insights</p>
+        </div>
+    </div>
+
+    <!-- Monitoring Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                        Monitoring Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-thermometer-half fa-2x text-danger mb-2"></i>
+                                <h4 class="fw-bold">{{ current_temp|default:"28" }}°C</h4>
+                                <p class="text-muted mb-0">Soil Temperature</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-tint fa-2x text-info mb-2"></i>
+                                <h4 class="fw-bold">{{ moisture_level|default:"65" }}%</h4>
+                                <p class="text-muted mb-0">Soil Moisture</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-seedling fa-2x text-success mb-2"></i>
+                                <h4 class="fw-bold">{{ ph_level|default:"6.8" }}</h4>
+                                <p class="text-muted mb-0">pH Level</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-leaf fa-2x text-warning mb-2"></i>
+                                <h4 class="fw-bold">{{ organic_matter|default:"3.2" }}%</h4>
+                                <p class="text-muted mb-0">Organic Matter</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Analytics -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-area text-primary me-2"></i>
+                        Soil Health Trends (Last 30 Days)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="soilTrendsChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-pie-chart text-success me-2"></i>
+                        Nutrient Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="nutrientChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monitoring Schedule -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt text-info me-2"></i>
+                        Monitoring Schedule
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Today</strong><br>
+                                        <small class="text-muted">9:00 AM</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">Moisture Check</span>
+                                    </td>
+                                    <td>Field A</td>
+                                    <td>
+                                        <span class="badge bg-warning">Pending</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="markComplete('moisture')">
+                                            <i class="fas fa-check"></i> Complete
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Tomorrow</strong><br>
+                                        <small class="text-muted">2:00 PM</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">pH Test</span>
+                                    </td>
+                                    <td>Field B</td>
+                                    <td>
+                                        <span class="badge bg-secondary">Scheduled</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="reschedule('ph')">
+                                            <i class="fas fa-clock"></i> Reschedule
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Next Week</strong><br>
+                                        <small class="text-muted">Monday 10:00 AM</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Full Analysis</span>
+                                    </td>
+                                    <td>All Fields</td>
+                                    <td>
+                                        <span class="badge bg-secondary">Scheduled</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-info btn-sm" onclick="viewDetails('full')">
+                                            <i class="fas fa-eye"></i> Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts and Notifications -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bell text-warning me-2"></i>
+                        Soil Health Alerts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Moisture Alert:</strong> Field A moisture level is below optimal range (45% vs recommended 60-80%).
+                        <button class="btn btn-sm btn-outline-warning ms-3" onclick="acknowledgeAlert('moisture')">
+                            Acknowledge
+                        </button>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>pH Reminder:</strong> Field B pH test is due tomorrow. Current pH: 6.8 (Optimal: 6.0-7.0).
+                        <button class="btn btn-sm btn-outline-info ms-3" onclick="scheduleTest('ph')">
+                            Schedule Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools text-primary me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-primary w-100" onclick="addMonitoringPoint()">
+                                <i class="fas fa-plus me-2"></i>Add Monitoring Point
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-success w-100" onclick="exportData()">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-info w-100" onclick="setAlerts()">
+                                <i class="fas fa-cog me-2"></i>Set Alerts
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:home' %}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Soil Health
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Soil Trends Chart
+const ctx1 = document.getElementById('soilTrendsChart').getContext('2d');
+const soilTrendsChart = new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: ['Day 1', 'Day 5', 'Day 10', 'Day 15', 'Day 20', 'Day 25', 'Day 30'],
+        datasets: [{
+            label: 'Moisture (%)',
+            data: [65, 68, 72, 70, 67, 65, 63],
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            tension: 0.1
+        }, {
+            label: 'pH Level',
+            data: [6.8, 6.9, 7.0, 6.9, 6.8, 6.7, 6.8],
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: false
+            }
+        }
+    }
+});
+
+// Nutrient Distribution Chart
+const ctx2 = document.getElementById('nutrientChart').getContext('2d');
+const nutrientChart = new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Nitrogen', 'Phosphorus', 'Potassium', 'Organic Matter'],
+        datasets: [{
+            data: [30, 25, 20, 25],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Action functions
+function markComplete(type) {
+    alert(`${type} monitoring marked as complete!`);
+}
+
+function reschedule(type) {
+    alert(`${type} test rescheduling coming soon!`);
+}
+
+function viewDetails(type) {
+    alert(`${type} analysis details coming soon!`);
+}
+
+function acknowledgeAlert(type) {
+    alert(`${type} alert acknowledged!`);
+}
+
+function scheduleTest(type) {
+    alert(`${type} test scheduling coming soon!`);
+}
+
+function addMonitoringPoint() {
+    alert('Add monitoring point functionality coming soon!');
+}
+
+function exportData() {
+    alert('Data export functionality coming soon!');
+}
+
+function setAlerts() {
+    alert('Alert configuration coming soon!');
+}
+</script>
+{% endblock %}

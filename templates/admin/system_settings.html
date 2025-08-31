@@ -1,0 +1,1109 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}System Settings - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-cogs me-2"></i>System Settings
+        </h1>
+        <div>
+            <button class="btn btn-primary" onclick="saveAllSettings()">
+                <i class="fas fa-save me-1"></i>Save All Settings
+            </button>
+            <button class="btn btn-secondary" onclick="resetToDefaults()">
+                <i class="fas fa-undo me-1"></i>Reset to Defaults
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Navigation -->
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Settings Categories</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="#general" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                            <i class="fas fa-cog me-2"></i>General Settings
+                        </a>
+                        <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-shield-alt me-2"></i>Security
+                        </a>
+                        <a href="#email" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-envelope me-2"></i>Email Configuration
+                        </a>
+                        <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-bell me-2"></i>Notifications
+                        </a>
+                        <a href="#backup" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-database me-2"></i>Backup & Maintenance
+                        </a>
+                        <a href="#integrations" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-plug me-2"></i>Integrations
+                        </a>
+                        <a href="#ui_ux" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-palette me-2"></i>UI/UX Customization
+                        </a>
+                        <a href="#content" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-edit me-2"></i>Content Customization
+                        </a>
+                        <a href="#features" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-toggle-on me-2"></i>Feature Toggles
+                        </a>
+                        <a href="#seo" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-search me-2"></i>SEO Settings
+                        </a>
+                        <a href="#social" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-share-alt me-2"></i>Social Media
+                        </a>
+                        <a href="#legal" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-gavel me-2"></i>Legal Pages
+                        </a>
+                        <a href="#performance" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-tachometer-alt me-2"></i>Performance
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- General Settings -->
+                <div class="tab-pane fade show active" id="general">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">General Settings</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="generalSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="siteName" class="form-label">Site Name</label>
+                                            <input type="text" class="form-control" id="siteName" name="site_name" 
+                                                   value="{{ settings.site_name|default:'Farmazee' }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="siteDescription" class="form-label">Site Description</label>
+                                            <input type="text" class="form-control" id="siteDescription" name="site_description" 
+                                                   value="{{ settings.site_description|default:'Smart Farming Solutions' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="timezone" class="form-label">Timezone</label>
+                                            <select class="form-select" id="timezone" name="timezone">
+                                                <option value="Asia/Kolkata" {% if settings.timezone == 'Asia/Kolkata' %}selected{% endif %}>Asia/Kolkata (IST)</option>
+                                                <option value="UTC" {% if settings.timezone == 'UTC' %}selected{% endif %}>UTC</option>
+                                                <option value="America/New_York" {% if settings.timezone == 'America/New_York' %}selected{% endif %}>America/New_York (EST)</option>
+                                                <option value="Europe/London" {% if settings.timezone == 'Europe/London' %}selected{% endif %}>Europe/London (GMT)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="language" class="form-label">Language</label>
+                                            <select class="form-select" id="language" name="language">
+                                                <option value="en" {% if settings.language == 'en' %}selected{% endif %}>English</option>
+                                                <option value="hi" {% if settings.language == 'hi' %}selected{% endif %}>Hindi</option>
+                                                <option value="te" {% if settings.language == 'te' %}selected{% endif %}>Telugu</option>
+                                                <option value="ta" {% if settings.language == 'ta' %}selected{% endif %}>Tamil</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maintenanceMode" class="form-label">Maintenance Mode</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="maintenanceMode" name="maintenance_mode"
+                                                       {% if settings.maintenance_mode %}checked{% endif %}>
+                                                <label class="form-check-label" for="maintenanceMode">
+                                                    Enable maintenance mode
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="debugMode" class="form-label">Debug Mode</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="debugMode" name="debug_mode"
+                                                       {% if settings.debug_mode %}checked{% endif %}>
+                                                <label class="form-check-label" for="debugMode">
+                                                    Enable debug mode
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="tab-pane fade" id="security">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Security Settings</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="securitySettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="sessionTimeout" class="form-label">Session Timeout (minutes)</label>
+                                            <input type="number" class="form-control" id="sessionTimeout" name="session_timeout" 
+                                                   value="{{ settings.session_timeout|default:120 }}" min="15" max="1440">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxLoginAttempts" class="form-label">Max Login Attempts</label>
+                                            <input type="number" class="form-control" id="maxLoginAttempts" name="max_login_attempts" 
+                                                   value="{{ settings.max_login_attempts|default:5 }}" min="3" max="10">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="passwordMinLength" class="form-label">Minimum Password Length</label>
+                                            <input type="number" class="form-control" id="passwordMinLength" name="password_min_length" 
+                                                   value="{{ settings.password_min_length|default:8 }}" min="6" max="20">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="requireStrongPassword" class="form-label">Require Strong Password</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="requireStrongPassword" name="require_strong_password"
+                                                       {% if settings.require_strong_password %}checked{% endif %}>
+                                                <label class="form-check-label" for="requireStrongPassword">
+                                                    Require uppercase, lowercase, numbers, and symbols
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enable2FA" class="form-label">Two-Factor Authentication</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enable2FA" name="enable_2fa"
+                                                       {% if settings.enable_2fa %}checked{% endif %}>
+                                                <label class="form-check-label" for="enable2FA">
+                                                    Enable 2FA for admin users
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableCSRF" class="form-label">CSRF Protection</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableCSRF" name="enable_csrf"
+                                                       {% if settings.enable_csrf %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableCSRF">
+                                                    Enable CSRF token validation
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Configuration -->
+                <div class="tab-pane fade" id="email">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Email Configuration</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="emailSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="smtpHost" class="form-label">SMTP Host</label>
+                                            <input type="text" class="form-control" id="smtpHost" name="smtp_host" 
+                                                   value="{{ settings.smtp_host|default:'smtp.gmail.com' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="smtpPort" class="form-label">SMTP Port</label>
+                                            <input type="number" class="form-control" id="smtpPort" name="smtp_port" 
+                                                   value="{{ settings.smtp_port|default:587 }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="smtpUsername" class="form-label">SMTP Username</label>
+                                            <input type="email" class="form-control" id="smtpUsername" name="smtp_username" 
+                                                   value="{{ settings.smtp_username }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="smtpPassword" class="form-label">SMTP Password</label>
+                                            <input type="password" class="form-control" id="smtpPassword" name="smtp_password" 
+                                                   value="{{ settings.smtp_password }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fromEmail" class="form-label">From Email</label>
+                                            <input type="email" class="form-control" id="fromEmail" name="from_email" 
+                                                   value="{{ settings.from_email|default:'noreply@farmazee.com' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fromName" class="form-label">From Name</label>
+                                            <input type="text" class="form-control" id="fromName" name="from_name" 
+                                                   value="{{ settings.from_name|default:'Farmazee' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-info" onclick="testEmailConnection()">
+                                        <i class="fas fa-paper-plane me-1"></i>Test Email Connection
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Notification Settings</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="notificationSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="emailNotifications" class="form-label">Email Notifications</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="emailNotifications" name="email_notifications"
+                                                       {% if settings.email_notifications %}checked{% endif %}>
+                                                <label class="form-check-label" for="emailNotifications">
+                                                    Send email notifications
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="smsNotifications" class="form-label">SMS Notifications</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="smsNotifications" name="sms_notifications"
+                                                       {% if settings.sms_notifications %}checked{% endif %}>
+                                                <label class="form-check-label" for="smsNotifications">
+                                                    Send SMS notifications
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="pushNotifications" class="form-label">Push Notifications</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pushNotifications" name="push_notifications"
+                                                       {% if settings.push_notifications %}checked{% endif %}>
+                                                <label class="form-check-label" for="pushNotifications">
+                                                    Send push notifications
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="adminAlerts" class="form-label">Admin Alerts</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="adminAlerts" name="admin_alerts"
+                                                       {% if settings.admin_alerts %}checked{% endif %}>
+                                                <label class="form-check-label" for="adminAlerts">
+                                                    Send alerts to admin users
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup & Maintenance -->
+                <div class="tab-pane fade" id="backup">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Backup & Maintenance</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="backupSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="autoBackup" class="form-label">Auto Backup</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="autoBackup" name="auto_backup"
+                                                       {% if settings.auto_backup %}checked{% endif %}>
+                                                <label class="form-check-label" for="autoBackup">
+                                                    Enable automatic backups
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="backupFrequency" class="form-label">Backup Frequency</label>
+                                            <select class="form-select" id="backupFrequency" name="backup_frequency">
+                                                <option value="daily" {% if settings.backup_frequency == 'daily' %}selected{% endif %}>Daily</option>
+                                                <option value="weekly" {% if settings.backup_frequency == 'weekly' %}selected{% endif %}>Weekly</option>
+                                                <option value="monthly" {% if settings.backup_frequency == 'monthly' %}selected{% endif %}>Monthly</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="retainBackups" class="form-label">Retain Backups (days)</label>
+                                            <input type="number" class="form-control" id="retainBackups" name="retain_backups" 
+                                                   value="{{ settings.retain_backups|default:30 }}" min="7" max="365">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="backupLocation" class="form-label">Backup Location</label>
+                                            <input type="text" class="form-control" id="backupLocation" name="backup_location" 
+                                                   value="{{ settings.backup_location|default:'/backups' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-warning me-2" onclick="createBackup()">
+                                        <i class="fas fa-download me-1"></i>Create Manual Backup
+                                    </button>
+                                    <button type="button" class="btn btn-info" onclick="viewBackupHistory()">
+                                        <i class="fas fa-history me-1"></i>View Backup History
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UI/UX Customization -->
+                <div class="tab-pane fade" id="ui_ux">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">UI/UX Customization</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="uiUxSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="primaryColor" class="form-label">Primary Color</label>
+                                            <input type="color" class="form-control form-control-color" id="primaryColor" name="primary_color" 
+                                                   value="{{ settings.primary_color|default:'#007bff' }}" title="Choose primary color">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="secondaryColor" class="form-label">Secondary Color</label>
+                                            <input type="color" class="form-control form-control-color" id="secondaryColor" name="secondary_color" 
+                                                   value="{{ settings.secondary_color|default:'#6c757d' }}" title="Choose secondary color">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="accentColor" class="form-label">Accent Color</label>
+                                            <input type="color" class="form-control form-control-color" id="accentColor" name="accent_color" 
+                                                   value="{{ settings.accent_color|default:'#28a745' }}" title="Choose accent color">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fontFamily" class="form-label">Font Family</label>
+                                            <select class="form-select" id="fontFamily" name="font_family">
+                                                <option value="Inter, sans-serif" {% if settings.font_family == 'Inter, sans-serif' %}selected{% endif %}>Inter</option>
+                                                <option value="Roboto, sans-serif" {% if settings.font_family == 'Roboto, sans-serif' %}selected{% endif %}>Roboto</option>
+                                                <option value="Open Sans, sans-serif" {% if settings.font_family == 'Open Sans, sans-serif' %}selected{% endif %}>Open Sans</option>
+                                                <option value="Lato, sans-serif" {% if settings.font_family == 'Lato, sans-serif' %}selected{% endif %}>Lato</option>
+                                                <option value="Poppins, sans-serif" {% if settings.font_family == 'Poppins, sans-serif' %}selected{% endif %}>Poppins</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableDarkMode" class="form-label">Dark Mode</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableDarkMode" name="enable_dark_mode"
+                                                       {% if settings.enable_dark_mode %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableDarkMode">
+                                                    Enable dark mode option
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="defaultTheme" class="form-label">Default Theme</label>
+                                            <select class="form-select" id="defaultTheme" name="default_theme">
+                                                <option value="light" {% if settings.default_theme == 'light' %}selected{% endif %}>Light</option>
+                                                <option value="dark" {% if settings.default_theme == 'dark' %}selected{% endif %}>Dark</option>
+                                                <option value="auto" {% if settings.default_theme == 'auto' %}selected{% endif %}>Auto (System)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Customization -->
+                <div class="tab-pane fade" id="content">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Content Customization</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="contentSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="homepageTitle" class="form-label">Homepage Title</label>
+                                            <input type="text" class="form-control" id="homepageTitle" name="homepage_title" 
+                                                   value="{{ settings.homepage_title|default:'Welcome to Farmazee' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="homepageSubtitle" class="form-label">Homepage Subtitle</label>
+                                            <input type="text" class="form-control" id="homepageSubtitle" name="homepage_subtitle" 
+                                                   value="{{ settings.homepage_subtitle|default:'Your smart farming companion' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="aboutPageContent" class="form-label">About Page Content</label>
+                                    <textarea class="form-control" id="aboutPageContent" name="about_page_content" rows="4">{{ settings.about_page_content|default:'' }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contactPageContent" class="form-label">Contact Page Content</label>
+                                    <textarea class="form-control" id="contactPageContent" name="contact_page_content" rows="4">{{ settings.contact_page_content|default:'' }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="footerText" class="form-label">Footer Text</label>
+                                    <textarea class="form-control" id="footerText" name="footer_text" rows="3">{{ settings.footer_text|default:'© 2024 Farmazee. All rights reserved.' }}</textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Toggles -->
+                <div class="tab-pane fade" id="features">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Feature Toggles</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="featureSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableMarketplace" class="form-label">Marketplace</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableMarketplace" name="enable_marketplace"
+                                                       {% if settings.enable_marketplace %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableMarketplace">
+                                                    Enable marketplace functionality
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableCommunity" class="form-label">Community</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableCommunity" name="enable_community"
+                                                       {% if settings.enable_community %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableCommunity">
+                                                    Enable community features
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableAiChatbot" class="form-label">AI Chatbot</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableAiChatbot" name="enable_ai_chatbot"
+                                                       {% if settings.enable_ai_chatbot %}checked{% endif %}>
+                                                <label class="form-check-input" for="enableAiChatbot">
+                                                    Enable AI chatbot
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Weather</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableWeather" name="enable_weather"
+                                                       {% if settings.enable_weather %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableWeather">
+                                                    Enable weather features
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableSoilHealth" class="form-label">Soil Health</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableSoilHealth" name="enable_soil_health"
+                                                       {% if settings.enable_soil_health %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableSoilHealth">
+                                                    Enable soil health features
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableCropPlanning" class="form-label">Crop Planning</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableCropPlanning" name="enable_crop_planning"
+                                                       {% if settings.enable_crop_planning %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableCropPlanning">
+                                                    Enable crop planning features
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableSchemes" class="form-label">Government Schemes</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableSchemes" name="enable_schemes"
+                                                       {% if settings.enable_schemes %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableSchemes">
+                                                    Enable government schemes features
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEO Settings -->
+                <div class="tab-pane fade" id="seo">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">SEO Settings</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="seoSettingsForm">
+                                <div class="row">
+                                    <div class="mb-3">
+                                        <label for="metaTitle" class="form-label">Meta Title</label>
+                                        <input type="text" class="form-control" id="metaTitle" name="meta_title" 
+                                               value="{{ settings.meta_title|default:'Farmazee - Smart Farming Solutions' }}" maxlength="60">
+                                        <small class="form-text text-muted">Maximum 60 characters</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="metaDescription" class="form-label">Meta Description</label>
+                                            <input type="text" class="form-control" id="metaDescription" name="meta_description" 
+                                                   value="{{ settings.meta_description|default:'' }}" maxlength="160">
+                                            <small class="form-text text-muted">Maximum 160 characters</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="metaKeywords" class="form-label">Meta Keywords</label>
+                                    <textarea class="form-control" id="metaKeywords" name="meta_keywords" rows="3">{{ settings.meta_keywords|default:'' }}</textarea>
+                                    <small class="form-text text-muted">Comma-separated keywords</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-div class="mb-3">
+                                            <label for="googleAnalyticsId" class="form-label">Google Analytics ID</label>
+                                            <input type="text" class="form-control" id="googleAnalyticsId" name="google_analytics_id" 
+                                                   value="{{ settings.google_analytics_id|default:'' }}" placeholder="GA-XXXXXXXXX">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="facebookPixelId" class="form-label">Facebook Pixel ID</label>
+                                            <input type="text" class="form-control" id="facebookPixelId" name="facebook_pixel_id" 
+                                                   value="{{ settings.facebook_pixel_id|default:'' }}" placeholder="XXXXXXXXXX">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="tab-pane fade" id="social">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Social Media Links</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="socialSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="facebookUrl" class="form-label">Facebook URL</label>
+                                            <input type="url" class="form-control" id="facebookUrl" name="facebook_url" 
+                                                   value="{{ settings.facebook_url|default:'' }}" placeholder="https://facebook.com/farmazee">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="twitterUrl" class="form-label">Twitter URL</label>
+                                            <input type="url" class="form-control" id="twitterUrl" name="twitter_url" 
+                                                   value="{{ settings.facebook_url|default:'' }}" placeholder="https://twitter.com/farmazee">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="instagramUrl" class="form-label">Instagram URL</label>
+                                            <input type="url" class="form-control" id="instagramUrl" name="instagram_url" 
+                                                   value="{{ settings.instagram_url|default:'' }}" placeholder="https://instagram.com/farmazee">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="youtubeUrl" class="form-label">YouTube URL</label>
+                                            <input type="url" class="form-control" id="youtubeUrl" name="youtube_url" 
+                                                   value="{{ settings.youtube_url|default:'' }}" placeholder="https://youtube.com/farmazee">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="linkedinUrl" class="form-label">LinkedIn URL</label>
+                                            <input type="url" class="form-control" id="linkedinUrl" name="linkedin_url" 
+                                                   value="{{ settings.linkedin_url|default:'' }}" placeholder="https://linkedin.com/company/farmazee">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legal Pages -->
+                <div class="tab-pane fade" id="legal">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Legal Page Content</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="legalSettingsForm">
+                                <div class="mb-3">
+                                    <label for="termsOfService" class="form-label">Terms of Service</label>
+                                    <textarea class="form-control" id="termsOfService" name="terms_of_service" rows="8">{{ settings.terms_of_service|default:'' }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="privacyPolicy" class="form-label">Privacy Policy</label>
+                                    <textarea class="form-control" id="privacyPolicy" name="privacy_policy" rows="8">{{ settings.privacy_policy|default:'' }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cookiePolicy" class="form-label">Cookie Policy</label>
+                                    <textarea class="form-control" id="cookiePolicy" name="cookie_policy" rows="6">{{ settings.cookie_policy|default:'' }}</textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Settings -->
+                <div class="tab-pane fade" id="performance">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Performance Settings</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="performanceSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableCaching" class="form-label">Enable Caching</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableCaching" name="enable_caching"
+                                                       {% if settings.enable_caching %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableCaching">
+                                                    Enable page and data caching
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="cacheTimeout" class="form-label">Cache Timeout (seconds)</label>
+                                            <input type="number" class="form-control" id="cacheTimeout" name="cache_timeout" 
+                                                   value="{{ settings.cache_timeout|default:300 }}" min="60" max="3600">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableCompression" class="form-label">Enable Compression</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableCompression" name="enable_compression"
+                                                       {% if settings.enable_compression %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableCompression">
+                                                    Enable GZIP compression
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="enableMinification" class="form-label">Enable Minification</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableMinification" name="enable_minification"
+                                                       {% if settings.enable_minification %}checked{% endif %}>
+                                                <label class="form-check-label" for="enableMinification">
+                                                    Minify CSS and JavaScript
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations -->
+                <div class="tab-pane fade" id="integrations">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Third-Party Integrations</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="integrationSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="openrouterApiKey" class="form-label">OpenRouter API Key</label>
+                                            <input type="password" class="form-control" id="openrouterApiKey" name="openrouter_api_key" 
+                                                   value="{{ settings.openrouter_api_key }}">
+                                            <small class="form-text text-muted">For AI chatbot functionality</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="weatherApiKey" class="form-label">Weather API Key</label>
+                                            <input type="password" class="form-control" id="weatherApiKey" name="weather_api_key" 
+                                                   value="{{ settings.weather_api_key }}">
+                                            <small class="form-text text-muted">For weather data integration</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="googleMapsApiKey" class="form-label">Google Maps API Key</label>
+                                            <input type="password" class="form-control" id="googleMapsApiKey" name="google_maps_api_key" 
+                                                   value="{{ settings.google_maps_api_key }}">
+                                            <small class="form-text text-muted">For location services</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="paymentGateway" class="form-label">Payment Gateway</label>
+                                            <select class="form-select" id="paymentGateway" name="payment_gateway">
+                                                <option value="razorpay" {% if settings.payment_gateway == 'razorpay' %}selected{% endif %}>Razorpay</option>
+                                                <option value="stripe" {% if settings.payment_gateway == 'stripe' %}selected{% endif %}>Stripe</option>
+                                                <option value="paypal" {% if settings.payment_gateway == 'paypal' %}selected{% endif %}>PayPal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-success" onclick="testIntegrations()">
+                                        <i class="fas fa-check me-1"></i>Test Integrations
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Tab navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const tabLinks = document.querySelectorAll('[data-bs-toggle="list"]');
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all tabs and links
+            tabLinks.forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            const target = document.querySelector(this.getAttribute('href'));
+            target.classList.add('show', 'active');
+        });
+    });
+});
+
+// Save all settings
+function saveAllSettings() {
+    const forms = [
+        'generalSettingsForm',
+        'securitySettingsForm', 
+        'emailSettingsForm',
+        'notificationSettingsForm',
+        'backupSettingsForm',
+        'uiUxSettingsForm',
+        'contentSettingsForm',
+        'featureSettingsForm',
+        'seoSettingsForm',
+        'socialSettingsForm',
+        'legalSettingsForm',
+        'performanceSettingsForm',
+        'integrationSettingsForm'
+    ];
+    
+    const allData = {};
+    
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            const formData = new FormData(form);
+            for (let [key, value] of formData.entries()) {
+                if (formData.get(key) === 'on') {
+                    allData[key] = true;
+                } else {
+                    allData[key] = value;
+                }
+            }
+        }
+    });
+    
+    // Send to backend
+    fetch('{% url "admin:system_settings" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(allData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Settings saved successfully!', 'success');
+        } else {
+            showAlert('Error saving settings: ' + data.message, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred while saving settings', 'danger');
+    });
+}
+
+// Reset to defaults
+function resetToDefaults() {
+    if (confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
+        fetch('{% url "admin:system_settings" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({action: 'reset_to_defaults'})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                showAlert('Error resetting settings: ' + data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred while resetting settings', 'danger');
+        });
+    }
+}
+
+// Test email connection
+function testEmailConnection() {
+    const formData = new FormData(document.getElementById('emailSettingsForm'));
+    const emailData = {};
+    for (let [key, value] of formData.entries()) {
+        emailData[key] = value;
+    }
+    
+    fetch('{% url "admin:system_settings" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({action: 'test_email', ...emailData})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Email connection test successful!', 'success');
+        } else {
+            showAlert('Email connection test failed: ' + data.message, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred while testing email connection', 'danger');
+    });
+}
+
+// Create backup
+function createBackup() {
+    if (confirm('Create a manual backup now? This may take a few minutes.')) {
+        fetch('{% url "admin:system_settings" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({action: 'create_backup'})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Backup created successfully!', 'success');
+            } else {
+                showAlert('Error creating backup: ' + data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred while creating backup', 'danger');
+        });
+    }
+}
+
+// View backup history
+function viewBackupHistory() {
+    // Implement backup history view
+    alert('Backup history functionality to be implemented');
+}
+
+// Test integrations
+function testIntegrations() {
+    const formData = new FormData(document.getElementById('integrationSettingsForm'));
+    const integrationData = {};
+    for (let [key, value] of formData.entries()) {
+        integrationData[key] = value;
+    }
+    
+    fetch('{% url "admin:system_settings" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({action: 'test_integrations', ...integrationData})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Integration tests completed successfully!', 'success');
+        } else {
+            showAlert('Integration tests failed: ' + data.message, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred while testing integrations', 'danger');
+    });
+}
+
+// Show alert
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

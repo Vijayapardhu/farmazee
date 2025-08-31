@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                Welcome, {{ user.get_full_name|default:user.username }}!
+            </h1>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="fas fa-bell fa-2x mb-2"></i>
+                    <h4>{{ unread_notifications_count|default:0 }}</h4>
+                    <p class="card-text">Unread Notifications</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="fas fa-seedling fa-2x mb-2"></i>
+                    <h4>{{ related_crops|length }}</h4>
+                    <p class="card-text">Related Crops</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="fas fa-handshake fa-2x mb-2"></i>
+                    <h4>{{ state_schemes|length }}</h4>
+                    <p class="card-text">Available Schemes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="fas fa-cloud-sun fa-2x mb-2"></i>
+                    <h4>{% if weather_data %}Yes{% else %}No{% endif %}</h4>
+                    <p class="card-text">Weather Data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Info -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        Profile Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ user_profile.user.get_full_name|default:user_profile.user.username }}</p>
+                    <p><strong>Village:</strong> {{ user_profile.village|default:"Not specified" }}</p>
+                    <p><strong>District:</strong> {{ user_profile.district|default:"Not specified" }}</p>
+                    <p><strong>State:</strong> {{ user_profile.state|default:"Not specified" }}</p>
+                    <p><strong>Land Area:</strong> {{ user_profile.land_area|default:"Not specified" }} acres</p>
+                    <p><strong>Primary Crop:</strong> {{ user_profile.primary_crop|default:"Not specified" }}</p>
+                    <a href="{% url 'core:profile' %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cloud-sun me-2"></i>
+                        Local Weather
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if weather_data %}
+                        <div class="text-center">
+                            <h3 class="text-primary">{{ weather_data.temperature }}°C</h3>
+                            <p class="text-muted">{{ weather_data.description }}</p>
+                            <p><i class="fas fa-map-marker-alt text-danger me-1"></i>{{ weather_data.location }}</p>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Weather information not available for your location.</p>
+                    {% endif %}
+                    <a href="{% url 'weather:home' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-external-link-alt me-1"></i>View Full Weather
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Notifications -->
+    {% if notifications %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>
+                        Recent Notifications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for notification in notifications %}
+                    <div class="alert alert-info">
+                        <h6>{{ notification.title }}</h6>
+                        <p class="mb-1">{{ notification.message }}</p>
+                        <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+                    </div>
+                    {% endfor %}
+                    <a href="{% url 'core:notifications' %}" class="btn btn-outline-info">
+                        <i class="fas fa-list me-1"></i>View All Notifications
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'weather:home' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-cloud-sun me-2"></i>Check Weather
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'crops:list' %}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-seedling me-2"></i>Browse Crops
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'marketplace:home' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-store me-2"></i>Visit Marketplace
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'schemes:list' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-handshake me-2"></i>View Schemes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

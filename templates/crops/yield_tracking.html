@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yield Tracking - {{ crop.name }} - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'crops:list' %}">Crops</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'crops:detail' crop.pk %}">{{ crop.name }}</a></li>
+                    <li class="breadcrumb-item active">Yield Tracking</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3 mb-0">
+                    <i class="fas fa-chart-bar text-success me-2"></i>
+                    Yield Tracking - {{ crop.name }}
+                </h2>
+                <div>
+                    <a href="{% url 'crops:detail' crop.pk %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Crop
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Add Yield Record -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plus text-success me-2"></i>
+                        Add Yield Record
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="yield-form">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="harvest_date" class="form-label">Harvest Date</label>
+                            <input type="date" class="form-control" id="harvest_date" name="harvest_date" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="quantity_harvested" class="form-label">Quantity Harvested (kg)</label>
+                            <input type="number" class="form-control" id="quantity_harvested" name="quantity_harvested" min="0" step="0.1" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="quality_grade" class="form-label">Quality Grade</label>
+                            <select class="form-select" id="quality_grade" name="quality_grade">
+                                <option value="">Select Quality Grade</option>
+                                <option value="A">Grade A (Premium)</option>
+                                <option value="B">Grade B (Good)</option>
+                                <option value="C">Grade C (Average)</option>
+                                <option value="D">Grade D (Below Average)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="market_price" class="form-label">Market Price per kg (₹)</label>
+                            <input type="number" class="form-control" id="market_price" name="market_price" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional observations, weather conditions, etc..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save me-2"></i>Add Record
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yield Records -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history text-info me-2"></i>
+                        Yield History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if yield_records %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Harvest Date</th>
+                                        <th>Quantity (kg)</th>
+                                        <th>Quality</th>
+                                        <th>Price/kg</th>
+                                        <th>Total Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in yield_records %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ record.harvest_date|date:"M d, Y" }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ record.quantity_harvested }} kg</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{% if record.quality_grade == 'A' %}success{% elif record.quality_grade == 'B' %}info{% elif record.quality_grade == 'C' %}warning{% else %}secondary{% endif %}">
+                                                Grade {{ record.quality_grade }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if record.market_price %}
+                                                ₹{{ record.market_price }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if record.total_value %}
+                                                <strong>₹{{ record.total_value }}</strong>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info" onclick="viewYieldDetails({{ record.id }})" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No yield records yet</h5>
+                            <p class="text-muted">Start tracking your harvests by adding your first yield record above.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Yield Analytics -->
+            {% if yield_records %}
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-chart-pie text-warning me-2"></i>
+                                Yield Summary
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <h4 class="text-primary">{{ yield_records|length }}</h4>
+                                    <small class="text-muted">Total Harvests</small>
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="text-success">
+                                        {% with total_quantity=0 %}
+                                            {% for record in yield_records %}
+                                                {% with total_quantity=total_quantity|add:record.quantity_harvested %}{% endwith %}
+                                            {% endfor %}
+                                            {{ total_quantity|floatformat:1 }}
+                                        {% endwith %}
+                                    </h4>
+                                    <small class="text-muted">Total kg</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-chart-line text-info me-2"></i>
+                                Yield Trend
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="yieldChart" width="300" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Yield Details Modal -->
+<div class="modal fade" id="yieldModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yield Record Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="yieldModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.badge {
+    font-size: 0.8rem;
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.yield-form .form-control,
+.yield-form .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.yield-form .form-control:focus,
+.yield-form .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.card {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 12px;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0 !important;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// View yield details
+function viewYieldDetails(recordId) {
+    const modalBody = document.getElementById('yieldModalBody');
+    modalBody.innerHTML = `
+        <div class="text-center py-4">
+            <i class="fas fa-spinner fa-spin fa-2x text-primary mb-3"></i>
+            <p>Loading yield details...</p>
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('yieldModal'));
+    modal.show();
+    
+    // Simulate loading
+    setTimeout(() => {
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Harvest Details</h6>
+                    <p><strong>Date:</strong> <span id="yieldDate"></span></p>
+                    <p><strong>Quantity:</strong> <span id="yieldQuantity"></span></p>
+                    <p><strong>Quality Grade:</strong> <span id="yieldQuality"></span></p>
+                    <p><strong>Market Price:</strong> <span id="yieldPrice"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Additional Information</h6>
+                    <p id="yieldNotes"></p>
+                    
+                    <h6>Calculated Values</h6>
+                    <p><strong>Total Value:</strong> <span id="yieldTotal"></span></p>
+                </div>
+            </div>
+        `;
+    }, 1000);
+}
+
+// Initialize yield chart
+{% if yield_records %}
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('yieldChart').getContext('2d');
+    
+    // Sample data - in real app, this would come from the backend
+    const labels = ['{{ yield_records.0.harvest_date|date:"M d" }}', '{{ yield_records.1.harvest_date|date:"M d" }}', '{{ yield_records.2.harvest_date|date:"M d" }}'];
+    const data = [25, 30, 28]; // Yield quantities
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Yield (kg)',
+                data: data,
+                borderColor: '#17a2b8',
+                backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+});
+{% endif %}
+
+// Auto-calculate total value
+document.getElementById('quantity_harvested')?.addEventListener('input', calculateTotal);
+document.getElementById('market_price')?.addEventListener('input', calculateTotal);
+
+function calculateTotal() {
+    const quantity = parseFloat(document.getElementById('quantity_harvested')?.value) || 0;
+    const price = parseFloat(document.getElementById('market_price')?.value) || 0;
+    const total = quantity * price;
+    
+    if (total > 0) {
+        console.log(`Total value: ₹${total.toFixed(2)}`);
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Smart Farmer Support - Empowering Indian Farmers{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-4">
+                    Smart Solutions for <span class="text-warning">Smart Farmers</span>
+                </h1>
+                <p class="lead mb-4">
+                    Get real-time weather updates, crop management tips, market prices, and government schemes all in one place. 
+                    Join thousands of farmers who are already benefiting from our digital platform.
+                </p>
+                <div class="d-flex gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'account_signup' %}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Join Now
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'core:about' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="{% static 'images/hero-farmer.jpg' %}" alt="Smart Farmer" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card bg-white p-4 rounded shadow-sm">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h3 class="fw-bold text-success">{{ total_farmers|default:"10,000" }}+</h3>
+                    <p class="text-muted">Registered Farmers</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card bg-white p-4 rounded shadow-sm">
+                    <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                    <h3 class="fw-bold text-success">{{ total_crops|default:"50" }}+</h3>
+                    <p class="text-muted">Crop Varieties</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-card bg-white p-4 rounded shadow-sm">
+                    <i class="fas fa-store fa-3x text-success mb-3"></i>
+                    <h3 class="fw-bold text-success">{{ total_products|default:"500" }}+</h3>
+                    <p class="text-muted">Market Products</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-card bg-white p-4 rounded shadow-sm">
+                    <i class="fas fa-handshake fa-3x text-success mb-3"></i>
+                    <h3 class="fw-bold text-success">{{ total_schemes|default:"25" }}+</h3>
+                    <p class="text-muted">Government Schemes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Our Features</h2>
+            <p class="lead text-muted">Everything you need for smart farming in one platform</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Weather Forecast -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card h-100 bg-white p-4 rounded shadow-sm border">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-cloud-sun fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Weather Forecast</h4>
+                    <p class="text-muted text-center">
+                        Get accurate weather predictions for your location. Plan your farming activities 
+                        based on real-time weather data and forecasts.
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'weather:home' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-right me-2"></i>Check Weather
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Crop Management -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card h-100 bg-white p-4 rounded shadow-sm border">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-seedling fa-3x text-success"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Crop Management</h4>
+                    <p class="text-muted text-center">
+                        Learn about different crops, their growing requirements, pest management, 
+                        and disease control techniques.
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
+                            <i class="fas fa-arrow-right me-2"></i>Explore Crops
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- E-Marketplace -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card h-100 bg-white p-4 rounded shadow-sm border">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-store fa-3x text-warning"></i>
+                    </div>
+                    <h4 class="text-center mb-3">E-Marketplace</h4>
+                    <p class="text-muted text-center">
+                        Buy and sell agricultural products directly. Get the best prices for your 
+                        produce and find quality farming inputs.
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'marketplace:home' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-arrow-right me-2"></i>Visit Marketplace
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Community Forum -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card h-100 bg-white p-4 rounded shadow-sm border">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-users fa-3x text-info"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Community Forum</h4>
+                    <p class="text-muted text-center">
+                        Connect with fellow farmers, share experiences, ask questions, and learn 
+                        from agricultural experts.
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'community:home' %}" class="btn btn-outline-info">
+                            <i class="fas fa-arrow-right me-2"></i>Join Community
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Government Schemes -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card h-100 bg-white p-4 rounded shadow-sm border">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-handshake fa-3x text-danger"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Government Schemes</h4>
+                    <p class="text-muted text-center">
+                        Stay updated with the latest government schemes, subsidies, and support 
+                        programs for farmers.
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'schemes:list' %}" class="btn btn-outline-danger">
+                            <i class="fas fa-arrow-right me-2"></i>View Schemes
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Soil Health -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-card h-100 bg-white p-4 rounded shadow-sm border">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-mountain fa-3x text-secondary"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Soil Health</h4>
+                    <p class="text-muted text-center">
+                        Learn about soil testing, fertilizer management, and soil conservation 
+                        techniques for better crop yields.
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'soil_health:home' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-right me-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Weather Section -->
+{% if recent_weather %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="fw-bold mb-4">Current Weather Update</h2>
+                <div class="weather-card bg-white p-4 rounded shadow">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-map-marker-alt fa-2x text-primary me-3"></i>
+                        <div>
+                            <h4 class="mb-0">{{ recent_weather.location }}</h4>
+                            <p class="text-muted mb-0">{{ recent_weather.description }}</p>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h3 class="text-primary mb-0">{{ recent_weather.temperature }}°C</h3>
+                            <small class="text-muted">Temperature</small>
+                        </div>
+                        <div class="col-4">
+                            <h3 class="text-info mb-0">{{ recent_weather.humidity }}%</h3>
+                            <small class="text-muted">Humidity</small>
+                        </div>
+                        <div class="col-4">
+                            <h3 class="text-warning mb-0">{{ recent_weather.wind_speed }} km/h</h3>
+                            <small class="text-muted">Wind Speed</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <h3 class="fw-bold mb-4">Featured Crops</h3>
+                <div class="row">
+                    {% for crop in featured_crops %}
+                    <div class="col-md-6 mb-3">
+                        <div class="crop-card bg-white p-3 rounded shadow-sm border">
+                            <h6 class="fw-bold">{{ crop.name }}</h6>
+                            <p class="text-muted small mb-2">{{ crop.category|title }}</p>
+                            <a href="{% url 'crops:detail' crop.pk %}" class="btn btn-sm btn-outline-success">
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="py-5 bg-success text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Ready to Transform Your Farming?</h2>
+        <p class="lead mb-4">
+            Join thousands of farmers who are already using Smart Farmer Support to improve their yields and income.
+        </p>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'account_signup' %}" class="btn btn-warning btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Get Started Today
+            </a>
+        {% else %}
+            <a href="{% url 'core:dashboard' %}" class="btn btn-warning btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.hero-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.stat-card {
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.weather-card {
+    transition: transform 0.3s ease;
+}
+
+.weather-card:hover {
+    transform: translateY(-2px);
+}
+
+.crop-card {
+    transition: transform 0.3s ease;
+}
+
+.crop-card:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

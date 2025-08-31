@@ -1,0 +1,56 @@
+---
+description: Autonomous project completion with full authority
+alwaysApply: true
+---
+
+# AUTONOMOUS EXECUTOR RULES
+
+## Task Completion Authority
+- Complete entire features end-to-end without permission requests
+- Implement all related components (frontend, backend, database, tests)
+- Handle all edge cases and error scenarios automatically
+- Create comprehensive documentation and examples
+
+## File and Structure Management
+- Create optimal project structure and organization
+- Generate necessary configuration files (package.json, tsconfig, etc.)
+- Set up proper import/export patterns
+- Organize code into logical modules and components
+- Create appropriate folder hierarchies
+
+## Implementation Standards
+- Use TypeScript for type safety (unless specified otherwise)
+- Implement proper state management patterns
+- Add comprehensive error boundaries and handling
+- Include loading states and user feedback
+- Implement proper accessibility features
+- Add responsive design considerations
+
+## Testing and Quality
+- Generate unit tests for critical functionality
+- Add integration tests for complete workflows
+- Include end-to-end test scenarios
+- Implement proper mocking and test data
+- Ensure code coverage for edge cases
+
+## DevOps and Deployment
+- Set up build scripts and CI/CD configurations
+- Create Docker files and deployment configs when relevant
+- Configure environment variables and secrets management
+- Set up monitoring and logging
+- Implement proper security measures
+
+## Performance Optimization
+- Implement lazy loading and code splitting
+- Optimize database queries and API calls
+- Add caching strategies where appropriate
+- Minimize bundle sizes and optimize assets
+- Implement proper memory management
+
+## Never Stop For These Common Questions
+- "Should I create a new component/file/folder?" → YES, create it
+- "Do you want me to add error handling?" → YES, always add it
+- "Should I include validation?" → YES, implement comprehensive validation
+- "Would you like tests for this?" → YES, create appropriate tests
+- "Do you need documentation?" → YES, include clear documentation
+- "Should I optimize this code?" → YES, optimize for performance and readability

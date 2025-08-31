@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold text-success mb-4">About Farmazee</h1>
+            <p class="lead text-muted">Empowering Indian farmers with digital solutions for sustainable agriculture</p>
+        </div>
+    </div>
+
+    <!-- Mission & Vision -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-bullseye fa-2x"></i>
+                    </div>
+                    <h4 class="card-title">Our Mission</h4>
+                    <p class="card-text">To revolutionize farming in India by providing farmers with cutting-edge digital tools, expert knowledge, and market access to improve productivity and profitability.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-eye fa-2x"></i>
+                    </div>
+                    <h4 class="card-title">Our Vision</h4>
+                    <p class="card-text">To create a digitally empowered farming community where every farmer has access to technology, knowledge, and markets for sustainable agricultural growth.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Section -->
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <h2 class="fw-bold mb-4">Our Story</h2>
+            <p class="text-muted">Farmazee was born from a simple observation: Indian farmers, despite being the backbone of our economy, often lack access to modern technology and market information.</p>
+            <p class="text-muted">Founded in 2024, we set out to bridge this digital divide by creating a comprehensive platform that brings together weather forecasting, crop management, market insights, and financial services.</p>
+            <p class="text-muted">Today, we serve thousands of farmers across India, helping them make informed decisions and improve their agricultural practices.</p>
+        </div>
+        <div class="col-lg-6">
+            <img src="{% static 'images/about-farming.jpg' %}" alt="Farming in India" class="img-fluid rounded shadow">
+        </div>
+    </div>
+
+    <!-- Values Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">Our Core Values</h2>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">Community First</h5>
+                    <p class="card-text text-muted">We prioritize the needs of the farming community and build solutions that truly serve them.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-lightbulb fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">Innovation</h5>
+                    <p class="card-text text-muted">We continuously innovate to provide the best digital solutions for modern farming.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-leaf fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">Sustainability</h5>
+                    <p class="card-text text-muted">We promote sustainable farming practices that protect our environment for future generations.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-handshake fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">Trust</h5>
+                    <p class="card-text text-muted">We build lasting relationships with farmers based on trust, transparency, and reliability.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">Our Team</h2>
+            <p class="text-muted">Meet the passionate individuals behind Farmazee</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                    <h5 class="card-title">Agricultural Experts</h5>
+                    <p class="card-text text-muted">Our team includes experienced agronomists and farming specialists who understand the challenges faced by Indian farmers.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                        <i class="fas fa-laptop-code fa-3x text-white"></i>
+                    </div>
+                    <h5 class="card-title">Technology Team</h5>
+                    <p class="card-text text-muted">Skilled developers and data scientists who create innovative digital solutions for the agricultural sector.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                        <i class="fas fa-headset fa-3x text-white"></i>
+                    </div>
+                    <h5 class="card-title">Support Team</h5>
+                    <p class="card-text text-muted">Dedicated customer support professionals who ensure farmers get the help they need when they need it.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <div class="card bg-success text-white">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-3">Join the Digital Farming Revolution</h3>
+                    <p class="lead mb-4">Be part of the transformation that's making Indian agriculture smarter, more efficient, and more profitable.</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{% url 'signup' %}" class="btn btn-light btn-lg px-4">Get Started Today</a>
+                        <a href="{% url 'core:contact' %}" class="btn btn-outline-light btn-lg px-4">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

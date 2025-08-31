@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Improvements - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-seedling text-success me-2"></i>
+                Soil Improvements
+            </h1>
+            <p class="lead text-muted">Track and manage your soil improvement practices</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="#" class="btn btn-primary w-100" onclick="addImprovement()">
+                                <i class="fas fa-plus me-2"></i>Add Improvement
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="#" class="btn btn-outline-success w-100" onclick="scheduleImprovement()">
+                                <i class="fas fa-calendar me-2"></i>Schedule Practice
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="#" class="btn btn-outline-info w-100" onclick="viewRecommendations()">
+                                <i class="fas fa-lightbulb me-2"></i>Get Recommendations
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:home' %}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Soil Health
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Improvements List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-primary me-2"></i>
+                        Improvement Practices
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if improvements %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Effectiveness</th>
+                                    <th>Timeline</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for improvement in improvements %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <i class="fas fa-{{ improvement.improvement_type|default:'seedling' }} fa-2x text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ improvement.get_improvement_type_display }}</strong><br>
+                                                <small class="text-muted">{{ improvement.description|truncatewords:8 }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">{{ improvement.location }}</span>
+                                    </td>
+                                    <td>
+                                        {% if improvement.status == 'planned' %}
+                                        <span class="badge bg-secondary">Planned</span>
+                                        {% elif improvement.status == 'in_progress' %}
+                                        <span class="badge bg-warning">In Progress</span>
+                                        {% elif improvement.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                        {% elif improvement.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ improvement.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar {% if improvement.progress_percentage >= 80 %}bg-success{% elif improvement.progress_percentage >= 50 %}bg-warning{% else %}bg-info{% endif %}" 
+                                                 role="progressbar" style="width: {{ improvement.progress_percentage }}%">
+                                                {{ improvement.progress_percentage }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if improvement.effectiveness %}
+                                            {% if improvement.effectiveness == 'excellent' %}
+                                            <span class="badge bg-success">Excellent</span>
+                                            {% elif improvement.effectiveness == 'high' %}
+                                            <span class="badge bg-primary">High</span>
+                                            {% elif improvement.effectiveness == 'medium' %}
+                                            <span class="badge bg-warning">Medium</span>
+                                            {% elif improvement.effectiveness == 'low' %}
+                                            <span class="badge bg-danger">Low</span>
+                                            {% endif %}
+                                        {% else %}
+                                        <span class="text-muted">Not rated</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">Start: {{ improvement.start_date|date:"M d, Y" }}</small><br>
+                                        {% if improvement.end_date %}
+                                        <small class="text-muted">End: {{ improvement.end_date|date:"M d, Y" }}</small>
+                                        {% else %}
+                                        <small class="text-muted">Ongoing</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="#" class="btn btn-outline-primary btn-sm" onclick="viewDetails({{ improvement.id }})">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if improvement.status == 'planned' or improvement.status == 'in_progress' %}
+                                            <button class="btn btn-outline-success btn-sm" onclick="updateProgress({{ improvement.id }})">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            {% endif %}
+                                            {% if improvement.status == 'completed' %}
+                                            <button class="btn btn-outline-warning btn-sm" onclick="rateEffectiveness({{ improvement.id }})">
+                                                <i class="fas fa-star"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-seedling fa-3x mb-3"></i>
+                        <h5>No Soil Improvements Yet</h5>
+                        <p>Start improving your soil health by adding your first improvement practice!</p>
+                        <button class="btn btn-primary" onclick="addImprovement()">
+                            <i class="fas fa-plus me-2"></i>Add First Improvement
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Improvement Tips -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Improvement Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-leaf fa-2x text-success mb-3"></i>
+                                    <h6>Organic Matter</h6>
+                                    <p class="small text-muted">
+                                        Add compost, manure, or cover crops to improve soil structure and fertility.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-thermometer-half fa-2x text-warning mb-3"></i>
+                                    <h6>pH Management</h6>
+                                    <p class="small text-muted">
+                                        Test soil pH regularly and adjust with lime (raise) or sulfur (lower) as needed.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-tint fa-2x text-info mb-3"></i>
+                                    <h6>Drainage</h6>
+                                    <p class="small text-muted">
+                                        Improve drainage with raised beds, contouring, or installing drainage systems.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addImprovement() {
+    alert('Add improvement functionality coming soon!');
+}
+
+function scheduleImprovement() {
+    alert('Schedule improvement functionality coming soon!');
+}
+
+function viewRecommendations() {
+    alert('Recommendations functionality coming soon!');
+}
+
+function viewDetails(improvementId) {
+    alert('View details functionality coming soon!');
+}
+
+function updateProgress(improvementId) {
+    alert('Update progress functionality coming soon!');
+}
+
+function rateEffectiveness(improvementId) {
+    alert('Rate effectiveness functionality coming soon!');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Health - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-seedling text-success me-2"></i>
+                Soil Health Management
+            </h1>
+            <p class="lead text-muted">Monitor, analyze, and improve your soil health for better crop yields</p>
+        </div>
+    </div>
+
+    <!-- Soil Health Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie text-info me-2"></i>
+                        Soil Health Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-flask fa-2x text-primary mb-2"></i>
+                                <h4 class="fw-bold">{{ total_tests|default:"15" }}</h4>
+                                <p class="text-muted mb-0">Soil Tests</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+                                <h4 class="fw-bold">{{ active_recommendations|default:"8" }}</h4>
+                                <p class="text-muted mb-0">Active Recommendations</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-tint fa-2x text-info mb-2"></i>
+                                <h4 class="fw-bold">{{ moisture_alerts|default:"3" }}</h4>
+                                <p class="text-muted mb-0">Moisture Alerts</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                                <h4 class="fw-bold">{{ improvement_score|default:"85" }}%</h4>
+                                <p class="text-muted mb-0">Improvement Score</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools text-primary me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                                                    <a href="{% url 'soil_health:tests' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-flask me-2"></i>View Soil Tests
+                        </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                                                    <a href="{% url 'soil_health:improvements' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-lightbulb me-2"></i>Soil Improvements
+                        </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:monitoring' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-chart-line me-2"></i>Soil Monitoring
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Soil Tests -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-flask text-primary me-2"></i>
+                        Recent Soil Tests
+                    </h5>
+                                            <a href="{% url 'soil_health:tests' %}" class="btn btn-outline-primary btn-sm">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_tests %}
+                    <div class="row">
+                        {% for test in recent_tests %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title">{{ test.location|default:"Field" }}</h6>
+                                        <span class="badge bg-{{ test.status|lower }}">{{ test.get_status_display }}</span>
+                                    </div>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <small class="text-muted">pH Level:</small><br>
+                                            <span class="fw-bold {% if test.ph_level < 6.0 or test.ph_level > 7.5 %}text-danger{% else %}text-success{% endif %}">
+                                                {{ test.ph_level|default:"N/A" }}
+                                            </span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Organic Matter:</small><br>
+                                            <span class="fw-bold">{{ test.organic_matter|default:"N/A" }}%</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <small class="text-muted">Nitrogen:</small><br>
+                                            <span class="fw-bold">{{ test.nitrogen|default:"N/A" }} kg/ha</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Phosphorus:</small><br>
+                                            <span class="fw-bold">{{ test.phosphorus|default:"N/A" }} kg/ha</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ test.test_date|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                
+                                <div class="card-footer bg-transparent">
+                                    <a href="{% url 'soil_health:test_detail' test.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-flask fa-3x mb-3"></i>
+                        <h5>No Soil Tests Yet</h5>
+                        <p>Schedule your first soil test to get started!</p>
+                        <a href="{% url 'soil_health:tests' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>View Tests
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soil Health Tips -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Soil Health Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-seedling fa-2x text-success me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Test Soil Regularly</h6>
+                                    <p class="text-muted small">Test your soil every 2-3 years to monitor nutrient levels and pH balance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-recycle fa-2x text-primary me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Practice Crop Rotation</h6>
+                                    <p class="text-muted small">Rotate crops to prevent nutrient depletion and reduce pest pressure.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-tint fa-2x text-info me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Maintain Proper Moisture</h6>
+                                    <p class="text-muted small">Ensure adequate soil moisture without overwatering to prevent erosion.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-leaf fa-2x text-success me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Add Organic Matter</h6>
+                                    <p class="text-muted small">Incorporate compost and organic materials to improve soil structure.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soil Types Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        Common Soil Types
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-circle fa-2x text-warning mb-2"></i>
+                                <h6>Clay Soil</h6>
+                                <p class="small text-muted">Heavy, retains water well, good for rice and wheat</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-circle fa-2x text-success mb-2"></i>
+                                <h6>Loamy Soil</h6>
+                                <p class="small text-muted">Ideal soil type, balanced nutrients, good for most crops</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-circle fa-2x text-info mb-2"></i>
+                                <h6>Sandy Soil</h6>
+                                <p class="small text-muted">Light, drains quickly, good for root vegetables</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nutrient Information -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-atom text-warning me-2"></i>
+                        Essential Nutrients
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+                                <h6>Nitrogen (N)</h6>
+                                <p class="small text-muted">Essential for leaf growth and chlorophyll production</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-seedling fa-2x text-primary mb-2"></i>
+                                <h6>Phosphorus (P)</h6>
+                                <p class="small text-muted">Important for root development and flowering</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-apple-alt fa-2x text-warning mb-2"></i>
+                                <h6>Potassium (K)</h6>
+                                <p class="small text-muted">Helps with disease resistance and fruit quality</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

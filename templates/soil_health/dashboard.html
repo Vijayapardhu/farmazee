@@ -1,0 +1,431 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Health - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Soil Health Overview Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-leaf me-2"></i>Soil Health Dashboard
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-primary text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-flask fa-2x"></i>
+                                </div>
+                                <h4 class="text-primary">{{ total_tests }}</h4>
+                                <p class="text-muted mb-0">Soil Tests</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-success text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-seedling fa-2x"></i>
+                                </div>
+                                <h4 class="text-success">{{ healthy_soils }}</h4>
+                                <p class="text-muted mb-0">Healthy Soils</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-warning text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                </div>
+                                <h4 class="text-warning">{{ needs_attention }}</h4>
+                                <p class="text-muted mb-0">Needs Attention</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-info text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-calendar-check fa-2x"></i>
+                                </div>
+                                <h4 class="text-info">{{ upcoming_tests }}</h4>
+                                <p class="text-muted mb-0">Upcoming Tests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Soil Tests Section -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-flask me-2"></i>Recent Soil Tests
+                    </h4>
+                    <a href="{% url 'soil_health:schedule_test' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-2"></i>Schedule Test
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_tests %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Test Date</th>
+                                    <th>Location</th>
+                                    <th>pH Level</th>
+                                    <th>Nitrogen</th>
+                                    <th>Phosphorus</th>
+                                    <th>Potassium</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for test in recent_tests %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">{{ test.test_date|date:"M d, Y" }}</div>
+                                        <small class="text-muted">{{ test.test_date|date:"D" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                            <span>{{ test.location_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ test.ph_status_color }}">{{ test.ph_level }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ test.nitrogen_status_color }}">{{ test.nitrogen_level }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ test.phosphorus_status_color }}">{{ test.phosphorus_level }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ test.potassium_status_color }}">{{ test.potassium_level }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ test.overall_status_color }}">{{ test.get_overall_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'soil_health:test_detail' test.id %}" class="btn btn-outline-primary" title="View Test Details" aria-label="View test details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'soil_health:download_report' test.id %}" class="btn btn-outline-success" title="Download Report" aria-label="Download test report">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-flask fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No soil tests conducted yet</p>
+                        <p class="text-muted">Schedule your first soil test to understand your soil health!</p>
+                        <a href="{% url 'soil_health:schedule_test' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus me-2"></i>Schedule First Test
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Soil Health Score
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if latest_test %}
+                    <div class="mb-3">
+                        <div class="display-4 text-{{ latest_test.overall_status_color }} fw-bold">{{ latest_test.overall_score }}%</div>
+                        <p class="text-muted">Overall Soil Health</p>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h6 class="text-primary">{{ latest_test.ph_score }}%</h6>
+                            <small class="text-muted">pH Level</small>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-success">{{ latest_test.nutrient_score }}%</h6>
+                            <small class="text-muted">Nutrients</small>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-warning">{{ latest_test.organic_score }}%</h6>
+                            <small class="text-muted">Organic Matter</small>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="py-4">
+                        <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No test data available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fertilizer Recommendations Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-seedling me-2"></i>Fertilizer Recommendations
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if fertilizer_recommendations %}
+                    <div class="row">
+                        {% for recommendation in fertilizer_recommendations %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card border-warning h-100">
+                                <div class="card-header bg-warning text-white">
+                                    <h6 class="mb-0">{{ recommendation.crop_name }}</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <small class="text-muted">Based on test from:</small>
+                                        <div class="fw-bold">{{ recommendation.test_date|date:"M d, Y" }}</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted">Recommended Fertilizers:</small>
+                                        <ul class="list-unstyled mt-1">
+                                            {% for fertilizer in recommendation.fertilizers %}
+                                            <li class="mb-1">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                {{ fertilizer.name }} - {{ fertilizer.amount }} kg/acre
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted">Application Timing:</small>
+                                        <div class="fw-bold">{{ recommendation.application_timing }}</div>
+                                    </div>
+                                    <div class="d-grid">
+                                        <a href="{% url 'soil_health:recommendation_detail' recommendation.id %}" class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-eye me-2"></i>View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-seedling fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No fertilizer recommendations available</p>
+                        <p class="text-muted">Conduct a soil test to get personalized recommendations!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soil Conservation Tips Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-leaf me-2"></i>Soil Conservation Tips
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-body text-center">
+                                    <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-water fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Water Management</h6>
+                                    <p class="card-text text-muted">Implement proper irrigation techniques to prevent soil erosion and maintain soil structure.</p>
+                                    <a href="{% url 'soil_health:conservation_tips' 'water' %}" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-info-circle me-2"></i>Learn More
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-body text-center">
+                                    <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-seedling fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Crop Rotation</h6>
+                                    <p class="card-text text-muted">Practice crop rotation to maintain soil fertility and prevent nutrient depletion.</p>
+                                    <a href="{% url 'soil_health:conservation_tips' 'crop_rotation' %}" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-info-circle me-2"></i>Learn More
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-body text-center">
+                                    <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-recycle fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Organic Matter</h6>
+                                    <p class="card-text text-muted">Add organic matter through composting and mulching to improve soil structure.</p>
+                                    <a href="{% url 'soil_health:conservation_tips' 'organic_matter' %}" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-info-circle me-2"></i>Learn More
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Irrigation Methods Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tint me-2"></i>Irrigation Methods
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-tint fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Drip Irrigation</h6>
+                                    <p class="card-text text-muted">Efficient water delivery directly to plant roots, reducing water wastage.</p>
+                                    <a href="{% url 'soil_health:irrigation_methods' 'drip' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-info-circle me-1"></i>Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-cloud-rain fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Sprinkler System</h6>
+                                    <p class="card-text text-muted">Overhead watering system suitable for large areas and various crop types.</p>
+                                    <a href="{% url 'soil_health:irrigation_methods' 'sprinkler' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-info-circle me-1"></i>Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-stream fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Furrow Irrigation</h6>
+                                    <p class="card-text text-muted">Traditional method using channels between crop rows for water distribution.</p>
+                                    <a href="{% url 'soil_health:irrigation_methods' 'furrow' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-info-circle me-1"></i>Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-water fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">Flood Irrigation</h6>
+                                    <p class="card-text text-muted">Surface flooding method for rice and other water-intensive crops.</p>
+                                    <a href="{% url 'soil_health:irrigation_methods' 'flood' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-info-circle me-1"></i>Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:schedule_test' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-flask fa-3x text-primary mb-3"></i>
+                                    <h6 class="card-title">Schedule Test</h6>
+                                    <p class="card-text text-muted">Book a soil test</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:fertilizer_calculator' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-calculator fa-3x text-success mb-3"></i>
+                                    <h6 class="card-title">Fertilizer Calculator</h6>
+                                    <p class="card-text text-muted">Calculate requirements</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:soil_library' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-book fa-3x text-info mb-3"></i>
+                                    <h6 class="card-title">Soil Library</h6>
+                                    <p class="card-text text-muted">Learn about soil types</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'soil_health:expert_consultation' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-user-graduate fa-3x text-warning mb-3"></i>
+                                    <h6 class="card-title">Expert Consultation</h6>
+                                    <p class="card-text text-muted">Get professional advice</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

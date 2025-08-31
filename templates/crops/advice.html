@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Farming Advice - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'crops:list' %}">Crops</a></li>
+                    <li class="breadcrumb-item active">Farming Advice</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3 mb-0">
+                    <i class="fas fa-lightbulb text-warning me-2"></i>
+                    Farming Advice & Recommendations
+                </h2>
+                <div>
+                    <a href="{% url 'crops:list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Crops
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   placeholder="Search by title or content..." 
+                                   value="{{ search_query }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="season" class="form-label">Season</label>
+                            <select class="form-select" id="season" name="season">
+                                <option value="">All Seasons</option>
+                                {% for choice in seasons %}
+                                <option value="{{ choice.0 }}" {% if selected_season == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Advice -->
+    {% if featured_advice %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star me-2"></i>
+                        Featured Advice
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for advice in featured_advice %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title">{{ advice.title }}</h6>
+                                        <span class="badge bg-warning text-dark">Featured</span>
+                                    </div>
+                                    <p class="card-text">{{ advice.content|truncatewords:30 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-seedling me-1"></i>
+                                            {{ advice.crop.name }}
+                                        </small>
+                                        {% if advice.season %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ advice.get_season_display }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- All Advice -->
+    <div class="row">
+        <div class="col-12">
+            {% if advice_list %}
+                <div class="row">
+                    {% for advice in advice_list %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="mb-0">{{ advice.title }}</h5>
+                                    {% if advice.is_featured %}
+                                    <span class="badge bg-warning text-dark">Featured</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <p class="card-text">{{ advice.content }}</p>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">
+                                            <i class="fas fa-seedling me-1"></i>
+                                            <strong>Crop:</strong> {{ advice.crop.name }}
+                                        </small>
+                                    </div>
+                                    {% if advice.season %}
+                                    <div class="col-6">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <strong>Season:</strong> {{ advice.get_season_display }}
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if advice.advice_type %}
+                                <div class="mb-3">
+                                    <span class="badge bg-info">{{ advice.advice_type|title }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Added on {{ advice.created_at|date:"M d, Y" }}
+                                    </small>
+                                    <a href="{% url 'crops:detail' advice.crop.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View Crop
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if advice_list.has_other_pages %}
+                <nav aria-label="Advice pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if advice_list.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ advice_list.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_season %}&season={{ selected_season }}{% endif %}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in advice_list.paginator.page_range %}
+                        {% if advice_list.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > advice_list.number|add:'-3' and num < advice_list.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_season %}&season={{ selected_season }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        
+                        {% if advice_list.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ advice_list.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_season %}&season={{ selected_season }}{% endif %}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-lightbulb fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No farming advice found</h4>
+                    <p class="text-muted">
+                        {% if search_query or selected_season %}
+                            Try adjusting your search criteria or filters.
+                        {% else %}
+                            No farming advice has been added yet.
+                        {% endif %}
+                    </p>
+                    {% if search_query or selected_season %}
+                    <a href="{% url 'crops:advice' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                    </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- General Farming Tips -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tips text-success me-2"></i>
+                        General Farming Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-seedling text-success fa-2x me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Soil Health</h6>
+                                    <p class="text-muted small">Regular soil testing and organic matter addition improves soil fertility and crop yields.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-tint text-info fa-2x me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Water Management</h6>
+                                    <p class="text-muted small">Efficient irrigation systems and proper timing can save water and improve crop health.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-rotate text-primary fa-2x me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Crop Rotation</h6>
+                                    <p class="text-muted small">Rotating crops helps break pest cycles and maintain soil nutrient balance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-clock text-warning fa-2x me-3"></i>
+                                </div>
+                                <div>
+                                    <h6>Timing</h6>
+                                    <p class="text-muted small">Planting and harvesting at the right time is crucial for optimal crop performance.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.border-warning {
+    border-color: #ffc107 !important;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+.card-header {
+    background-color: rgba(0,0,0,0.03);
+}
+</style>
+{% endblock %}

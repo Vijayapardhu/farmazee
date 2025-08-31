@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FAQ - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-success">Frequently Asked Questions</h1>
+                <p class="lead text-muted">Find answers to common questions about Farmazee</p>
+            </div>
+
+            {% if faqs %}
+                <div class="accordion" id="faqAccordion">
+                    {% for faq in faqs %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq{{ faq.id }}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ faq.id }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="collapse{{ faq.id }}">
+                                {{ faq.question }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ faq.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="faq{{ faq.id }}" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                {{ faq.answer|linebreaks }}
+                                {% if faq.category %}
+                                <div class="mt-3">
+                                    <span class="badge bg-primary">{{ faq.get_category_display }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-question-circle fa-4x text-muted mb-3"></i>
+                    <h3>No FAQs Available</h3>
+                    <p class="text-muted">We're working on adding frequently asked questions. Please check back soon!</p>
+                </div>
+            {% endif %}
+
+            <div class="mt-5 text-center">
+                <h4>Still have questions?</h4>
+                <p class="text-muted">Can't find what you're looking for? Contact our support team.</p>
+                <a href="{% url 'core:contact' %}" class="btn btn-success">
+                    <i class="fas fa-envelope me-2"></i>Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

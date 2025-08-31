@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-shield-alt text-primary me-2"></i>
+                Privacy Policy
+            </h1>
+            <p class="text-muted">Last updated: {{ "now"|date:"F j, Y" }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3>1. Information We Collect</h3>
+                    <p>We collect information you provide directly to us, such as when you create an account, update your profile, or contact us for support.</p>
+                    
+                    <h4>Personal Information</h4>
+                    <ul>
+                        <li>Name and contact information</li>
+                        <li>Farm details and agricultural preferences</li>
+                        <li>Location data for weather services</li>
+                        <li>Communication preferences</li>
+                    </ul>
+
+                    <h3 class="mt-4">2. How We Use Your Information</h3>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Provide and maintain our services</li>
+                        <li>Send you weather updates and agricultural recommendations</li>
+                        <li>Connect you with other farmers and experts</li>
+                        <li>Improve our platform and develop new features</li>
+                        <li>Send you important updates and notifications</li>
+                    </ul>
+
+                    <h3 class="mt-4">3. Information Sharing</h3>
+                    <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy.</p>
+
+                    <h3 class="mt-4">4. Data Security</h3>
+                    <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+
+                    <h3 class="mt-4">5. Your Rights</h3>
+                    <p>You have the right to:</p>
+                    <ul>
+                        <li>Access your personal information</li>
+                        <li>Update or correct your information</li>
+                        <li>Delete your account</li>
+                        <li>Opt-out of certain communications</li>
+                    </ul>
+
+                    <h3 class="mt-4">6. Contact Us</h3>
+                    <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+                    <p>
+                        <strong>Email:</strong> privacy@smartfarmersupport.com<br>
+                        <strong>Phone:</strong> +91 98765 43210
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Need Help?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>If you have questions about our privacy practices, we're here to help.</p>
+                    <a href="{% url 'contact' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-envelope me-2"></i>Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

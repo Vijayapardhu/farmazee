@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign Up - Farmazee{% endblock %}
+
+{% block extra_css %}
+<style>
+    .signup-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 0;
+    }
+    .signup-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .signup-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    .signup-body {
+        padding: 2rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .btn-signup {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+    .btn-signup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+    }
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+    }
+    .features-list {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-top: 2rem;
+    }
+    .feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: #28a745;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="signup-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="signup-card">
+                    <div class="signup-header">
+                        <h1 class="mb-3">
+                            <i class="fas fa-seedling me-3"></i>
+                            Join Farmazee
+                        </h1>
+                        <p class="mb-0">Start your smart farming journey today</p>
+                    </div>
+                    
+                    <div class="signup-body">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                            <i class="fas fa-user me-2"></i>First Name
+                                        </label>
+                                        {{ form.first_name|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                            <i class="fas fa-user me-2"></i>Last Name
+                                        </label>
+                                        {{ form.last_name|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                {{ form.email|as_crispy_field }}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Username
+                                </label>
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                            <i class="fas fa-lock me-2"></i>Password
+                                        </label>
+                                        {{ form.password1|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                            <i class="fas fa-lock me-2"></i>Confirm Password
+                                        </label>
+                                        {{ form.password2|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <p class="text-muted small">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Additional profile information can be added after account creation.
+                                </p>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-signup btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Create Account
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="login-link">
+                            <p class="mb-0">
+                                Already have an account? 
+                                <a href="{% url 'account_login' %}" class="text-decoration-none fw-bold">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-list">
+                    <h4 class="text-center mb-4">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Why Join Farmazee?
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-cloud-sun"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Smart Weather Alerts</h6>
+                                    <small class="text-muted">Get real-time weather updates and farming recommendations</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Crop Management</h6>
+                                    <small class="text-muted">Plan, track, and optimize your crop production</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Marketplace Access</h6>
+                                    <small class="text-muted">Buy inputs and sell produce at best prices</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Community Support</h6>
+                                    <small class="text-muted">Connect with fellow farmers and experts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation enhancement
+    const form = document.querySelector('form');
+    const submitBtn = document.querySelector('.btn-signup');
+    
+    form.addEventListener('submit', function(e) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+    });
+    
+    // Password strength indicator
+    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+    if (password1) {
+        password1.addEventListener('input', function() {
+            const strength = checkPasswordStrength(this.value);
+            updatePasswordStrengthIndicator(strength);
+        });
+    }
+});
+
+function checkPasswordStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    return score;
+}
+
+function updatePasswordStrengthIndicator(strength) {
+    const strengthBar = document.querySelector('.password-strength');
+    if (strengthBar) {
+        const colors = ['#dc3545', '#ffc107', '#17a2b8', '#28a745', '#28a745'];
+        const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+        strengthBar.style.width = (strength * 20) + '%';
+        strengthBar.style.backgroundColor = colors[strength - 1];
+        strengthBar.setAttribute('aria-label', labels[strength - 1]);
+    }
+}
+</script>
+{% endblock %}

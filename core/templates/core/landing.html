@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Farmazee - Empowering Farmers with Technology{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white text-center py-5" data-aos="fade-up">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-seedling text-success me-3"></i>
+                    Farmazee
+                </h1>
+                <p class="lead mb-4">
+                    Empowering farmers with cutting-edge technology, real-time weather insights, 
+                    and expert agricultural guidance to maximize yields and sustainable farming practices.
+                </p>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    <a href="{% url 'signup' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Get Started Free
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-image-container">
+                    <div class="hero-placeholder rounded d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="text-white">
+                            <i class="fas fa-seedling fa-5x mb-3"></i>
+                            <h4>Smart Farming Solutions</h4>
+                            <p class="mb-0">Technology-driven agriculture for better yields</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-star text-warning me-2"></i>
+                    Why Choose Farmazee?
+                </h2>
+                <p class="lead text-muted">Comprehensive tools and insights for modern farming</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-cloud-sun text-primary fa-3x"></i>
+                    </div>
+                    <h4 class="mb-3">Weather Intelligence</h4>
+                    <p class="text-muted">
+                        Get real-time weather updates, forecasts, and crop-specific recommendations 
+                        to make informed farming decisions.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-seedling text-success fa-3x"></i>
+                    </div>
+                    <h4 class="mb-3">Crop Management</h4>
+                    <p class="text-muted">
+                        Access comprehensive crop information, best practices, and expert advice 
+                        for optimal crop health and yield.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-users text-info fa-3x"></i>
+                    </div>
+                    <h4 class="mb-3">Community Support</h4>
+                    <p class="text-muted">
+                        Connect with fellow farmers, share experiences, and get expert advice 
+                        from agricultural professionals.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-store text-warning fa-3x"></i>
+                    </div>
+                    <h4 class="mb-3">E-Marketplace</h4>
+                    <p class="text-muted">
+                        Buy and sell agricultural products, seeds, fertilizers, and equipment 
+                        in our secure online marketplace.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-handshake text-primary fa-3x"></i>
+                    </div>
+                    <h4 class="mb-3">Government Schemes</h4>
+                    <p class="text-muted">
+                        Stay updated with the latest government schemes, subsidies, and support 
+                        programs for farmers.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-mountain text-secondary fa-3x"></i>
+                    </div>
+                    <h4 class="mb-3">Soil Health</h4>
+                    <p class="text-muted">
+                        Monitor soil health, get recommendations for soil improvement, and 
+                        learn sustainable farming practices.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Crops Section -->
+{% if featured_crops %}
+<section class="featured-crops-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-leaf text-success me-2"></i>
+                    Featured Crops
+                </h2>
+                <p class="lead text-muted">Discover popular crops and their best practices</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for crop in featured_crops %}
+            <div class="col-lg-4 col-md-6">
+                <div class="crop-card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-leaf me-2"></i>
+                            {{ crop.name }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">{{ crop.description|truncatewords:20 }}</p>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <small class="text-muted">Season</small><br>
+                                <strong>{{ crop.get_season_display }}</strong>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Category</small><br>
+                                <strong>{{ crop.get_category_display }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'crops:detail' crop.id %}" class="btn btn-outline-success btn-sm w-100">
+                            <i class="fas fa-info-circle me-1"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'crops:list' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-seedling me-2"></i>View All Crops
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Government Schemes Section -->
+{% if recent_schemes %}
+<section class="schemes-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-handshake text-primary me-2"></i>
+                    Latest Government Schemes
+                </h2>
+                <p class="lead text-muted">Stay updated with government support for farmers</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for scheme in recent_schemes %}
+            <div class="col-lg-4 col-md-6">
+                <div class="scheme-card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-handshake me-2"></i>
+                            {{ scheme.title }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">{{ scheme.description|truncatewords:25 }}</p>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <small class="text-muted">Amount</small><br>
+                                <strong class="text-success">{{ scheme.scheme_amount }}</strong>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Deadline</small><br>
+                                <strong class="text-danger">{{ scheme.deadline|date:"M j, Y" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'schemes:detail' scheme.id %}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-info-circle me-1"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'schemes:list' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-handshake me-2"></i>View All Schemes
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action Section -->
+<section class="cta-section py-5 text-white text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-4">
+                    <i class="fas fa-rocket text-warning me-2"></i>
+                    Ready to Transform Your Farming?
+                </h2>
+                <p class="lead mb-4">
+                    Join thousands of farmers who are already using Farmazee 
+                    to improve their yields and farming practices.
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'signup' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Start Free Trial
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-image-container {
+    position: relative;
+}
+
+.hero-placeholder {
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.feature-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.crop-card, .scheme-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.crop-card:hover, .scheme-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: none;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 12px 30px;
+}
+
+.btn-lg {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}

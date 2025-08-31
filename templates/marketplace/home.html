@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Marketplace - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-store text-primary me-2"></i>
+                Farmazee Marketplace
+            </h1>
+            <p class="lead text-muted">Buy and sell agricultural products, inputs, and equipment</p>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" action="{% url 'marketplace:products' %}" class="row g-3">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control form-control-lg" name="search" 
+                                   placeholder="Search for products, inputs, or equipment..." value="{{ request.GET.search|default:'' }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="category" class="visually-hidden">Category</label>
+                            <select class="form-select form-select-lg" name="category" id="category" aria-label="Select category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-search me-2"></i>Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Products -->
+    {% if featured_products %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Featured Products
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in featured_products %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-box fa-3x text-white"></i>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ product.name }}</h6>
+                                    <p class="card-text text-muted small">{{ product.description|truncatewords:15 }}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-primary">₹{{ product.price }}</span>
+                                        <small class="text-muted">{{ product.vendor.name|default:"Unknown Vendor" }}</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer bg-transparent">
+                                    <a href="{% url 'marketplace:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-th-large text-success me-2"></i>
+                        Browse Categories
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for category in categories %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <i class="fas fa-{{ category.icon|default:'box' }} fa-3x text-primary"></i>
+                                    </div>
+                                    <h6 class="card-title">{{ category.name }}</h6>
+                                    <p class="card-text text-muted small">{{ category.description|truncatewords:10 }}</p>
+                                    <a href="{% url 'marketplace:category_products' category.pk %}" class="btn btn-outline-primary btn-sm">
+                                        Browse {{ category.name }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools text-info me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:products' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-list me-2"></i>All Products
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:inputs' %}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-seedling me-2"></i>Farming Inputs
+                            </a>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:orders' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-shopping-cart me-2"></i>My Orders
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:vendor_dashboard' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-store-alt me-2"></i>Vendor Dashboard
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'account_login' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'signup' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-user-plus me-2"></i>Register
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Choose Farmazee Marketplace -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-award text-warning me-2"></i>
+                        Why Choose Farmazee Marketplace?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                                <h6>Verified Vendors</h6>
+                                <p class="small text-muted">All vendors are verified for quality and reliability</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-truck fa-2x text-primary mb-2"></i>
+                                <h6>Fast Delivery</h6>
+                                <p class="small text-muted">Quick and reliable delivery to your farm</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-credit-card fa-2x text-info mb-2"></i>
+                                <h6>Secure Payments</h6>
+                                <p class="small text-muted">Multiple secure payment options available</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-headset fa-2x text-warning mb-2"></i>
+                                <h6>24/7 Support</h6>
+                                <p class="small text-muted">Round-the-clock customer support</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

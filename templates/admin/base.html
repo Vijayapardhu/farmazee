@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Panel - Farmazee{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-sidebar {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar.collapsed {
+    width: 60px;
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 4px 12px;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.admin-sidebar .nav-link i {
+    width: 20px;
+    margin-right: 12px;
+}
+
+.admin-sidebar.collapsed .nav-link i {
+    margin-right: 0;
+}
+
+.admin-sidebar .nav-link span {
+    transition: opacity 0.3s ease;
+}
+
+.admin-sidebar.collapsed .nav-link span {
+    opacity: 0;
+    display: none;
+}
+
+.admin-main {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.admin-main.expanded {
+    margin-left: 60px;
+}
+
+.admin-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.admin-content {
+    padding: 2rem;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.admin-stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-stats-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.admin-stats-card p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.admin-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+}
+
+.admin-table th {
+    background: #f8f9fa;
+    border: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.admin-table td {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.admin-btn {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.admin-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 270px;
+    z-index: 1001;
+    background: #667eea;
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.toggle-sidebar.collapsed {
+    left: 80px;
+}
+
+.toggle-sidebar:hover {
+    background: #5a6fd8;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .admin-main {
+        margin-left: 0;
+    }
+    
+    .toggle-sidebar {
+        left: 20px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Toggle Sidebar Button -->
+<button class="toggle-sidebar" id="toggleSidebar" title="Toggle Sidebar">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Admin Sidebar -->
+<nav class="admin-sidebar" id="adminSidebar">
+    <div class="p-3">
+        <div class="text-center mb-4">
+            <h5 class="mb-0">
+                <i class="fas fa-shield-alt me-2"></i>
+                <span id="sidebarTitle">Admin Panel</span>
+            </h5>
+            <small class="text-muted">Farmazee Management</small>
+        </div>
+        
+        <hr class="border-light">
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                   href="{% url 'admin:dashboard' %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'user_management' %}active{% endif %}" 
+                   href="{% url 'admin:user_management' %}">
+                    <i class="fas fa-users"></i>
+                    <span>User Management</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'crop_management' %}active{% endif %}" 
+                   href="{% url 'admin:crop_management' %}">
+                    <i class="fas fa-seedling"></i>
+                    <span>Crop Management</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'marketplace_management' %}active{% endif %}" 
+                   href="{% url 'admin:marketplace_management' %}">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'community_management' %}active{% endif %}" 
+                   href="{% url 'admin:community_management' %}">
+                    <i class="fas fa-comments"></i>
+                    <span>Community</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'analytics_dashboard' %}active{% endif %}" 
+                   href="{% url 'admin:analytics_dashboard' %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'bulk_actions' %}active{% endif %}" 
+                   href="{% url 'admin:bulk_actions' %}">
+                    <i class="fas fa-tasks"></i>
+                    <span>Bulk Actions</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'system_settings' %}active{% endif %}" 
+                   href="{% url 'admin:system_settings' %}">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'api_endpoints' %}active{% endif %}" 
+                   href="{% url 'admin:api_endpoints' %}">
+                    <i class="fas fa-code"></i>
+                    <span>API</span>
+                </a>
+            </li>
+        </ul>
+        
+        <hr class="border-light mt-4">
+        
+        <div class="text-center">
+            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>
+                <span>Back to Site</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content Area -->
+<main class="admin-main" id="adminMain">
+    <header class="admin-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0">{% block admin_title %}Admin Panel{% endblock %}</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'admin:dashboard' %}">Admin</a></li>
+                        {% block breadcrumb %}{% endblock %}
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <small class="text-muted">Welcome, {{ user.get_full_name|default:user.username }}</small>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="User Menu">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'core:profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'core:dashboard' %}">Back to Site</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="admin-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block admin_content %}{% endblock %}
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('adminSidebar');
+    const main = document.getElementById('adminMain');
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebarTitle = document.getElementById('sidebarTitle');
+    
+    // Toggle sidebar
+    toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        toggleBtn.classList.toggle('collapsed');
+        
+        if (sidebar.classList.contains('collapsed')) {
+            sidebarTitle.style.display = 'none';
+        } else {
+            sidebarTitle.style.display = 'block';
+        }
+    });
+    
+    // Mobile sidebar toggle
+    if (window.innerWidth <= 768) {
+        sidebar.classList.add('collapsed');
+        main.classList.add('expanded');
+        toggleBtn.classList.add('collapsed');
+        sidebarTitle.style.display = 'none';
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('collapsed');
+            main.classList.add('expanded');
+            toggleBtn.classList.add('collapsed');
+            sidebarTitle.style.display = 'none';
+        }
+    });
+    
+    // Add active class to current nav item
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.admin-sidebar .nav-link');
+    
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+            link.classList.add('active');
+        }
+    });
+});
+</script>
+{% endblock %}

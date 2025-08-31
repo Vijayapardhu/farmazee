@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmazee - Test Page</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Farmazee Frontend Test</h1>
+        
+        <div class="test-section">
+            <h2>Community Section Test</h2>
+            <div id="community-topics"></div>
+            <div id="community-questions"></div>
+            <div id="community-experts"></div>
+            <div id="community-events"></div>
+            <div id="community-discussions"></div>
+            <div id="community-polls"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Schemes Section Test</h2>
+            <div id="schemes-categories"></div>
+            <div id="schemes-list"></div>
+            <div id="user-applications"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Soil Health Section Test</h2>
+            <div id="soil-tests"></div>
+            <div id="soil-recommendations"></div>
+            <div id="soil-monitoring"></div>
+            <div id="soil-types"></div>
+            <div id="soil-nutrients"></div>
+        </div>
+    </div>
+
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/weather.js"></script>
+    <script src="./js/crops.js"></script>
+    <script src="./js/marketplace.js"></script>
+    <script src="./js/community.js"></script>
+    <script src="./js/schemes.js"></script>
+    <script src="./js/soil-health.js"></script>
+
+    <script>
+        // Test initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Testing Farmazee Frontend...');
+            
+            // Test if all managers are initialized
+            if (window.Community) {
+                console.log('✅ Community Manager: OK');
+            } else {
+                console.log('❌ Community Manager: Failed');
+            }
+            
+            if (window.Schemes) {
+                console.log('✅ Schemes Manager: OK');
+            } else {
+                console.log('❌ Schemes Manager: Failed');
+            }
+            
+            if (window.SoilHealth) {
+                console.log('✅ Soil Health Manager: OK');
+            } else {
+                console.log('❌ Soil Health Manager: Failed');
+            }
+            
+            if (window.Farmazee) {
+                console.log('✅ Main Farmazee: OK');
+            } else {
+                console.log('❌ Main Farmazee: Failed');
+            }
+            
+            console.log('Test completed!');
+        });
+    </script>
+</body>
+</html>
+

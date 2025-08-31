@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Government Schemes - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-handshake text-info me-2"></i>
+                Government Schemes
+            </h1>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="GET" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" placeholder="Search schemes..." value="{{ request.GET.q }}">
+                <button type="submit" class="btn btn-info" aria-label="Search schemes">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="categoryFilter" aria-label="Filter by scheme category">
+                <option value="">All Categories</option>
+                <option value="subsidy">Subsidy</option>
+                <option value="loan">Loan</option>
+                <option value="insurance">Insurance</option>
+                <option value="training">Training</option>
+                <option value="infrastructure">Infrastructure</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Active Schemes -->
+    {% if schemes %}
+    <div class="row">
+        {% for scheme in schemes %}
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card scheme-card h-100">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-handshake me-2"></i>
+                            {{ scheme.title }}
+                        </h5>
+                        <span class="badge bg-light text-dark">{{ scheme.get_category_display }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ scheme.description|truncatewords:30 }}</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Amount:</strong><br>
+                            <span class="text-success">{{ scheme.scheme_amount }}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Deadline:</strong><br>
+                            <span class="text-danger">{{ scheme.deadline|date:"M j, Y" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Eligibility:</strong><br>
+                        <small class="text-muted">{{ scheme.eligibility_criteria|truncatewords:15 }}</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Benefits:</strong><br>
+                        <small class="text-muted">{{ scheme.benefits|truncatewords:15 }}</small>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <small class="text-muted">States</small><br>
+                            <strong>{{ scheme.states }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Status</small><br>
+                            <span class="badge bg-{% if scheme.is_active %}success{% else %}secondary{% endif %}">
+                                {% if scheme.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'schemes:detail' scheme.id %}" class="btn btn-outline-info btn-sm w-100">
+                        <i class="fas fa-info-circle me-1"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if schemes.has_other_pages %}
+    <nav aria-label="Schemes pagination">
+        <ul class="pagination justify-content-center">
+            {% if schemes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ schemes.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in schemes.paginator.page_range %}
+                {% if schemes.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > schemes.number|add:'-3' and num < schemes.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if schemes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ schemes.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-handshake fa-5x text-muted mb-3"></i>
+        <h4 class="text-muted">No schemes found</h4>
+        <p class="text-muted">Try adjusting your search criteria or check back later.</p>
+    </div>
+    {% endif %}
+
+    <!-- Quick Links -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-link me-2"></i>
+                        Quick Links
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success w-100">
+                                <i class="fas fa-external-link-alt me-2"></i>PM-KISAN Portal
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="https://farmer.gov.in/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success w-100">
+                                <i class="fas fa-external-link-alt me-2"></i>Farmer Portal
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="https://agricoop.gov.in/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success w-100">
+                                <i class="fas fa-external-link-alt me-2"></i>Agriculture Ministry
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.scheme-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.scheme-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.card-footer {
+    border-top: 1px solid rgba(0,0,0,0.125);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('categoryFilter').addEventListener('change', function() {
+    const category = this.value;
+    const currentUrl = new URL(window.location);
+    
+    if (category) {
+        currentUrl.searchParams.set('category', category);
+    } else {
+        currentUrl.searchParams.delete('category');
+    }
+    
+    window.location.href = currentUrl.toString();
+});
+
+// Set the selected category in the filter dropdown
+const urlParams = new URLSearchParams(window.location.search);
+const categoryParam = urlParams.get('category');
+if (categoryParam) {
+    document.getElementById('categoryFilter').value = categoryParam;
+}
+</script>
+{% endblock %}

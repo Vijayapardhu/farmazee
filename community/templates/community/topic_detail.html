@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ topic.title }} - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'community:home' %}">Community</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'community:forum' %}">Forum</a></li>
+                    <li class="breadcrumb-item active">{{ topic.title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>
+                        {{ topic.title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ topic.content }}</p>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-user me-1"></i>{{ topic.author.get_full_name|default:topic.author.username }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ topic.created_at|date:"M j, Y H:i" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholder for replies -->
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Replies</h6>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-muted">No replies yet. Be the first to respond!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Topic Information
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Category:</strong> {{ topic.category.name }}</p>
+                    <p><strong>Status:</strong> 
+                        <span class="badge bg-{% if topic.is_active %}success{% else %}secondary{% endif %}">
+                            {% if topic.is_active %}Active{% else %}Closed{% endif %}
+                        </span>
+                    </p>
+                    <p><strong>Created:</strong> {{ topic.created_at|date:"M j, Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

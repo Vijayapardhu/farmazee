@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-success">Privacy Policy</h1>
+                <p class="lead text-muted">How we protect and handle your personal information</p>
+                <p class="text-muted">Last updated: August 29, 2024</p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">1. Information We Collect</h3>
+                        <p class="text-muted">We collect information you provide directly to us, such as when you create an account, update your profile, or contact us for support.</p>
+                        <ul class="text-muted">
+                            <li>Personal information (name, email, phone number)</li>
+                            <li>Farm-related information (location, crop types, farm size)</li>
+                            <li>Usage data and preferences</li>
+                            <li>Communication records</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">2. How We Use Your Information</h3>
+                        <p class="text-muted">We use the information we collect to:</p>
+                        <ul class="text-muted">
+                            <li>Provide and improve our services</li>
+                            <li>Send you relevant weather alerts and farming advice</li>
+                            <li>Connect you with other farmers and experts</li>
+                            <li>Process transactions and payments</li>
+                            <li>Send you updates and marketing communications (with your consent)</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">3. Information Sharing</h3>
+                        <p class="text-muted">We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:</p>
+                        <ul class="text-muted">
+                            <li>With your explicit consent</li>
+                            <li>To comply with legal obligations</li>
+                            <li>To protect our rights and safety</li>
+                            <li>With service providers who assist us in operating our platform</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">4. Data Security</h3>
+                        <p class="text-muted">We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. These measures include:</p>
+                        <ul class="text-muted">
+                            <li>Encryption of sensitive data</li>
+                            <li>Regular security assessments</li>
+                            <li>Access controls and authentication</li>
+                            <li>Secure data storage practices</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">5. Your Rights</h3>
+                        <p class="text-muted">You have the right to:</p>
+                        <ul class="text-muted">
+                            <li>Access your personal information</li>
+                            <li>Correct inaccurate information</li>
+                            <li>Request deletion of your data</li>
+                            <li>Opt-out of marketing communications</li>
+                            <li>Withdraw consent at any time</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">6. Cookies and Tracking</h3>
+                        <p class="text-muted">We use cookies and similar technologies to enhance your experience on our platform. These help us:</p>
+                        <ul class="text-muted">
+                            <li>Remember your preferences</li>
+                            <li>Analyze website usage</li>
+                            <li>Provide personalized content</li>
+                            <li>Improve our services</li>
+                        </ul>
+                        <p class="text-muted">You can control cookie settings through your browser preferences.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">7. Third-Party Services</h3>
+                        <p class="text-muted">Our platform may integrate with third-party services such as:</p>
+                        <ul class="text-muted">
+                            <li>Weather data providers</li>
+                            <li>Payment processors</li>
+                            <li>Analytics services</li>
+                            <li>Social media platforms</li>
+                        </ul>
+                        <p class="text-muted">These services have their own privacy policies, and we encourage you to review them.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">8. Data Retention</h3>
+                        <p class="text-muted">We retain your personal information for as long as necessary to provide our services and fulfill the purposes outlined in this policy. We may retain certain information for legal, regulatory, or business purposes.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">9. Children's Privacy</h3>
+                        <p class="text-muted">Our services are not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe we have collected such information, please contact us immediately.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">10. Changes to This Policy</h3>
+                        <p class="text-muted">We may update this privacy policy from time to time. We will notify you of any material changes by posting the new policy on our website and updating the "Last updated" date.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h3 class="fw-bold text-success mb-3">11. Contact Us</h3>
+                        <p class="text-muted">If you have any questions about this privacy policy or our data practices, please contact us:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="text-muted">
+                                    <strong>Email:</strong><br>
+                                    privacy@smartfarmer.com
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">
+                                    <strong>Phone:</strong><br>
+                                    +91 1800-123-4567
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'core:contact' %}" class="btn btn-success">
+                    <i class="fas fa-envelope me-2"></i>Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

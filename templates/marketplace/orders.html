@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders - Farmazee Marketplace{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-shopping-bag text-primary me-2"></i>
+                My Orders
+            </h1>
+            <p class="lead text-muted">Track your order history and current orders</p>
+        </div>
+    </div>
+
+    <!-- Order Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                                <h4 class="fw-bold">{{ pending_orders|default:"0" }}</h4>
+                                <p class="text-muted mb-0">Pending Orders</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-truck fa-2x text-info mb-2"></i>
+                                <h4 class="fw-bold">{{ shipped_orders|default:"0" }}</h4>
+                                <p class="text-muted mb-0">Shipped Orders</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                <h4 class="fw-bold">{{ delivered_orders|default:"0" }}</h4>
+                                <p class="text-muted mb-0">Delivered Orders</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-undo fa-2x text-danger mb-2"></i>
+                                <h4 class="fw-bold">{{ cancelled_orders|default:"0" }}</h4>
+                                <p class="text-muted mb-0">Cancelled Orders</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-primary me-2"></i>
+                        Order History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ order.order_number|default:order.id }}</strong>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ order.created_at|date:"M d, Y" }}</small><br>
+                                        <small class="text-muted">{{ order.created_at|time:"H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                {% if order.items.first.product.image %}
+                                                <img src="{{ order.items.first.product.image.url }}" alt="Product" style="width: 40px; height: 40px; object-fit: cover;" class="rounded">
+                                                {% else %}
+                                                <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-box fa-sm text-white"></i>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <strong>{{ order.items.first.product.name|default:"Product" }}</strong>
+                                                {% if order.items.count > 1 %}
+                                                <br><small class="text-muted">+{{ order.items.count|add:"-1" }} more items</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">₹{{ order.total_amount|default:"0.00" }}</span>
+                                    </td>
+                                    <td>
+                                        {% if order.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% elif order.status == 'confirmed' %}
+                                        <span class="badge bg-info">Confirmed</span>
+                                        {% elif order.status == 'shipped' %}
+                                        <span class="badge bg-primary">Shipped</span>
+                                        {% elif order.status == 'delivered' %}
+                                        <span class="badge bg-success">Delivered</span>
+                                        {% elif order.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'marketplace:order_detail' order.pk %}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if order.status == 'pending' %}
+                                            <button class="btn btn-outline-danger btn-sm" onclick="cancelOrder({{ order.id }})" title="Cancel Order">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            {% endif %}
+                                            {% if order.status == 'delivered' %}
+                                            <button class="btn btn-outline-success btn-sm" onclick="rateOrder({{ order.id }})" title="Rate Order">
+                                                <i class="fas fa-star"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-shopping-bag fa-3x mb-3"></i>
+                        <h5>No Orders Yet</h5>
+                        <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
+                        <a href="{% url 'marketplace:home' %}" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart me-2"></i>Start Shopping
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    {% if orders %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools text-primary me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:home' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-shopping-cart me-2"></i>Continue Shopping
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:inputs' %}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-seedling me-2"></i>Browse Inputs
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'core:profile' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-user me-2"></i>Update Profile
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function cancelOrder(orderId) {
+    if (confirm('Are you sure you want to cancel this order?')) {
+        // This would typically make an AJAX call to cancel the order
+        alert('Order cancellation request sent! (Functionality coming soon)');
+    }
+}
+
+function rateOrder(orderId) {
+    // This would typically open a rating modal
+    alert('Rating functionality coming soon!');
+}
+
+// Add some interactivity to the table rows
+document.addEventListener('DOMContentLoaded', function() {
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('click', function() {
+            const viewButton = this.querySelector('a[href*="order_detail"]');
+            if (viewButton) {
+                viewButton.click();
+            }
+        });
+        row.style.cursor = 'pointer';
+    });
+});
+</script>
+{% endblock %}

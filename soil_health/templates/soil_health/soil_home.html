@@ -1,0 +1,560 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Health - Smart Farmer Support{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #795548 0%, #8d6e63 100%);
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+    }
+    
+    .tip-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .tip-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .tip-image {
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(45deg, #795548, #8d6e63);
+    }
+    
+    .fertilizer-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .fertilizer-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .fertilizer-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #28a745;
+    }
+    
+    .test-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .test-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .irrigation-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .irrigation-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .soil-type-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .soil-type-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .soil-type-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #795548;
+    }
+    
+    .stats-card {
+        background: linear-gradient(45deg, #795548, #8d6e63);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .feature-item {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #28a745;
+    }
+    
+    .category-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-seedling"></i>
+                    Soil Health Management
+                </h1>
+                <p class="lead mb-4">
+                    Learn about soil types, fertility management, testing methods, and sustainable farming practices to improve your crop yields and soil health.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#tips" class="btn btn-light btn-lg">
+                        <i class="fas fa-lightbulb"></i> Soil Tips
+                    </a>
+                    <a href="#fertilizers" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-leaf"></i> Fertilizers
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-microscope fa-5x mb-3"></i>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="mb-0">{{ total_tips|default:0 }}</h3>
+                            <small>Soil Tips</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="mb-0">{{ total_fertilizers|default:0 }}</h3>
+                            <small>Fertilizers</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="mb-0">{{ total_tests|default:0 }}</h3>
+                            <small>Test Methods</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Quick Stats -->
+    <div class="row mb-5">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="fas fa-lightbulb fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ total_tips|default:0 }}</h4>
+                    <p class="card-text">Soil Tips</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="fas fa-leaf fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ total_fertilizers|default:0 }}</h4>
+                    <p class="card-text">Fertilizers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="fas fa-microscope fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ total_tests|default:0 }}</h4>
+                    <p class="card-text">Test Methods</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="fas fa-tint fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ total_irrigation|default:0 }}</h4>
+                    <p class="card-text">Irrigation Methods</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soil Types -->
+    {% if soil_types %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">
+                <i class="fas fa-layer-group text-primary"></i>
+                Soil Types
+            </h2>
+        </div>
+        {% for soil_type in soil_types %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="soil-type-card">
+                <div class="soil-type-icon">
+                    <i class="fas fa-circle"></i>
+                </div>
+                <h5 class="card-title">{{ soil_type.name }}</h5>
+                <p class="card-text text-muted small">{{ soil_type.description|truncatewords:15 }}</p>
+                <div class="mb-2">
+                    <span class="badge bg-primary">pH: {{ soil_type.ph_range }}</span>
+                </div>
+                <a href="{% url 'soil_health:soil_type_detail' soil_type.id %}" class="btn btn-outline-primary btn-sm">
+                    Learn More
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Featured Soil Tips -->
+    {% if featured_tips %}
+    <div class="row mb-5" id="tips">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-lightbulb text-warning"></i>
+                    Featured Soil Tips
+                </h2>
+                <a href="{% url 'soil_health:tip_list' %}" class="btn btn-outline-warning">
+                    View All Tips
+                </a>
+            </div>
+        </div>
+        {% for tip in featured_tips %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card tip-card">
+                {% if tip.image %}
+                    <img src="{{ tip.image.url }}" class="card-img-top tip-image" alt="{{ tip.title }}">
+                {% else %}
+                    <div class="card-img-top tip-image d-flex align-items-center justify-content-center">
+                        <i class="fas fa-lightbulb fa-3x text-white"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="card-title mb-0">{{ tip.title }}</h6>
+                        <span class="badge bg-warning category-badge">{{ tip.get_category_display }}</span>
+                    </div>
+                    <p class="card-text text-muted small">{{ tip.content|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ tip.created_at|date:"M d, Y" }}
+                        </small>
+                        <a href="{% url 'soil_health:tip_detail' tip.id %}" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-eye"></i> Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Fertilizers -->
+    {% if fertilizers %}
+    <div class="row mb-5" id="fertilizers">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-leaf text-success"></i>
+                    Fertilizers & Nutrients
+                </h2>
+                <a href="{% url 'soil_health:fertilizer_list' %}" class="btn btn-outline-success">
+                    View All Fertilizers
+                </a>
+            </div>
+        </div>
+        {% for fertilizer in fertilizers %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="fertilizer-card">
+                <div class="fertilizer-icon">
+                    {% if fertilizer.type == 'organic' %}
+                        <i class="fas fa-seedling"></i>
+                    {% elif fertilizer.type == 'chemical' %}
+                        <i class="fas fa-flask"></i>
+                    {% elif fertilizer.type == 'bio' %}
+                        <i class="fas fa-bacteria"></i>
+                    {% else %}
+                        <i class="fas fa-leaf"></i>
+                    {% endif %}
+                </div>
+                <h5 class="card-title">{{ fertilizer.name }}</h5>
+                <p class="card-text text-muted small">{{ fertilizer.description|truncatewords:15 }}</p>
+                <div class="mb-2">
+                    <span class="badge bg-success">{{ fertilizer.get_type_display }}</span>
+                    <span class="badge bg-info">NPK: {{ fertilizer.npk_ratio }}</span>
+                </div>
+                <a href="{% url 'soil_health:fertilizer_detail' fertilizer.id %}" class="btn btn-outline-success btn-sm">
+                    View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Soil Testing Methods -->
+    {% if soil_tests %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-microscope text-info"></i>
+                    Soil Testing Methods
+                </h2>
+                <a href="{% url 'soil_health:test_list' %}" class="btn btn-outline-info">
+                    View All Tests
+                </a>
+            </div>
+        </div>
+        {% for test in soil_tests %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="test-card">
+                <h5 class="card-title">
+                    <i class="fas fa-microscope text-info"></i>
+                    {{ test.name }}
+                </h5>
+                <p class="card-text text-muted">{{ test.description|truncatewords:20 }}</p>
+                <div class="mb-3">
+                    <span class="badge bg-info">{{ test.get_type_display }}</span>
+                    <span class="badge bg-secondary">{{ test.duration }} days</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="fas fa-rupee-sign"></i> {{ test.cost|floatformat:0 }}
+                    </small>
+                    <a href="{% url 'soil_health:test_detail' test.id %}" class="btn btn-outline-info btn-sm">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Irrigation Methods -->
+    {% if irrigation_methods %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-tint text-primary"></i>
+                    Irrigation Methods
+                </h2>
+                <a href="{% url 'soil_health:irrigation_list' %}" class="btn btn-outline-primary">
+                    View All Methods
+                </a>
+            </div>
+        </div>
+        {% for method in irrigation_methods %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="irrigation-card">
+                <h5 class="card-title">
+                    <i class="fas fa-tint text-primary"></i>
+                    {{ method.name }}
+                </h5>
+                <p class="card-text text-muted">{{ method.description|truncatewords:20 }}</p>
+                <div class="mb-3">
+                    <span class="badge bg-primary">{{ method.get_type_display }}</span>
+                    <span class="badge bg-success">Efficiency: {{ method.efficiency }}%</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="fas fa-rupee-sign"></i> Cost: {{ method.get_cost_display }}
+                    </small>
+                    <a href="{% url 'soil_health:irrigation_detail' method.id %}" class="btn btn-outline-primary btn-sm">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Call to Action -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="stats-card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Need Soil Testing?</h3>
+                        <p class="mb-3">Get your soil tested to understand its composition and nutrient levels for better crop planning.</p>
+                        <a href="{% url 'soil_health:test_list' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-microscope"></i> Soil Testing
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Fertilizer Recommendations</h3>
+                        <p class="mb-3">Get personalized fertilizer recommendations based on your soil type and crop requirements.</p>
+                        <a href="{% url 'soil_health:fertilizer_list' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-leaf"></i> View Fertilizers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-link text-primary"></i>
+                Soil Health Tools
+            </h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h5>Soil Tips</h5>
+                    <p class="text-muted">Best practices for soil management</p>
+                    <a href="{% url 'soil_health:tip_list' %}" class="btn btn-outline-primary btn-sm">View Tips</a>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h5>Fertilizers</h5>
+                    <p class="text-muted">Organic and chemical fertilizers</p>
+                    <a href="{% url 'soil_health:fertilizer_list' %}" class="btn btn-outline-success btn-sm">View Fertilizers</a>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h5>Soil Testing</h5>
+                    <p class="text-muted">Professional soil analysis methods</p>
+                    <a href="{% url 'soil_health:test_list' %}" class="btn btn-outline-info btn-sm">View Tests</a>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <h5>Irrigation</h5>
+                    <p class="text-muted">Modern irrigation techniques</p>
+                    <a href="{% url 'soil_health:irrigation_list' %}" class="btn btn-outline-primary btn-sm">View Methods</a>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h5>Crop Rotation</h5>
+                    <p class="text-muted">Sustainable crop rotation plans</p>
+                    <a href="{% url 'soil_health:rotation_list' %}" class="btn btn-outline-warning btn-sm">View Plans</a>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h5>Soil Monitoring</h5>
+                    <p class="text-muted">Track soil health over time</p>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add loading animation to cards
+document.querySelectorAll('.tip-card, .fertilizer-card, .test-card, .irrigation-card, .soil-type-card, .feature-item').forEach(card => {
+    card.addEventListener('click', function(e) {
+        if (!e.target.closest('a')) {
+            const link = this.querySelector('a');
+            if (link) {
+                link.click();
+            }
+        }
+    });
+});
+
+// Smooth scroll to sections
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+
+// Add parallax effect to hero section
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const hero = document.querySelector('.hero-section');
+    if (hero) {
+        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+</script>
+{% endblock %}
+
+
+

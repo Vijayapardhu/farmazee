@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Government Schemes - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Schemes Overview Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-landmark me-2"></i>Government Schemes Dashboard
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-success text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-file-alt fa-2x"></i>
+                                </div>
+                                <h4 class="text-success">{{ total_schemes }}</h4>
+                                <p class="text-muted mb-0">Total Schemes</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-info text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                                <h4 class="text-info">{{ active_schemes }}</h4>
+                                <p class="text-muted mb-0">Active Schemes</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-warning text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                                <h4 class="text-warning">{{ pending_applications }}</h4>
+                                <p class="text-muted mb-0">Pending Applications</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-secondary text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-rupee-sign fa-2x"></i>
+                                </div>
+                                <h4 class="text-secondary">₹{{ total_benefits }}</h4>
+                                <p class="text-muted mb-0">Total Benefits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Schemes Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-star me-2"></i>Featured Schemes
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if featured_schemes %}
+                    <div class="row">
+                        {% for scheme in featured_schemes %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-header bg-success text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">{{ scheme.name }}</h6>
+                                        <span class="badge bg-light text-dark">{{ scheme.get_category_display }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-3">{{ scheme.description|truncatewords:20 }}</p>
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <small class="text-muted">Max Benefit</small>
+                                            <div class="fw-bold text-success">₹{{ scheme.max_benefit_amount }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Deadline</small>
+                                            <div class="fw-bold {% if scheme.is_expiring_soon %}text-danger{% else %}text-muted{% endif %}">
+                                                {{ scheme.application_deadline|date:"M d, Y" }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted">
+                                            <strong>Eligibility:</strong> {{ scheme.eligibility_criteria|truncatewords:10 }}
+                                        </small>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'schemes:scheme_detail' scheme.id %}" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-eye me-2"></i>View Details
+                                        </a>
+                                        {% if scheme.is_eligible_for_user %}
+                                        <a href="{% url 'schemes:apply_scheme' scheme.id %}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-edit me-2"></i>Apply Now
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            <i class="fas fa-times me-2"></i>Not Eligible
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No featured schemes available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Applications Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list-alt me-2"></i>My Applications
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if user_applications %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Scheme Name</th>
+                                    <th>Applied Date</th>
+                                    <th>Status</th>
+                                    <th>Amount Requested</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for application in user_applications %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-alt text-primary me-2"></i>
+                                            <span class="fw-bold">{{ application.scheme.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ application.applied_date|date:"M d, Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ application.status_color }}">{{ application.get_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">₹{{ application.amount_requested }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ application.updated_at|date:"M d, Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'schemes:application_detail' application.id %}" class="btn btn-outline-primary" title="View Application Details" aria-label="View application details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if application.status == 'pending' %}
+                                            <a href="{% url 'schemes:edit_application' application.id %}" class="btn btn-outline-success" title="Edit Application" aria-label="Edit application">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No applications submitted yet</p>
+                        <p class="text-muted">Browse available schemes and apply for benefits!</p>
+                        <a href="{% url 'schemes:all_schemes' %}" class="btn btn-info btn-lg">
+                                            <i class="fas fa-search me-2"></i>Browse Schemes
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheme Categories Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tags me-2"></i>Scheme Categories
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for category in scheme_categories %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="bg-{{ category.color }} text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-{{ category.icon }} fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">{{ category.name }}</h6>
+                                    <p class="text-muted mb-2">{{ category.scheme_count }} schemes</p>
+                                    <p class="text-muted small mb-3">{{ category.description|truncatewords:10 }}</p>
+                                    <a href="{% url 'schemes:category_schemes' category.id %}" class="btn btn-outline-{{ category.color }} btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Schemes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Important Updates Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>Important Updates & Deadlines
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if important_updates %}
+                    <div class="row">
+                        {% for update in important_updates %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="alert alert-danger d-flex align-items-start">
+                                <i class="fas fa-exclamation-triangle text-danger me-3 mt-1"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="alert-heading">{{ update.title }}</h6>
+                                    <p class="mb-1">{{ update.description }}</p>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small class="text-muted">
+                                                <strong>Scheme:</strong> {{ update.scheme.name }}
+                                            </small>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">
+                                                <strong>Deadline:</strong> 
+                                                <span class="text-danger">{{ update.deadline|date:"M d, Y" }}</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="{% url 'schemes:scheme_detail' update.scheme.id %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-info-circle me-1"></i>Learn More
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <p class="text-success mb-0">No urgent updates at this time</p>
+                        <p class="text-muted">All scheme deadlines are being tracked normally</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:all_schemes' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                                    <h6 class="card-title">Browse Schemes</h6>
+                                    <p class="card-text text-muted">Find available schemes</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:eligibility_checker' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                                    <h6 class="card-title">Check Eligibility</h6>
+                                    <p class="card-text text-muted">See what you qualify for</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:application_tracker' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-tasks fa-3x text-info mb-3"></i>
+                                    <h6 class="card-title">Track Applications</h6>
+                                    <p class="card-text text-muted">Monitor your status</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:document_upload' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-upload fa-3x text-warning mb-3"></i>
+                                    <h6 class="card-title">Upload Documents</h6>
+                                    <p class="card-text text-muted">Submit required files</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

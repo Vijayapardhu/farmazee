@@ -1,0 +1,364 @@
+{% extends 'admin/base.html' %}
+
+{% block admin_title %}User Management{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">User Management</li>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Search and Filters -->
+<div class="admin-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Search Users</label>
+                <input type="text" class="form-control" id="search" name="search" 
+                       value="{{ search }}" placeholder="Search by name, email, or username">
+            </div>
+            <div class="col-md-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">All Status</option>
+                    <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-select" id="role" name="role">
+                    <option value="">All Roles</option>
+                    <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+                    <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
+                    <option value="regular" {% if role == 'regular' %}selected{% endif %}>Regular User</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="admin-stats-card text-center">
+            <h3>{{ total_users }}</h3>
+            <p>Total Users</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-stats-card text-center">
+            <h3>{{ page_obj.object_list|length }}</h3>
+            <p>Filtered Results</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-stats-card text-center">
+            <h3>{{ page_obj.paginator.num_pages }}</h3>
+            <p>Total Pages</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-stats-card text-center">
+            <h3>{{ page_obj.number }}</h3>
+            <p>Current Page</p>
+        </div>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="admin-card">
+    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Users</h5>
+        <div>
+            <button class="btn btn-success btn-sm me-2" onclick="exportUsers()">
+                <i class="fas fa-download me-1"></i>Export
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">
+                <i class="fas fa-plus me-1"></i>Add User
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table admin-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label for="selectAll" class="form-label mb-0">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" title="Select all users">
+                                </label>
+                            </th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in page_obj %}
+                        <tr>
+                            <td>
+                                <label for="user_{{ user.id }}" class="form-label mb-0">
+                                    <input type="checkbox" id="user_{{ user.id }}" name="user_ids" value="{{ user.id }}" class="user-checkbox" title="Select user {{ user.username }}">
+                                </label>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                        <i class="fas fa-user text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ user.get_full_name|default:user.username }}</h6>
+                                        <small class="text-muted">@{{ user.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.is_superuser %}
+                                    <span class="badge bg-danger">Superuser</span>
+                                {% elif user.is_staff %}
+                                    <span class="badge bg-warning">Staff</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Regular</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                            <td>
+                                {% if user.last_login %}
+                                    {{ user.last_login|timesince }} ago
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editUser({{ user.id }})" title="Edit User">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    {% if user.is_active %}
+                                        <button class="btn btn-sm btn-outline-warning" onclick="deactivateUser({{ user.id }})" title="Deactivate User">
+                                            <i class="fas fa-user-slash"></i>
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-outline-success" onclick="activateUser({{ user.id }})" title="Activate User">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                    {% endif %}
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser({{ user.id }})" title="Delete User">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bulk Actions -->
+            <div class="mt-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <span class="text-muted">Selected: <span id="selectedCount">0</span> users</span>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-success" onclick="bulkAction('activate')" disabled id="bulkActivate">
+                                <i class="fas fa-user-check me-1"></i>Activate
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="bulkAction('deactivate')" disabled id="bulkDeactivate">
+                                <i class="fas fa-user-slash me-1"></i>Deactivate
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="bulkAction('delete')" disabled id="bulkDelete">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="User pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if role %}&role={{ role }}{% endif %}">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if role %}&role={{ role }}{% endif %}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if role %}&role={{ role }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if role %}&role={{ role }}{% endif %}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if role %}&role={{ role }}{% endif %}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No users found</h5>
+                <p class="text-muted">Try adjusting your search criteria or filters.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Update selected count
+function updateSelectedCount() {
+    const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+    const count = checkboxes.length;
+    document.getElementById('selectedCount').textContent = count;
+    
+    // Enable/disable bulk action buttons
+    const bulkButtons = ['bulkActivate', 'bulkDeactivate', 'bulkDelete'];
+    bulkButtons.forEach(id => {
+        document.getElementById(id).disabled = count === 0;
+    });
+}
+
+// Toggle select all
+function toggleSelectAll() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateSelectedCount();
+}
+
+// Add event listeners to checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+});
+
+// Bulk actions
+function bulkAction(action) {
+    const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+    const userIds = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (userIds.length === 0) {
+        alert('Please select users first');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to ${action} ${userIds.length} user(s)?`)) {
+        return;
+    }
+    
+    // Create form and submit
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "admin:bulk_actions" %}';
+    
+    const actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    actionInput.value = action;
+    
+    const itemTypeInput = document.createElement('input');
+    itemTypeInput.type = 'hidden';
+    itemTypeInput.name = 'item_type';
+    itemTypeInput.value = 'users';
+    
+    userIds.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'item_ids';
+        input.value = id;
+        form.appendChild(input);
+    });
+    
+    form.appendChild(actionInput);
+    form.appendChild(itemTypeInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Individual user actions
+function editUser(userId) {
+    // Implement edit user functionality
+    alert('Edit user ' + userId + ' - Implement this functionality');
+}
+
+function activateUser(userId) {
+    if (confirm('Are you sure you want to activate this user?')) {
+        bulkAction('activate');
+    }
+}
+
+function deactivateUser(userId) {
+    if (confirm('Are you sure you want to deactivate this user?')) {
+        bulkAction('deactivate');
+    }
+}
+
+function deleteUser(userId) {
+    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+        bulkAction('delete');
+    }
+}
+
+function exportUsers() {
+    // Implement export functionality
+    alert('Export users - Implement this functionality');
+}
+
+function showAddUserModal() {
+    // Implement add user modal
+    alert('Add user modal - Implement this functionality');
+}
+</script>
+{% endblock %}

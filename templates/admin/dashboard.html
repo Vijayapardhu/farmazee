@@ -1,0 +1,332 @@
+{% extends 'admin/base.html' %}
+
+{% block admin_title %}Dashboard Overview{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Dashboard</li>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3>{{ total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-seedling fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3>{{ total_crops }}</h3>
+                    <p>Total Crops</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-store fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3>{{ total_products }}</h3>
+                    <p>Total Products</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-shopping-cart fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3>{{ total_orders }}</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Approvals Alert -->
+{% if pending_approvals.new_users > 0 or pending_approvals.new_products > 0 or pending_approvals.new_topics > 0 or pending_approvals.new_questions > 0 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Pending Approvals</h6>
+            <div class="row">
+                {% if pending_approvals.new_users > 0 %}
+                <div class="col-md-3">
+                    <strong>{{ pending_approvals.new_users }}</strong> new users
+                </div>
+                {% endif %}
+                {% if pending_approvals.new_products > 0 %}
+                <div class="col-md-3">
+                    <strong>{{ pending_approvals.new_products }}</strong> new products
+                </div>
+                {% endif %}
+                {% if pending_approvals.new_topics > 0 %}
+                <div class="col-md-3">
+                    <strong>{{ pending_approvals.new_topics }}</strong> new topics
+                </div>
+                {% endif %}
+                {% if pending_approvals.new_questions > 0 %}
+                <div class="col-md-3">
+                    <strong>{{ pending_approvals.new_questions }}</strong> new questions
+                </div>
+                {% endif %}
+            </div>
+            <hr>
+            <a href="{% url 'admin:user_management' %}" class="btn btn-sm btn-warning me-2">Review Users</a>
+            <a href="{% url 'admin:marketplace_management' %}" class="btn btn-sm btn-warning me-2">Review Products</a>
+            <a href="{% url 'admin:community_management' %}" class="btn btn-sm btn-warning">Review Content</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" title="Close alert"></button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- System Health and Recent Activity -->
+<div class="row">
+    <!-- System Health -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="fas fa-heartbeat me-2 text-success"></i>System Health</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Database Size</span>
+                        <span class="badge bg-primary">{{ system_health.database_size }}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" style="width: 75%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Active Sessions</span>
+                        <span class="badge bg-success">{{ system_health.active_sessions }}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: 60%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Server Uptime</span>
+                        <span class="badge bg-info">{{ system_health.server_uptime }}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: 99%"></div>
+                    </div>
+                </div>
+                
+                <div class="text-muted small">
+                    <i class="fas fa-clock me-1"></i>
+                    Last backup: {{ system_health.last_backup|timesince }} ago
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Users -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-user-plus me-2 text-primary"></i>Recent Users</h5>
+                <a href="{% url 'admin:user_management' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_users %}
+                    {% for user in recent_users %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                <i class="fas fa-user text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">{{ user.get_full_name|default:user.username }}</h6>
+                            <small class="text-muted">{{ user.email }}</small>
+                        </div>
+                        <div class="text-muted small">
+                            {{ user.date_joined|timesince }} ago
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <p>No recent users</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Crops -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-seedling me-2 text-success"></i>Recent Crops</h5>
+                <a href="{% url 'admin:crop_management' %}" class="btn btn-sm btn-outline-success">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_crops %}
+                    {% for crop in recent_crops %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                                <i class="fas fa-seedling text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">{{ crop.name }}</h6>
+                            <small class="text-muted">{{ crop.get_category_display }}</small>
+                        </div>
+                        <div class="text-muted small">
+                            {{ crop.created_at|timesince }} ago
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-seedling fa-2x mb-2"></i>
+                        <p>No recent crops</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Products and Orders -->
+<div class="row">
+    <!-- Recent Products -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-box me-2 text-warning"></i>Recent Products</h5>
+                <a href="{% url 'admin:marketplace_management' %}" class="btn btn-sm btn-outline-warning">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_products %}
+                    {% for product in recent_products %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-2">
+                                <i class="fas fa-box text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">{{ product.name }}</h6>
+                            <small class="text-muted">{{ product.category.name|default:"No Category" }}</small>
+                        </div>
+                        <div class="text-muted small">
+                            {{ product.created_at|timesince }} ago
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-box fa-2x mb-2"></i>
+                        <p>No recent products</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Orders -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-shopping-cart me-2 text-info"></i>Recent Orders</h5>
+                <a href="{% url 'admin:marketplace_management' %}" class="btn btn-sm btn-outline-info">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_orders %}
+                    {% for order in recent_orders %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-circle p-2">
+                                <i class="fas fa-shopping-cart text-info"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">Order #{{ order.id }}</h6>
+                            <small class="text-muted">{{ order.status|title }}</small>
+                        </div>
+                        <div class="text-muted small">
+                            {{ order.created_at|timesince }} ago
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                        <p>No recent orders</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="admin-card">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2 text-danger"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:user_management' %}" class="btn btn-outline-primary w-100 admin-btn">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:crop_management' %}" class="btn btn-outline-success w-100 admin-btn">
+                            <i class="fas fa-seedling me-2"></i>Manage Crops
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:marketplace_management' %}" class="btn btn-outline-warning w-100 admin-btn">
+                            <i class="fas fa-store me-2"></i>Manage Marketplace
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:community_management' %}" class="btn btn-outline-info w-100 admin-btn">
+                            <i class="fas fa-comments me-2"></i>Manage Community
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2E7D32" />
+    <meta name="description" content="Farmazee - Smart Farming Platform for Modern Agriculture" />
+    <meta name="keywords" content="smart farming, agriculture, crop management, weather forecast, soil health, marketplace" />
+    <meta name="author" content="Farmazee Team" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Farmazee - Smart Farming Platform" />
+    <meta property="og:description" content="Revolutionize your farming with AI-powered insights, weather forecasting, and smart crop management." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://farmazee.com" />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Farmazee - Smart Farming Platform" />
+    <meta name="twitter:description" content="Revolutionize your farming with AI-powered insights, weather forecasting, and smart crop management." />
+    <meta name="twitter:image" content="%PUBLIC_URL%/og-image.jpg" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Farmazee" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    
+    <title>Farmazee - Smart Farming Platform</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" style="display: none;">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p>Loading Farmazee...</p>
+      </div>
+    </div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>
+

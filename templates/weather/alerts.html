@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Weather Alerts - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                Weather Alerts
+            </h1>
+        </div>
+    </div>
+
+    <!-- Active Alerts -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                        Active Alerts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if alerts %}
+                    <div class="row">
+                        {% for alert in alerts %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="alert alert-warning">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="alert-heading">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            {{ alert.title }}
+                                        </h6>
+                                        <p class="mb-1">{{ alert.description }}</p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            {{ alert.location }}
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-warning text-dark">
+                                        {{ alert.alert_type|title }}
+                                    </span>
+                                </div>
+                                <hr class="my-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ alert.created_at|date:"M d, Y H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                        <h5>No Active Alerts</h5>
+                        <p>There are currently no active weather alerts.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history text-info me-2"></i>
+                        Recent Alert History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Title</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for alert in alerts %}
+                                <tr>
+                                    <td>{{ alert.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ alert.alert_type|lower }}">
+                                            {{ alert.alert_type|title }}
+                                        </span>
+                                    </td>
+                                    <td>{{ alert.title }}</td>
+                                    <td>{{ alert.location }}</td>
+                                    <td>
+                                        {% if alert.is_active %}
+                                        <span class="badge bg-warning">Active</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Expired</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No alert history available
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

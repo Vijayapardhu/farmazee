@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Government Schemes - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-landmark text-success me-2"></i>
+                Government Schemes
+            </h1>
+            <p class="lead text-muted">Discover and apply for government agricultural schemes and subsidies</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="search" class="form-label">Search Schemes</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   placeholder="Search by name, description, or category" value="{{ request.GET.search|default:'' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                <option value="subsidy" {% if request.GET.category == "subsidy" %}selected{% endif %}>Subsidy</option>
+                                <option value="loan" {% if request.GET.category == "loan" %}selected{% endif %}>Loan</option>
+                                <option value="insurance" {% if request.GET.category == "insurance" %}selected{% endif %}>Insurance</option>
+                                <option value="training" {% if request.GET.category == "training" %}selected{% endif %}>Training</option>
+                                <option value="equipment" {% if request.GET.category == "equipment" %}selected{% endif %}>Equipment</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="state" class="form-label">State</label>
+                            <select class="form-select" id="state" name="state">
+                                <option value="">All States</option>
+                                <option value="AP" {% if request.GET.state == "AP" %}selected{% endif %}>Andhra Pradesh</option>
+                                <option value="TG" {% if request.GET.state == "TG" %}selected{% endif %}>Telangana</option>
+                                <option value="KA" {% if request.GET.state == "KA" %}selected{% endif %}>Karnataka</option>
+                                <option value="TN" {% if request.GET.state == "TN" %}selected{% endif %}>Tamil Nadu</option>
+                                <option value="MH" {% if request.GET.state == "MH" %}selected{% endif %}>Maharashtra</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Search Schemes
+                            </button>
+                                                    <a href="{% url 'schemes:list' %}" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-refresh me-2"></i>Clear Filters
+                        </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Schemes -->
+    {% if featured_schemes %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Featured Schemes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for scheme in featured_schemes %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title">{{ scheme.name }}</h6>
+                                        <span class="badge bg-{{ scheme.category|lower }}">{{ scheme.get_category_display }}</span>
+                                    </div>
+                                    
+                                    <p class="card-text text-muted small">{{ scheme.description|truncatewords:20 }}</p>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <small class="text-muted">Max Amount:</small><br>
+                                            <span class="fw-bold text-success">₹{{ scheme.max_amount|default:"N/A" }}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Eligibility:</small><br>
+                                            <span class="fw-bold">{{ scheme.eligibility_criteria|default:"N/A"|truncatechars:15 }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ scheme.state|default:"All India" }}
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {% if scheme.start_date %}
+                                                {{ scheme.start_date|date:"M Y" }}
+                                            {% else %}
+                                                Ongoing
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{% url 'schemes:detail' scheme.pk %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>View Details
+                                        </a>
+                                        {% if user.is_authenticated %}
+                                        <a href="{% url 'schemes:apply' scheme.pk %}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-edit me-1"></i>Apply Now
+                                        </a>
+                                        {% else %}
+                                        <a href="{% url 'account_login' %}" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-sign-in-alt me-1"></i>Login to Apply
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- All Schemes -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-primary me-2"></i>
+                        All Available Schemes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if schemes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Scheme Name</th>
+                                    <th>Category</th>
+                                    <th>Max Amount</th>
+                                    <th>State</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for scheme in schemes %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ scheme.name }}</strong><br>
+                                        <small class="text-muted">{{ scheme.description|truncatewords:10 }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ scheme.category|lower }}">{{ scheme.get_category_display }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">₹{{ scheme.max_amount|default:"N/A" }}</span>
+                                    </td>
+                                    <td>{{ scheme.state|default:"All India" }}</td>
+                                    <td>
+                                        {% if scheme.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'schemes:detail' scheme.pk %}" class="btn btn-outline-primary btn-sm" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if user.is_authenticated %}
+                                            <a href="{% url 'schemes:apply' scheme.pk %}" class="btn btn-success btn-sm" title="Apply Now">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <h5>No Schemes Found</h5>
+                        <p>No schemes match your search criteria.</p>
+                        <a href="{% url 'schemes:list' %}" class="btn btn-primary">
+                            <i class="fas fa-refresh me-2"></i>Clear Filters
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools text-info me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:dashboard' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-tachometer-alt me-2"></i>My Applications
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:eligibility' %}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-check-circle me-2"></i>Check Eligibility
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:calculator' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-calculator me-2"></i>Subsidy Calculator
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'schemes:guidelines' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-book me-2"></i>Guidelines
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheme Categories Info -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-success me-2"></i>
+                        Scheme Categories
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-hand-holding-usd fa-2x text-success mb-2"></i>
+                                <h6>Subsidies</h6>
+                                <p class="small text-muted">Direct financial support for agricultural activities</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-university fa-2x text-primary mb-2"></i>
+                                <h6>Loans</h6>
+                                <p class="small text-muted">Low-interest loans for farming equipment and inputs</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-shield-alt fa-2x text-warning mb-2"></i>
+                                <h6>Insurance</h6>
+                                <p class="small text-muted">Crop and livestock insurance schemes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

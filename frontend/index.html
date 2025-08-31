@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Farmazee - Smart Farming Platform for Modern Agriculture">
+    <meta name="keywords" content="smart farming, agriculture, crop management, weather forecast, soil health, marketplace">
+    <meta name="author" content="Farmazee Team">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Farmazee - Smart Farming Platform">
+    <meta property="og:description" content="Revolutionize your farming with AI-powered insights, weather forecasting, and smart crop management.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://farmazee.com">
+    <meta property="og:image" content="./assets/images/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    
+    <!-- Swiper CSS for Carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+    
+    <title>Farmazee - Smart Farming Platform</title>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Loading Farmazee...</h2>
+            <p>Preparing your smart farming experience</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="./assets/images/logo.png" alt="Farmazee Logo" class="logo-img">
+                <span class="logo-text">Farmazee</span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="#login" class="nav-link auth-link" id="login-link">Login</a>
+                <a href="#signup" class="nav-link auth-link btn-primary" id="signup-link">Sign Up</a>
+            </div>
+            
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Landing Page Section -->
+        <section id="home" class="hero-section">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Welcome to 
+                        <span class="highlight">Farmazee</span>
+                    </h1>
+                    <p class="hero-description">
+                        Your trusted partner in smart farming. Farmazee combines cutting-edge AI technology, 
+                        real-time weather insights, and expert agricultural knowledge to help you achieve 
+                        better yields and sustainable farming practices.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary btn-large" onclick="scrollToSection('features')">
+                            <i class="fas fa-rocket"></i>
+                            Explore Features
+                        </button>
+                        <button class="btn btn-secondary btn-large" onclick="openDemo()">
+                            <i class="fas fa-play"></i>
+                            Watch Demo
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="./assets/images/hero-farming.jpg" alt="Smart Farming Technology" class="hero-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Powerful Features for Smart Farming</h2>
+                    <p class="section-description">
+                        Everything you need to manage your farm efficiently and increase productivity
+                    </p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">
+                            <img src="./assets/images/weather-forecast.jpg" alt="Weather Forecasting" class="feature-img">
+                        </div>
+                        <h3>Weather Forecasting</h3>
+                        <p>Get accurate weather predictions and alerts to plan your farming activities</p>
+                    </div>
+                    
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-icon">
+                            <img src="./assets/images/crop-management.jpg" alt="Crop Management" class="feature-img">
+                        </div>
+                        <h3>Crop Management</h3>
+                        <p>Track crop growth, schedule activities, and get AI-powered recommendations</p>
+                    </div>
+                    
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-icon">
+                            <img src="./assets/images/soil-health.jpg" alt="Soil Health" class="feature-img">
+                        </div>
+                        <h3>Soil Health</h3>
+                        <p>Monitor soil conditions and get personalized improvement recommendations</p>
+                    </div>
+                    
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-icon">
+                            <img src="./assets/images/marketplace.jpg" alt="Marketplace" class="feature-img">
+                        </div>
+                        <h3>Marketplace</h3>
+                        <p>Buy and sell agricultural products in our secure e-marketplace</p>
+                    </div>
+                    
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="feature-icon">
+                            <img src="./assets/images/community.jpg" alt="Community" class="feature-img">
+                        </div>
+                        <h3>Community</h3>
+                        <p>Connect with fellow farmers and agricultural experts</p>
+                    </div>
+                    
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="feature-icon">
+                            <img src="./assets/images/government-schemes.jpg" alt="Government Schemes" class="feature-img">
+                        </div>
+                        <h3>Government Schemes</h3>
+                        <p>Stay updated with latest agricultural schemes and subsidies</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2>About Farmazee</h2>
+                        <p>
+                            Farmazee is India's leading smart farming platform, empowering farmers 
+                            with cutting-edge technology and data-driven insights. Founded with a vision 
+                            to revolutionize agriculture, we combine traditional farming wisdom with 
+                            modern AI technology to create sustainable, profitable farming solutions.
+                        </p>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <h3>10K+</h3>
+                                <p>Active Farmers</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3>50+</h3>
+                                <p>Crop Types</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3>95%</h3>
+                                <p>Accuracy Rate</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-image">
+                        <img src="./assets/images/about-farmers.jpg" alt="Farmers using Farmazee technology" class="about-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Get in Touch</h2>
+                    <p class="section-description">
+                        Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                    </p>
+                </div>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Address</h4>
+                                <p>123 Farming Street, Agriculture City, AC 12345</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Phone</h4>
+                                <p>+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <p>info@farmazee.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="subject" name="subject" placeholder="Subject" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="./assets/images/logo-white.png" alt="Farmazee Logo" class="footer-logo-img">
+                        <span>Farmazee</span>
+                    </div>
+                    <p>Empowering farmers with smart technology for a sustainable future.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#weather">Weather Forecast</a></li>
+                        <li><a href="#crops">Crop Management</a></li>
+                        <li><a href="#marketplace">Marketplace</a></li>
+                        <li><a href="#community">Community</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#help">Help Center</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Farmazee. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modals -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login to Farmazee</h2>
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+            <p class="auth-footer">
+                Don't have an account? <a href="#" onclick="showSignupModal()">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Your Account</h2>
+            <form id="signup-form" class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="signup-name" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+            <p class="auth-footer">
+                Already have an account? <a href="#" onclick="showLoginModal()">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard (Hidden by default) -->
+    <div id="dashboard" class="dashboard-container" style="display: none;">
+        <!-- Dashboard content will be loaded here -->
+    </div>
+
+    <!-- Community Section -->
+    <section id="community" class="community-section" style="display: none;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Community & Support</h2>
+                <p class="section-description">Connect with fellow farmers, ask questions, and get expert advice</p>
+            </div>
+            
+            <div class="community-tabs">
+                <button class="tab-btn active" data-tab="topics">Discussion Topics</button>
+                <button class="tab-btn" data-tab="questions">Q&A Forum</button>
+                <button class="tab-btn" data-tab="experts">Expert Consultations</button>
+                <button class="tab-btn" data-tab="events">Events & Workshops</button>
+                <button class="tab-btn" data-tab="discussions">Active Discussions</button>
+                <button class="tab-btn" data-tab="polls">Community Polls</button>
+            </div>
+
+            <div class="tab-content active" id="topics-tab">
+                <div class="community-actions">
+                    <button class="btn btn-primary btn-create-topic">Create New Topic</button>
+                </div>
+                <div id="community-topics" class="community-grid"></div>
+            </div>
+
+            <div class="tab-content" id="questions-tab">
+                <div class="community-actions">
+                    <button class="btn btn-primary btn-ask-question">Ask a Question</button>
+                </div>
+                <div id="community-questions" class="community-grid"></div>
+            </div>
+
+            <div class="tab-content" id="experts-tab">
+                <div id="community-experts" class="community-grid"></div>
+            </div>
+
+            <div class="tab-content" id="events-tab">
+                <div id="community-events" class="community-grid"></div>
+            </div>
+
+            <div class="tab-content" id="discussions-tab">
+                <div id="community-discussions" class="community-grid"></div>
+            </div>
+
+            <div class="tab-content" id="polls-tab">
+                <div id="community-polls" class="community-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Government Schemes Section -->
+    <section id="schemes" class="schemes-section" style="display: none;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Government Schemes & Subsidies</h2>
+                <p class="section-description">Stay updated with latest agricultural schemes and apply for benefits</p>
+            </div>
+            
+            <div class="schemes-categories" id="schemes-categories"></div>
+            
+            <div class="schemes-content">
+                <div class="schemes-list" id="schemes-list"></div>
+                
+                <div class="user-applications">
+                    <h3>My Applications</h3>
+                    <div id="user-applications"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Soil Health Section -->
+    <section id="soil-health" class="soil-health-section" style="display: none;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Soil Health Management</h2>
+                <p class="section-description">Monitor soil conditions, get recommendations, and improve fertility</p>
+            </div>
+            
+            <div class="soil-health-tabs">
+                <button class="tab-btn active" data-tab="tests">Soil Tests</button>
+                <button class="tab-btn" data-tab="recommendations">Recommendations</button>
+                <button class="tab-btn" data-tab="monitoring">Monitoring</button>
+                <button class="tab-btn" data-tab="types">Soil Types</button>
+                <button class="tab-btn" data-tab="nutrients">Nutrients</button>
+            </div>
+
+            <div class="tab-content active" id="tests-tab">
+                <div class="soil-actions">
+                    <button class="btn btn-primary btn-schedule-test">Schedule New Test</button>
+                </div>
+                <div id="soil-tests" class="soil-grid"></div>
+            </div>
+
+            <div class="tab-content" id="recommendations-tab">
+                <div id="soil-recommendations" class="soil-grid"></div>
+            </div>
+
+            <div class="tab-content" id="monitoring-tab">
+                <div class="soil-actions">
+                    <button class="btn btn-primary btn-add-monitoring">Add Monitoring Data</button>
+                </div>
+                <div id="soil-monitoring" class="soil-grid"></div>
+            </div>
+
+            <div class="tab-content" id="types-tab">
+                <div id="soil-types" class="soil-grid"></div>
+            </div>
+
+            <div class="tab-content" id="nutrients-tab">
+                <div id="soil-nutrients" class="soil-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/weather.js"></script>
+    <script src="./js/crops.js"></script>
+    <script src="./js/marketplace.js"></script>
+    <script src="./js/community.js"></script>
+    <script src="./js/schemes.js"></script>
+    <script src="./js/soil-health.js"></script>
+</body>
+</html>

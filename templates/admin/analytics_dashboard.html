@@ -1,0 +1,719 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-line me-2"></i>Analytics Dashboard
+        </h1>
+        <div>
+            <select class="form-select form-select-sm d-inline-block w-auto me-2" id="timeRange">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="365">Last Year</option>
+            </select>
+            <button class="btn btn-primary" onclick="refreshAnalytics()">
+                <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_users }}</div>
+                            <div class="text-xs text-success">
+                                <i class="fas fa-arrow-up"></i> {{ user_growth|default:"0" }}%
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Active Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_users }}</div>
+                            <div class="text-xs text-success">
+                                <i class="fas fa-arrow-up"></i> {{ active_growth|default:"0" }}%
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Revenue</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹{{ total_revenue|default:"0" }}</div>
+                            <div class="text-xs text-success">
+                                <i class="fas fa-arrow-up"></i> {{ revenue_growth|default:"0" }}%
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Page Views</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ page_views|default:"0" }}</div>
+                            <div class="text-xs text-success">
+                                <i class="fas fa-arrow-up"></i> {{ views_growth|default:"0" }}%
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-eye fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- User Growth Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">User Growth Trend</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                             aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Chart Options:</div>
+                            <a class="dropdown-item" href="#" onclick="exportChart('userGrowth')">Export Chart</a>
+                            <a class="dropdown-item" href="#" onclick="printChart('userGrowth')">Print Chart</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Distribution Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">User Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="userDistributionChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> Farmers
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Vendors
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-info"></i> Experts
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Charts Row -->
+    <div class="row mb-4">
+        <!-- Crop Activity Chart -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Crop Activity</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="cropActivityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marketplace Activity Chart -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Marketplace Activity</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="marketplaceActivityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Analytics -->
+    <div class="row mb-4">
+        <!-- Top Performing Crops -->
+        <div class="col-xl-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Top Performing Crops</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Crop</th>
+                                    <th>Success Rate</th>
+                                    <th>Total Planted</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for crop in top_crops %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" 
+                                                 style="width: 30px; height: 30px;">
+                                                <i class="fas fa-seedling text-success"></i>
+                                            </div>
+                                            {{ crop.name }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 style="width: {{ crop.success_rate }}%">
+                                                {{ crop.success_rate }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ crop.total_planted }}</td>
+                                    <td>
+                                        <span class="badge {% if crop.trend == 'up' %}bg-success{% elif crop.trend == 'down' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                            <i class="fas fa-arrow-{{ crop.trend }}"></i>
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No crop data available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Engagement -->
+        <div class="col-xl-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">User Engagement</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <div class="h4 text-primary">{{ avg_session_duration|default:"0" }}m</div>
+                                <small class="text-muted">Avg. Session Duration</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <div class="h4 text-success">{{ bounce_rate|default:"0" }}%</div>
+                                <small class="text-muted">Bounce Rate</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <div class="h4 text-info">{{ pages_per_session|default:"0" }}</div>
+                                <small class="text-muted">Pages per Session</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <div class="h4 text-warning">{{ return_rate|default:"0" }}%</div>
+                                <small class="text-muted">Return Rate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Geographic Distribution -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Geographic Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div id="map" style="height: 400px; background-color: #f8f9fc;"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="font-weight-bold">Top Regions</h6>
+                            {% for region in top_regions %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>{{ region.name }}</span>
+                                <span class="badge bg-primary">{{ region.user_count }}</span>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No regional data available</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-time Activity Feed -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Real-time Activity Feed</h6>
+                </div>
+                <div class="card-body">
+                    <div class="activity-feed" id="activityFeed">
+                        {% for activity in recent_activities %}
+                        <div class="activity-item d-flex align-items-center mb-3">
+                            <div class="activity-icon me-3">
+                                <i class="fas fa-{{ activity.icon }} fa-lg text-{{ activity.color }}"></i>
+                            </div>
+                            <div class="activity-content flex-grow-1">
+                                <div class="activity-text">{{ activity.text }}</div>
+                                <small class="text-muted">{{ activity.time|timesince }} ago</small>
+                            </div>
+                            <div class="activity-badge">
+                                <span class="badge bg-{{ activity.badge_color }}">{{ activity.badge_text }}</span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center">No recent activity</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let charts = {};
+
+// Initialize charts when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    startRealTimeUpdates();
+});
+
+// Initialize all charts
+function initializeCharts() {
+    // User Growth Chart
+    const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+    charts.userGrowth = new Chart(userGrowthCtx, {
+        type: 'line',
+        data: {
+            labels: {{ user_growth_labels|safe }},
+            datasets: [{
+                label: 'New Users',
+                data: {{ user_growth_data|safe }},
+                borderColor: 'rgb(78, 115, 223)',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // User Distribution Chart
+    const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
+    charts.userDistribution = new Chart(userDistributionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Farmers', 'Vendors', 'Experts'],
+            datasets: [{
+                data: [{{ farmer_count|default:0 }}, {{ vendor_count|default:0 }}, {{ expert_count|default:0 }}],
+                backgroundColor: [
+                    'rgb(78, 115, 223)',
+                    'rgb(28, 200, 138)',
+                    'rgb(54, 185, 204)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Crop Activity Chart
+    const cropActivityCtx = document.getElementById('cropActivityChart').getContext('2d');
+    charts.cropActivity = new Chart(cropActivityCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ crop_activity_labels|safe }},
+            datasets: [{
+                label: 'Crops Planted',
+                data: {{ crop_activity_data|safe }},
+                backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                borderColor: 'rgb(78, 115, 223)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Marketplace Activity Chart
+    const marketplaceActivityCtx = document.getElementById('marketplaceActivityChart').getContext('2d');
+    charts.marketplaceActivity = new Chart(marketplaceActivityCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ marketplace_activity_labels|safe }},
+            datasets: [{
+                label: 'Orders',
+                data: {{ marketplace_activity_data|safe }},
+                backgroundColor: 'rgba(28, 200, 138, 0.8)',
+                borderColor: 'rgb(28, 200, 138)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Refresh analytics data
+function refreshAnalytics() {
+    const timeRange = document.getElementById('timeRange').value;
+    
+    // Show loading state
+    const refreshBtn = document.querySelector('button[onclick="refreshAnalytics()"]');
+    const originalText = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
+    refreshBtn.disabled = true;
+    
+    // Fetch new data
+    fetch(`{% url "admin:analytics_dashboard" %}?time_range=${timeRange}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateCharts(data);
+                updateMetrics(data);
+                showAlert('Analytics refreshed successfully!', 'success');
+            } else {
+                showAlert('Error refreshing analytics: ' + data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred while refreshing analytics', 'danger');
+        })
+        .finally(() => {
+            // Restore button state
+            refreshBtn.innerHTML = originalText;
+            refreshBtn.disabled = false;
+        });
+}
+
+// Update charts with new data
+function updateCharts(data) {
+    // Update user growth chart
+    if (charts.userGrowth && data.user_growth_data) {
+        charts.userGrowth.data.labels = data.user_growth_labels;
+        charts.userGrowth.data.datasets[0].data = data.user_growth_data;
+        charts.userGrowth.update();
+    }
+    
+    // Update other charts similarly...
+}
+
+// Update metrics display
+function updateMetrics(data) {
+    // Update metric cards with new data
+    if (data.total_users !== undefined) {
+        document.querySelector('.card:has(.fa-users) .h5').textContent = data.total_users;
+    }
+    // Update other metrics...
+}
+
+// Start real-time updates
+function startRealTimeUpdates() {
+    // Update activity feed every 30 seconds
+    setInterval(updateActivityFeed, 30000);
+}
+
+// Update activity feed
+function updateActivityFeed() {
+    fetch('{% url "admin:analytics_dashboard" %}?action=activity_feed')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.activities) {
+                updateActivityFeedDisplay(data.activities);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating activity feed:', error);
+        });
+}
+
+// Update activity feed display
+function updateActivityFeedDisplay(activities) {
+    const feedContainer = document.getElementById('activityFeed');
+    let feedHTML = '';
+    
+    activities.forEach(activity => {
+        feedHTML += `
+            <div class="activity-item d-flex align-items-center mb-3">
+                <div class="activity-icon me-3">
+                    <i class="fas fa-${activity.icon} fa-lg text-${activity.color}"></i>
+                </div>
+                <div class="activity-content flex-grow-1">
+                    <div class="activity-text">${activity.text}</div>
+                    <small class="text-muted">${activity.time} ago</small>
+                </div>
+                <div class="activity-badge">
+                    <span class="badge bg-${activity.badge_color}">${activity.badge_text}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    feedContainer.innerHTML = feedHTML;
+}
+
+// Export chart
+function exportChart(chartName) {
+    if (charts[chartName]) {
+        const canvas = charts[chartName].canvas;
+        const link = document.createElement('a');
+        link.download = `${chartName}_chart.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+}
+
+// Print chart
+function printChart(chartName) {
+    if (charts[chartName]) {
+        const canvas = charts[chartName].canvas;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head><title>${chartName} Chart</title></head>
+                <body>
+                    <img src="${canvas.toDataURL()}" style="width: 100%; height: auto;">
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+}
+
+// Show alert
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Handle time range change
+document.getElementById('timeRange').addEventListener('change', function() {
+    refreshAnalytics();
+});
+</script>
+
+<style>
+.chart-area {
+    position: relative;
+    height: 20rem;
+    width: 100%;
+}
+
+.chart-pie {
+    position: relative;
+    height: 15rem;
+    width: 100%;
+}
+
+.chart-bar {
+    position: relative;
+    height: 15rem;
+    width: 100%;
+}
+
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.activity-item:hover {
+    background-color: #f8f9fc;
+}
+
+.activity-icon {
+    width: 40px;
+    text-align: center;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.activity-badge {
+    margin-left: 10px;
+}
+
+#map {
+    border-radius: 5px;
+    border: 1px solid #e3e6f0;
+}
+</style>
+{% endblock %}

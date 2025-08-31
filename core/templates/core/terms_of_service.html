@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terms of Service - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-file-contract text-primary me-2"></i>
+                Terms of Service
+            </h1>
+            <p class="text-muted">Last updated: {{ "now"|date:"F j, Y" }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3>1. Acceptance of Terms</h3>
+                    <p>By accessing and using Smart Farmer Support, you accept and agree to be bound by the terms and provision of this agreement.</p>
+
+                    <h3 class="mt-4">2. Use License</h3>
+                    <p>Permission is granted to temporarily download one copy of the materials on Smart Farmer Support for personal, non-commercial transitory viewing only.</p>
+
+                    <h3 class="mt-4">3. User Account</h3>
+                    <p>When you create an account with us, you must provide information that is accurate, complete, and current at all times.</p>
+
+                    <h3 class="mt-4">4. Acceptable Use</h3>
+                    <p>You agree not to use the service to:</p>
+                    <ul>
+                        <li>Violate any applicable laws or regulations</li>
+                        <li>Infringe upon the rights of others</li>
+                        <li>Transmit harmful or malicious content</li>
+                        <li>Attempt to gain unauthorized access to our systems</li>
+                    </ul>
+
+                    <h3 class="mt-4">5. Content and Information</h3>
+                    <p>While we strive to provide accurate and up-to-date information, we cannot guarantee the accuracy, completeness, or reliability of any information on our platform.</p>
+
+                    <h3 class="mt-4">6. Privacy</h3>
+                    <p>Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the service.</p>
+
+                    <h3 class="mt-4">7. Termination</h3>
+                    <p>We may terminate or suspend your account immediately, without prior notice, for conduct that we believe violates these Terms of Service or is harmful to other users or us.</p>
+
+                    <h3 class="mt-4">8. Limitation of Liability</h3>
+                    <p>In no event shall Smart Farmer Support be liable for any indirect, incidental, special, consequential, or punitive damages.</p>
+
+                    <h3 class="mt-4">9. Changes to Terms</h3>
+                    <p>We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect.</p>
+
+                    <h3 class="mt-4">10. Contact Information</h3>
+                    <p>If you have any questions about these Terms of Service, please contact us at:</p>
+                    <p>
+                        <strong>Email:</strong> legal@smartfarmersupport.com<br>
+                        <strong>Phone:</strong> +91 98765 43210
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Important Notice
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>By using our service, you agree to these terms. Please read them carefully before proceeding.</p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Questions?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>If you have questions about these terms, please contact our support team.</p>
+                    <a href="{% url 'contact' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

@@ -1,0 +1,606 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Farming Assistant - Farmazee{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Chat Interface -->
+            <div class="col-lg-8 mx-auto">
+                <div class="chat-card">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="ai-info">
+                                <h5 class="mb-0">Farmazee AI Assistant</h5>
+                                <small class="text-muted">Your personal farming expert</small>
+                            </div>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="btn btn-sm btn-outline-primary" onclick="clearChat()" title="Clear Chat">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="showQuickQuestions()" title="Quick Questions">
+                                <i class="fas fa-lightbulb"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages -->
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Welcome Message -->
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-bubble">
+                                    <p class="mb-2">Namaste! 🙏 I'm your AI farming assistant, here to help you with:</p>
+                                    <div class="quick-topics">
+                                        <span class="topic-tag">🌾 Crop Management</span>
+                                        <span class="topic-tag">🐛 Pest Control</span>
+                                        <span class="topic-tag">🌱 Soil Health</span>
+                                        <span class="topic-tag">🌦️ Weather</span>
+                                        <span class="topic-tag">💰 Market Info</span>
+                                        <span class="topic-tag">🏛️ Government Schemes</span>
+                                    </div>
+                                    <p class="mt-2">Ask me anything about farming in Telugu states!</p>
+                                </div>
+                            </div>
+                            <div class="message-time">Just now</div>
+                        </div>
+
+                        <!-- Previous Messages -->
+                        {% for message in chat_messages %}
+                        <div class="message {% if message.message_type == 'user' %}user-message{% else %}ai-message{% endif %}">
+                            <div class="message-content">
+                                {% if message.message_type == 'user' %}
+                                <div class="message-bubble user-bubble">
+                                    <p>{{ message.content }}</p>
+                                </div>
+                                <div class="message-avatar user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {% else %}
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-bubble">
+                                    <p>{{ message.content|linebreaks }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="message-time">{{ message.timestamp|date:"H:i" }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Quick Questions Panel -->
+                    <div class="quick-questions-panel" id="quickQuestionsPanel" style="display: none;">
+                        <div class="panel-header">
+                            <h6>Quick Questions</h6>
+                            <button class="btn-close" onclick="hideQuickQuestions()">&times;</button>
+                        </div>
+                        <div class="quick-questions-grid">
+                            <button class="quick-question" onclick="askQuestion('How to grow rice in Telangana?')">
+                                <i class="fas fa-seedling"></i>
+                                <span>Rice Cultivation</span>
+                            </button>
+                            <button class="quick-question" onclick="askQuestion('Best time to sow maize?')">
+                                <i class="fas fa-calendar"></i>
+                                <span>Sowing Time</span>
+                            </button>
+                            <button class="quick-question" onclick="askQuestion('How to control stem borer in rice?')">
+                                <i class="fas fa-bug"></i>
+                                <span>Pest Control</span>
+                            </button>
+                            <button class="quick-question" onclick="askQuestion('Soil testing methods?')">
+                                <i class="fas fa-flask"></i>
+                                <span>Soil Testing</span>
+                            </button>
+                            <button class="quick-question" onclick="askQuestion('Government subsidies for farmers?')">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <span>Subsidies</span>
+                            </button>
+                            <button class="quick-question" onclick="askQuestion('Weather forecast for farming?')">
+                                <i class="fas fa-cloud-sun"></i>
+                                <span>Weather</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input">
+                        <form id="chatForm" class="d-flex">
+                            <div class="input-group">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="messageInput" 
+                                       placeholder="Ask me about farming, crops, pests, soil health..."
+                                       autocomplete="off">
+                                <button type="submit" class="btn btn-primary" id="sendButton">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="typing-text">AI is thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Chat Container */
+.chat-container {
+    min-height: calc(100vh - 100px);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 2rem 0;
+}
+
+/* Chat Card */
+.chat-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Chat Header */
+.chat-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-avatar {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.ai-info h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.chat-actions .btn {
+    margin-left: 0.5rem;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+}
+
+/* Chat Messages */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.message-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.user-message .message-content {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.message-avatar:not(.user-avatar) {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.user-avatar {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+    color: white;
+}
+
+.message-bubble {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-width: 70%;
+    position: relative;
+}
+
+.user-bubble {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+    color: white;
+}
+
+.message-bubble p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.message-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+/* Quick Topics */
+.quick-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.topic-tag {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+/* Quick Questions Panel */
+.quick-questions-panel {
+    background: white;
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panel-header h6 {
+    margin: 0;
+    color: #495057;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.quick-questions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+}
+
+.quick-question {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.quick-question:hover {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.05);
+    transform: translateY(-2px);
+}
+
+.quick-question i {
+    font-size: 1.5rem;
+    color: #28a745;
+}
+
+.quick-question span {
+    font-size: 0.85rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Chat Input */
+.chat-input {
+    background: white;
+    border-top: 1px solid #dee2e6;
+    padding: 1.5rem;
+}
+
+.chat-input .form-control {
+    border-radius: 25px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.chat-input .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.chat-input .btn {
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    color: #6c757d;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    background: #28a745;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-card {
+        height: 90vh;
+        border-radius: 0;
+    }
+    
+    .message-bubble {
+        max-width: 85%;
+    }
+    
+    .quick-questions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+<script>
+let currentSessionId = '{{ chat_session.session_id }}';
+
+// Initialize chat
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const chatMessages = document.getElementById('chatMessages');
+    
+    // Auto-scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Handle form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage();
+    });
+    
+    // Handle Enter key
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // Focus input
+    messageInput.focus();
+});
+
+// Send message function
+function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message to chat
+    addMessage(message, 'user');
+    messageInput.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Send to backend
+    fetch('/ai-chatbot/send-message/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            message: message,
+            session_id: currentSessionId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideTypingIndicator();
+        
+        if (data.success) {
+            // Add AI response to chat
+            addMessage(data.ai_response.content, 'ai');
+        } else {
+            addMessage('Sorry, I encountered an error. Please try again.', 'ai');
+        }
+    })
+    .catch(error => {
+        hideTypingIndicator();
+        addMessage('Sorry, I encountered an error. Please try again.', 'ai');
+        console.error('Error:', error);
+    });
+}
+
+// Add message to chat
+function addMessage(content, type) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    const timestamp = new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    
+    messageDiv.className = `message ${type}-message`;
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            ${type === 'user' ? `
+                <div class="message-bubble user-bubble">
+                    <p>${content}</p>
+                </div>
+                <div class="message-avatar user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            ` : `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-bubble">
+                    <p>${content.replace(/\n/g, '<br>')}</p>
+                </div>
+            `}
+        </div>
+        <div class="message-time">${timestamp}</div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Show/hide typing indicator
+function showTypingIndicator() {
+    document.getElementById('typingIndicator').style.display = 'flex';
+}
+
+function hideTypingIndicator() {
+    document.getElementById('typingIndicator').style.display = 'none';
+}
+
+// Quick questions functions
+function showQuickQuestions() {
+    document.getElementById('quickQuestionsPanel').style.display = 'block';
+}
+
+function hideQuickQuestions() {
+    document.getElementById('quickQuestionsPanel').style.display = 'none';
+}
+
+function askQuestion(question) {
+    document.getElementById('messageInput').value = question;
+    sendMessage();
+    hideQuickQuestions();
+}
+
+// Clear chat function
+function clearChat() {
+    if (confirm('Are you sure you want to clear the chat history?')) {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = `
+            <div class="message ai-message">
+                <div class="message-content">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-bubble">
+                        <p>Chat history cleared. How can I help you today?</p>
+                    </div>
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+        `;
+    }
+}
+
+// Utility function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

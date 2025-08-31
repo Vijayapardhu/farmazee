@@ -1,0 +1,794 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Tests - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Error Message Display -->
+    {% if error_message %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Error:</strong> {{ error_message }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-flask text-primary me-2"></i>
+                        Soil Testing & Analysis
+                    </h1>
+                    <p class="lead text-muted mb-0">Comprehensive soil health monitoring and analysis for optimal crop production</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTestModal">
+                        <i class="fas fa-plus me-2"></i>New Soil Test
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportAllTests()">
+                        <i class="fas fa-file-excel me-2"></i>Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Dashboard -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ soil_tests.count }}</h4>
+                            <p class="mb-0">Total Tests</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-flask fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ completed_tests_count|default:0 }}</h4>
+                            <p class="mb-0">Completed</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ pending_tests_count|default:0 }}</h4>
+                            <p class="mb-0">Pending</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-clock fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ avg_health_score|default:0|floatformat:1 }}</h4>
+                            <p class="mb-0">Avg Health Score</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-heart fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Search & Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-search text-primary me-2"></i>
+                        Search & Filter Tests
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="searchForm" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="searchLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="searchLocation" placeholder="Search by location...">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="searchTestType" class="form-label">Test Type</label>
+                            <select class="form-select" id="searchTestType">
+                                <option value="">All Types</option>
+                                <option value="ph">pH Test</option>
+                                <option value="npk">NPK Test</option>
+                                <option value="organic_matter">Organic Matter</option>
+                                <option value="comprehensive">Comprehensive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="searchDateFrom" class="form-label">From Date</label>
+                            <input type="date" class="form-control" id="searchDateFrom">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="searchDateTo" class="form-label">To Date</label>
+                            <input type="date" class="form-control" id="searchDateTo">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search me-2"></i>Search
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearSearch()">
+                                <i class="fas fa-times me-2"></i>Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soil Tests List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-primary me-2"></i>
+                        Test History & Results
+                    </h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="viewAsGrid()">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm active" onclick="viewAsTable()">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if soil_tests %}
+                        <!-- Table View -->
+                        <div id="tableView" class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Test Info</th>
+                                        <th>Location & Depth</th>
+                                        <th>Key Parameters</th>
+                                        <th>Health Assessment</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for test in soil_tests %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="test-icon me-3">
+                                                    <i class="fas fa-flask fa-2x text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">{{ test.get_test_type_display }}</h6>
+                                                    <small class="text-muted">{{ test.test_date|date:"M d, Y" }}</small>
+                                                    <br>
+                                                    <small class="text-muted">{{ test.test_date|time:"H:i" }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>{{ test.location|default:"Field" }}</strong>
+                                                {% if test.soil_depth %}
+                                                <br><small class="text-muted">Depth: {{ test.soil_depth }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="parameter-summary">
+                                                {% for result in test.results.all|slice:":3" %}
+                                                <span class="badge bg-light text-dark me-1 mb-1">
+                                                    {{ result.parameter|title }}: {{ result.value }} {{ result.unit }}
+                                                </span>
+                                                {% endfor %}
+                                                {% if test.results.count > 3 %}
+                                                <small class="text-muted">+{{ test.results.count|add:"-3" }} more</small>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="health-indicator">
+                                                <span class="text-muted">Not assessed</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if test.is_completed %}
+                                            <span class="badge bg-success">Completed</span>
+                                            {% else %}
+                                            <span class="badge bg-warning">In Progress</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-outline-primary btn-sm" onclick="viewTestDetails({{ test.id }})" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm" onclick="downloadTestReport({{ test.id }})" title="Download Report">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button class="btn btn-outline-info btn-sm" onclick="compareTest({{ test.id }})" title="Compare">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Grid View (Hidden by default) -->
+                        <div id="gridView" class="row" style="display: none;">
+                            {% for test in soil_tests %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100 test-card">
+                                    <div class="card-header bg-light">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">{{ test.get_test_type_display }}</h6>
+                                            <span class="badge {% if test.is_completed %}bg-success{% else %}bg-warning{% endif %}">
+                                                {% if test.is_completed %}Completed{% else %}In Progress{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="test-info mb-3">
+                                            <p class="mb-1"><strong>Date:</strong> {{ test.test_date|date:"M d, Y" }}</p>
+                                            <p class="mb-1"><strong>Location:</strong> {{ test.location|default:"Field" }}</p>
+                                            {% if test.soil_depth %}
+                                            <p class="mb-1"><strong>Depth:</strong> {{ test.soil_depth }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="test-actions">
+                                            <button class="btn btn-primary btn-sm w-100 mb-2" onclick="viewTestDetails({{ test.id }})">
+                                                <i class="fas fa-eye me-2"></i>View Details
+                                            </button>
+                                            <div class="btn-group w-100" role="group">
+                                                <button class="btn btn-outline-success btn-sm" onclick="downloadTestReport({{ test.id }})">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button class="btn btn-outline-info btn-sm" onclick="compareTest({{ test.id }})">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-flask fa-4x mb-4 text-light"></i>
+                            <h4>No Soil Tests Yet</h4>
+                            <p class="mb-4">Start monitoring your soil health by scheduling your first comprehensive soil test.</p>
+                            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#newTestModal">
+                                <i class="fas fa-plus me-2"></i>Schedule First Test
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Analysis & Trends -->
+    {% if soil_tests %}
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Soil Health Trends
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="soilTrendsChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Key Insights
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="insight-item mb-3">
+                        <h6><i class="fas fa-seedling text-success me-2"></i>pH Balance</h6>
+                        <p class="small text-muted">
+                            {% if latest_test.ph_level %}
+                                {% if latest_test.ph_level < 6.0 %}
+                                Your soil is acidic. Consider adding lime to raise pH levels for better nutrient availability.
+                                {% elif latest_test.ph_level > 7.5 %}
+                                Your soil is alkaline. Consider adding sulfur or organic matter to lower pH levels.
+                                {% else %}
+                                Excellent! Your soil pH is optimal for most crops.
+                                {% endif %}
+                            {% else %}
+                                pH testing recommended for optimal crop growth.
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="insight-item mb-3">
+                        <h6><i class="fas fa-leaf text-primary me-2"></i>Nutrient Status</h6>
+                        <p class="small text-muted">
+                            Focus on balanced fertilization and organic matter improvement for sustainable crop production.
+                        </p>
+                    </div>
+                    <div class="insight-item">
+                        <h6><i class="fas fa-calendar text-info me-2"></i>Testing Schedule</h6>
+                        <p class="small text-muted">
+                            Regular soil testing every 2-3 years helps maintain optimal soil health and crop productivity.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- New Soil Test Modal -->
+<div class="modal fade" id="newTestModal" tabindex="-1" aria-labelledby="newTestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTestModalLabel">
+                    <i class="fas fa-plus text-primary me-2"></i>
+                    Schedule New Soil Test
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="newTestForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="testType" class="form-label">Test Type *</label>
+                            <select class="form-select" id="testType" name="test_type" required>
+                                <option value="">Select Test Type</option>
+                                <option value="ph">pH Test - Basic acidity/alkalinity</option>
+                                <option value="npk">NPK Test - Nitrogen, Phosphorus, Potassium</option>
+                                <option value="organic_matter">Organic Matter Test</option>
+                                <option value="micronutrients">Micronutrients Test</option>
+                                <option value="texture">Soil Texture Test</option>
+                                <option value="salinity">Salinity Test</option>
+                                <option value="comprehensive">Comprehensive Test - All parameters</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="testDate" class="form-label">Test Date *</label>
+                            <input type="date" class="form-control" id="testDate" name="test_date" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="location" class="form-label">Location *</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="e.g., North Field, Plot A" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="soilDepth" class="form-label">Soil Depth</label>
+                            <select class="form-select" id="soilDepth" name="soil_depth">
+                                <option value="">Select Depth</option>
+                                <option value="0-15 cm">0-15 cm (Surface)</option>
+                                <option value="15-30 cm">15-30 cm (Subsurface)</option>
+                                <option value="30-60 cm">30-60 cm (Deep)</option>
+                                <option value="60+ cm">60+ cm (Very Deep)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="sampleWeight" class="form-label">Sample Weight</label>
+                            <input type="text" class="form-control" id="sampleWeight" name="sample_weight" placeholder="e.g., 500g, 1kg">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="priority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any specific concerns, crop history, or special requirements..."></textarea>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Testing Tips:</strong> For best results, collect soil samples when the soil is neither too wet nor too dry. 
+                        Sample from multiple locations within the field and mix thoroughly.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Schedule Test
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Test Details Modal -->
+<div class="modal fade" id="testDetailsModal" tabindex="-1" aria-labelledby="testDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testDetailsModalLabel">
+                    <i class="fas fa-flask text-primary me-2"></i>
+                    Soil Test Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="testDetailsContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.test-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 110, 253, 0.1);
+    border-radius: 50%;
+}
+
+.parameter-summary .badge {
+    font-size: 0.75rem;
+}
+
+.health-indicator .health-bar {
+    min-width: 60px;
+}
+
+.test-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #dee2e6;
+}
+
+.test-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.insight-item h6 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.insight-item p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 12px;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.btn-group .btn {
+    border-radius: 6px;
+}
+
+.progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn-group {
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        flex: 1;
+    }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default date to today
+    document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+    
+    // Initialize charts if tests exist
+    {% if soil_tests %}
+    initializeCharts();
+    {% endif %}
+    
+    // Form submission
+    document.getElementById('newTestForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        scheduleNewTest();
+    });
+    
+    // Search form
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+});
+
+// View management
+function viewAsGrid() {
+    document.getElementById('tableView').style.display = 'none';
+    document.getElementById('gridView').style.display = 'block';
+    document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function viewAsTable() {
+    document.getElementById('tableView').style.display = 'block';
+    document.getElementById('gridView').style.display = 'none';
+    document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+// Test management functions
+function scheduleNewTest() {
+    const formData = new FormData(document.getElementById('newTestForm'));
+    
+    fetch('/soil/schedule-test/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Soil test scheduled successfully!');
+            location.reload();
+        } else {
+            alert('Error scheduling test: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error scheduling test. Please try again.');
+        console.error('Error:', error);
+    });
+}
+
+function viewTestDetails(testId) {
+    const modal = new bootstrap.Modal(document.getElementById('testDetailsModal'));
+    const content = document.getElementById('testDetailsContent');
+    
+    content.innerHTML = `
+        <div class="text-center py-4">
+            <i class="fas fa-spinner fa-spin fa-2x text-primary mb-3"></i>
+            <p>Loading test details...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Load test details (this would typically fetch from an API)
+    setTimeout(() => {
+        content.innerHTML = `
+            <div class="row">
+                <div class="col-md-8">
+                    <h6>Test Parameters & Results</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Value</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>pH Level</td>
+                                    <td>6.8</td>
+                                    <td>-</td>
+                                    <td><span class="badge bg-success">Optimal</span></td>
+                                    <td>Maintain current levels</td>
+                                </tr>
+                                <tr>
+                                    <td>Nitrogen (N)</td>
+                                    <td>45.2</td>
+                                    <td>kg/ha</td>
+                                    <td><span class="badge bg-warning">Medium</span></td>
+                                    <td>Consider nitrogen application</td>
+                                </tr>
+                                <tr>
+                                    <td>Phosphorus (P)</td>
+                                    <td>28.7</td>
+                                    <td>kg/ha</td>
+                                    <td><span class="badge bg-success">Optimal</span></td>
+                                    <td>Maintain current levels</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h6>Test Summary</h6>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <p><strong>Test Date:</strong> Aug 31, 2025</p>
+                            <p><strong>Location:</strong> North Field</p>
+                            <p><strong>Test Type:</strong> Comprehensive</p>
+                            <p><strong>Health Score:</strong> 8/10</p>
+                        </div>
+                    </div>
+                    
+                    <h6 class="mt-3">Actions Required</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            pH levels are optimal
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            Consider nitrogen application
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Schedule next test in 2 years
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }, 1000);
+}
+
+function downloadTestReport(testId) {
+    // This would typically generate and download a PDF report
+    alert('Generating test report... This feature will be implemented soon.');
+}
+
+function compareTest(testId) {
+    // This would typically open a comparison view
+    alert('Test comparison feature coming soon!');
+}
+
+function exportAllTests() {
+    // This would typically export all test data to Excel/CSV
+    alert('Exporting all test data... This feature will be implemented soon.');
+}
+
+function performSearch() {
+    // This would typically filter the tests based on search criteria
+    alert('Search functionality coming soon!');
+}
+
+function clearSearch() {
+    document.getElementById('searchForm').reset();
+    // This would typically reset the filtered results
+}
+
+// Chart initialization
+function initializeCharts() {
+    const ctx = document.getElementById('soilTrendsChart').getContext('2d');
+    
+    // Sample data - in real app, this would come from the backend
+    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    const phData = [6.5, 6.8, 6.7, 6.9, 7.0, 6.8];
+    const organicMatterData = [2.1, 2.3, 2.2, 2.4, 2.5, 2.3];
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'pH Level',
+                    data: phData,
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Organic Matter (%)',
+                    data: organicMatterData,
+                    borderColor: '#17a2b8',
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+}
+
+// Utility function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,712 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Community Management - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-users me-2"></i>Community Management
+        </h1>
+        <div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTopicModal">
+                <i class="fas fa-plus me-1"></i>Add Topic
+            </button>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                <i class="fas fa-calendar-plus me-1"></i>Add Event
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Topics</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_topics }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Questions</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_questions }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-question-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Active Events</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_events }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Approvals</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pending_approvals }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Search & Filter</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ request.GET.search }}" placeholder="Topic, question, event...">
+                </div>
+                <div class="col-md-2">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">All Status</option>
+                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="type" class="form-label">Type</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">All Types</option>
+                        <option value="topic" {% if request.GET.type == 'topic' %}selected{% endif %}>Topics</option>
+                        <option value="question" {% if request.GET.type == 'question' %}selected{% endif %}>Questions</option>
+                        <option value="event" {% if request.GET.type == 'event' %}selected{% endif %}>Events</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-1"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Forum Topics Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Forum Topics</h6>
+            <div>
+                <span class="badge bg-secondary me-2">Selected: <span id="selectedTopicCount">0</span></span>
+                <button class="btn btn-sm btn-success" id="bulkActivateTopics" disabled>
+                    <i class="fas fa-check me-1"></i>Activate
+                </button>
+                <button class="btn btn-sm btn-warning" id="bulkDeactivateTopics" disabled>
+                    <i class="fas fa-pause me-1"></i>Deactivate
+                </button>
+                <button class="btn btn-sm btn-danger" id="bulkDeleteTopics" disabled>
+                    <i class="fas fa-trash me-1"></i>Delete
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="topicsTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th width="30">
+                                <input type="checkbox" id="selectAllTopics">
+                            </th>
+                            <th>Topic</th>
+                            <th>Category</th>
+                            <th>Author</th>
+                            <th>Replies</th>
+                            <th>Views</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for topic in topics %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="topic-checkbox" value="{{ topic.id }}">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" 
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-comments text-muted"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ topic.title }}</div>
+                                        <small class="text-muted">{{ topic.content|truncatechars:50 }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ topic.category.name }}</span>
+                            </td>
+                            <td>{{ topic.author.username }}</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ topic.reply_count|default:0 }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">{{ topic.view_count|default:0 }}</span>
+                            </td>
+                            <td>
+                                <span class="badge {% if topic.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {% if topic.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ topic.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" title="Edit"
+                                            onclick="editTopic({{ topic.id }})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-{% if topic.is_active %}warning{% else %}success{% endif %}" 
+                                            title="{% if topic.is_active %}Deactivate{% else %}Activate{% endif %}"
+                                            onclick="toggleTopicStatus({{ topic.id }}, {{ topic.is_active|yesno:'false,true' }})">
+                                        <i class="fas fa-{% if topic.is_active %}pause{% else %}play{% endif %}"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" title="Delete"
+                                            onclick="deleteTopic({{ topic.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No topics found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if topics.has_other_pages %}
+            <nav aria-label="Topics pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if topics.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ topics.previous_page_number }}&{{ request.GET.urlencode }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in topics.paginator.page_range %}
+                        {% if topics.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > topics.number|add:'-3' and num < topics.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&{{ request.GET.urlencode }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if topics.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ topics.next_page_number }}&{{ request.GET.urlencode }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Questions Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Questions</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Answers</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in questions %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold">{{ question.title }}</div>
+                                <small class="text-muted">{{ question.content|truncatechars:100 }}</small>
+                            </td>
+                            <td>{{ question.author.username }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ question.category.name }}</span>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if question.status == 'open' %}bg-warning
+                                    {% elif question.status == 'answered' %}bg-success
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ question.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ question.answer_count|default:0 }}</span>
+                            </td>
+                            <td>{{ question.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details"
+                                        onclick="viewQuestion({{ question.id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" title="Mark Answered"
+                                        onclick="markQuestionAnswered({{ question.id }})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-question-circle fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No questions found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Community Events Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Community Events</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Organizer</th>
+                            <th>Date & Time</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Attendees</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold">{{ event.title }}</div>
+                                <small class="text-muted">{{ event.description|truncatechars:100 }}</small>
+                            </td>
+                            <td>{{ event.organizer.username }}</td>
+                            <td>
+                                <div>{{ event.event_date|date:"M d, Y" }}</div>
+                                <small class="text-muted">{{ event.event_time|time:"H:i" }}</small>
+                            </td>
+                            <td>{{ event.location }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if event.status == 'upcoming' %}bg-info
+                                    {% elif event.status == 'ongoing' %}bg-success
+                                    {% elif event.status == 'completed' %}bg-secondary
+                                    {% else %}bg-warning{% endif %}">
+                                    {{ event.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">{{ event.attendee_count|default:0 }}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details"
+                                        onclick="viewEvent({{ event.id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" title="Edit"
+                                        onclick="editEvent({{ event.id }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-calendar fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No events found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Topic Modal -->
+<div class="modal fade" id="addTopicModal" tabindex="-1" aria-labelledby="addTopicModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTopicModalLabel">Add New Topic</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addTopicForm">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="topicTitle" class="form-label">Topic Title</label>
+                                <input type="text" class="form-control" id="topicTitle" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="topicCategory" class="form-label">Category</label>
+                                <select class="form-select" id="topicCategory" required>
+                                    <option value="">Select Category</option>
+                                    {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicContent" class="form-label">Content</label>
+                        <textarea class="form-control" id="topicContent" rows="5" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveTopic()">Save Topic</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Event Modal -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEventForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="eventTitle" class="form-label">Event Title</label>
+                                <input type="text" class="form-control" id="eventTitle" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="eventDate" class="form-label">Event Date</label>
+                                <input type="date" class="form-control" id="eventDate" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="eventTime" class="form-label">Event Time</label>
+                                <input type="time" class="form-control" id="eventTime" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="eventLocation" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="eventLocation" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="eventDescription" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveEvent()">Save Event</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Topic selection handling
+document.getElementById('selectAllTopics').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.topic-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+    updateSelectedTopicCount();
+});
+
+document.querySelectorAll('.topic-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectedTopicCount);
+});
+
+function updateSelectedTopicCount() {
+    const selectedCount = document.querySelectorAll('.topic-checkbox:checked').length;
+    document.getElementById('selectedTopicCount').textContent = selectedCount;
+    
+    const bulkButtons = ['bulkActivateTopics', 'bulkDeactivateTopics', 'bulkDeleteTopics'];
+    bulkButtons.forEach(buttonId => {
+        document.getElementById(buttonId).disabled = selectedCount === 0;
+    });
+}
+
+// Bulk actions for topics
+document.getElementById('bulkActivateTopics').addEventListener('click', () => {
+    const selectedIds = getSelectedTopicIds();
+    if (selectedIds.length > 0) {
+        bulkTopicAction(selectedIds, 'activate');
+    }
+});
+
+document.getElementById('bulkDeactivateTopics').addEventListener('click', () => {
+    const selectedIds = getSelectedTopicIds();
+    if (selectedIds.length > 0) {
+        bulkTopicAction(selectedIds, 'deactivate');
+    }
+});
+
+document.getElementById('bulkDeleteTopics').addEventListener('click', () => {
+    const selectedIds = getSelectedTopicIds();
+    if (selectedIds.length > 0) {
+        if (confirm('Are you sure you want to delete the selected topics?')) {
+            bulkTopicAction(selectedIds, 'delete');
+        }
+    }
+});
+
+function getSelectedTopicIds() {
+    const checkboxes = document.querySelectorAll('.topic-checkbox:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+function bulkTopicAction(topicIds, action) {
+    fetch('{% url "admin:bulk_actions" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            action: action,
+            model: 'topic',
+            ids: topicIds
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while performing the bulk action');
+    });
+}
+
+// Topic management functions
+function editTopic(topicId) {
+    // Implement edit functionality
+    alert('Edit topic ' + topicId);
+}
+
+function toggleTopicStatus(topicId, newStatus) {
+    fetch('{% url "admin:bulk_actions" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            action: newStatus ? 'activate' : 'deactivate',
+            model: 'topic',
+            ids: [topicId]
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating topic status');
+    });
+}
+
+function deleteTopic(topicId) {
+    if (confirm('Are you sure you want to delete this topic?')) {
+        fetch('{% url "admin:bulk_actions" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                action: 'delete',
+                model: 'topic',
+                ids: [topicId]
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the topic');
+        });
+    }
+}
+
+// Question management functions
+function viewQuestion(questionId) {
+    // Implement question view functionality
+    alert('View question ' + questionId);
+}
+
+function markQuestionAnswered(questionId) {
+    fetch('{% url "admin:bulk_actions" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            action: 'mark_answered',
+            model: 'question',
+            ids: [questionId]
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating question status');
+    });
+}
+
+// Event management functions
+function viewEvent(eventId) {
+    // Implement event view functionality
+    alert('View event ' + eventId);
+}
+
+function editEvent(eventId) {
+    // Implement event edit functionality
+    alert('Edit event ' + eventId);
+}
+
+// Form save functions
+function saveTopic() {
+    // Implement topic save functionality
+    alert('Save topic functionality to be implemented');
+}
+
+function saveEvent() {
+    // Implement event save functionality
+    alert('Save event functionality to be implemented');
+}
+</script>
+{% endblock %}

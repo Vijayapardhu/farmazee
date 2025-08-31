@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Government Schemes - Smart Farmer Support{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+    }
+    
+    .scheme-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .scheme-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .scheme-image {
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(45deg, #6f42c1, #e83e8c);
+    }
+    
+    .scheme-status {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1;
+    }
+    
+    .scheme-details {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .detail-item {
+        text-align: center;
+        flex: 1;
+    }
+    
+    .detail-value {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #6f42c1;
+    }
+    
+    .detail-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .filter-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .search-box {
+        position: relative;
+    }
+    
+    .search-box .form-control {
+        padding-left: 2.5rem;
+        border-radius: 25px;
+    }
+    
+    .search-box .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    
+    .category-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .eligibility-list {
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .eligibility-list li {
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .eligibility-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .eligibility-list li:before {
+        content: "✓";
+        color: #28a745;
+        font-weight: bold;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-landmark"></i>
+                    Government Schemes
+                </h1>
+                <p class="lead mb-4">
+                    Discover government schemes, subsidies, and financial assistance programs designed to support farmers and promote agricultural development.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#schemes" class="btn btn-light btn-lg">
+                        <i class="fas fa-search"></i> Browse Schemes
+                    </a>
+                    <a href="{% url 'schemes:application_list' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-file-alt"></i> My Applications
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-hand-holding-usd fa-5x mb-3"></i>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="mb-0">{{ total_schemes|default:0 }}</h3>
+                            <small>Schemes</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="mb-0">{{ active_schemes|default:0 }}</h3>
+                            <small>Active</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <h3 class="mb-0">{{ total_applications|default:0 }}</h3>
+                            <small>Applications</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="schemes">
+    <!-- Search and Filter Section -->
+    <div class="filter-section">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control" name="search" placeholder="Search schemes..." value="{{ request.GET.search }}">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" name="category" id="category">
+                    <option value="">All Categories</option>
+                    <option value="subsidy" {% if request.GET.category == 'subsidy' %}selected{% endif %}>Subsidy</option>
+                    <option value="loan" {% if request.GET.category == 'loan' %}selected{% endif %}>Loan</option>
+                    <option value="insurance" {% if request.GET.category == 'insurance' %}selected{% endif %}>Insurance</option>
+                    <option value="training" {% if request.GET.category == 'training' %}selected{% endif %}>Training</option>
+                    <option value="infrastructure" {% if request.GET.category == 'infrastructure' %}selected{% endif %}>Infrastructure</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" name="status" id="status">
+                    <option value="">All Status</option>
+                    <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="upcoming" {% if request.GET.status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                    <option value="closed" {% if request.GET.status == 'closed' %}selected{% endif %}>Closed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="state" class="form-label">State</label>
+                <select class="form-select" name="state" id="state">
+                    <option value="">All States</option>
+                    <option value="andhra_pradesh" {% if request.GET.state == 'andhra_pradesh' %}selected{% endif %}>Andhra Pradesh</option>
+                    <option value="telangana" {% if request.GET.state == 'telangana' %}selected{% endif %}>Telangana</option>
+                    <option value="karnataka" {% if request.GET.state == 'karnataka' %}selected{% endif %}>Karnataka</option>
+                    <option value="tamil_nadu" {% if request.GET.state == 'tamil_nadu' %}selected{% endif %}>Tamil Nadu</option>
+                    <option value="maharashtra" {% if request.GET.state == 'maharashtra' %}selected{% endif %}>Maharashtra</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="fas fa-landmark fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ schemes.count }}</h4>
+                    <p class="card-text">Total Schemes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ active_schemes|default:0 }}</h4>
+                    <p class="card-text">Active Schemes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ upcoming_schemes|default:0 }}</h4>
+                    <p class="card-text">Upcoming</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="fas fa-file-alt fa-2x mb-2"></i>
+                    <h4 class="card-title">{{ total_applications|default:0 }}</h4>
+                    <p class="card-text">Applications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schemes Grid -->
+    <div class="row">
+        {% for scheme in schemes %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card scheme-card">
+                <div class="position-relative">
+                    {% if scheme.image %}
+                        <img src="{{ scheme.image.url }}" class="card-img-top scheme-image" alt="{{ scheme.title }}">
+                    {% else %}
+                        <div class="card-img-top scheme-image d-flex align-items-center justify-content-center">
+                            <i class="fas fa-landmark fa-3x text-white"></i>
+                        </div>
+                    {% endif %}
+                    <div class="scheme-status">
+                        {% if scheme.status == 'active' %}
+                            <span class="badge bg-success">Active</span>
+                        {% elif scheme.status == 'upcoming' %}
+                            <span class="badge bg-warning">Upcoming</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Closed</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ scheme.title }}</h5>
+                        <span class="badge bg-primary category-badge">{{ scheme.get_category_display }}</span>
+                    </div>
+                    <p class="card-text text-muted">{{ scheme.description|truncatewords:20 }}</p>
+                    
+                    <div class="scheme-details">
+                        <div class="detail-item">
+                            <div class="detail-value">₹{{ scheme.max_amount|floatformat:0 }}</div>
+                            <div class="detail-label">Max Amount</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">{{ scheme.deadline|date:"M d" }}</div>
+                            <div class="detail-label">Deadline</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">{{ scheme.applications.count }}</div>
+                            <div class="detail-label">Applied</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ scheme.get_state_display }}
+                        </small>
+                        <a href="{% url 'schemes:scheme_detail' scheme.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-info-circle"></i> Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No schemes found</h4>
+                <p class="text-muted">Try adjusting your search criteria or browse all schemes.</p>
+                <a href="{% url 'schemes:scheme_list' %}" class="btn btn-primary">
+                    <i class="fas fa-list"></i> View All Schemes
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if schemes.has_other_pages %}
+    <nav aria-label="Scheme pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if schemes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ schemes.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in schemes.paginator.page_range %}
+                {% if schemes.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > schemes.number|add:'-3' and num < schemes.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if schemes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ schemes.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Quick Links -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-link text-primary"></i>
+                Quick Links
+            </h3>
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{% url 'schemes:application_list' %}" class="card text-center text-decoration-none">
+                        <div class="card-body">
+                            <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">My Applications</h5>
+                            <p class="card-text">Track your scheme applications</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{% url 'schemes:scheme_list' %}?status=active" class="card text-center text-decoration-none">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Active Schemes</h5>
+                            <p class="card-text">Currently open for applications</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{% url 'schemes:scheme_list' %}?status=upcoming" class="card text-center text-decoration-none">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Upcoming Schemes</h5>
+                            <p class="card-text">Schemes opening soon</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{% url 'schemes:scheme_list' %}?category=subsidy" class="card text-center text-decoration-none">
+                        <div class="card-body">
+                            <i class="fas fa-hand-holding-usd fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Subsidies</h5>
+                            <p class="card-text">Financial assistance programs</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-submit form on filter change
+document.querySelectorAll('select[name="category"], select[name="status"], select[name="state"]').forEach(select => {
+    select.addEventListener('change', function() {
+        this.form.submit();
+    });
+});
+
+// Search with debounce
+let searchTimeout;
+document.querySelector('input[name="search"]').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        this.form.submit();
+    }, 500);
+});
+
+// Add loading animation to cards
+document.querySelectorAll('.scheme-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        if (!e.target.closest('a')) {
+            const link = this.querySelector('a[href*="scheme_detail"]');
+            if (link) {
+                link.click();
+            }
+        }
+    });
+});
+
+// Smooth scroll to schemes section
+document.querySelectorAll('a[href="#schemes"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('schemes').scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+{% endblock %}
+
+
+

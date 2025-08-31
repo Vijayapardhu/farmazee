@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Weather - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-cloud-sun text-primary me-2"></i>
+                Weather Information
+            </h1>
+        </div>
+    </div>
+
+    <!-- Current Weather for Major Cities -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map-marker-alt text-info me-2"></i>
+                        Current Weather - Major Cities
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for city, weather in current_weather.items %}
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="text-center p-3 border rounded">
+                                <h6 class="mb-2">{{ city }}</h6>
+                                {% if weather %}
+                                <div class="mb-2">
+                                    <i class="fas fa-thermometer-half text-danger"></i>
+                                    <span class="fw-bold">{{ weather.temperature }}°C</span>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-tint text-primary"></i>
+                                    <span>{{ weather.humidity }}%</span>
+                                </div>
+                                <div class="small text-muted">
+                                    {{ weather.description }}
+                                </div>
+                                {% else %}
+                                <div class="text-muted">
+                                    <i class="fas fa-question-circle"></i>
+                                    No data
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center text-muted">
+                            <i class="fas fa-cloud-slash fa-2x mb-3"></i>
+                            <p>No weather data available</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Alerts -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Active Weather Alerts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if active_alerts %}
+                    <div class="row">
+                        {% for alert in active_alerts %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    {{ alert.title }}
+                                </h6>
+                                <p class="mb-1">{{ alert.description }}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ alert.location }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-check-circle fa-2x mb-3 text-success"></i>
+                        <p>No active weather alerts</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Tools -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-search text-primary me-2"></i>
+                        Check Weather
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{% url 'weather:detail' 'Hyderabad' %}">
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="Enter city or location" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Get Weather
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Weather Dashboard
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Get personalized weather information for your location.</p>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'weather:dashboard' %}" class="btn btn-success">
+                        <i class="fas fa-tachometer-alt me-2"></i>View Dashboard
+                    </a>
+                    {% else %}
+                    <a href="{% url 'account_login' %}" class="btn btn-outline-success">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to Access
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

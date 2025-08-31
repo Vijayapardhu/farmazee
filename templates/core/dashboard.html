@@ -1,0 +1,488 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">Welcome back, {{ user.first_name|default:user.username }}!</h2>
+                            <p class="text-muted mb-0">Here's what's happening with your farm today.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="me-3">
+                                    <h6 class="mb-0">{{ weather_data.location }}</h6>
+                                    <small class="text-muted">{{ weather_data.description }}</small>
+                                </div>
+                                <div class="weather-icon">
+                                    <i class="fas fa-cloud-sun fa-2x text-warning"></i>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <span class="h4">{{ weather_data.temperature }}°C</span>
+                                <small class="text-muted ms-2">{{ weather_data.humidity }}% humidity</small>
+                            </div>
+                            {% if user.is_superuser or user.is_staff %}
+                            <div class="mt-2">
+                                <a href="{% url 'admin:dashboard' %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-shield-alt me-1"></i>Admin Panel
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded p-3">
+                                <i class="fas fa-seedling fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Active Crops</h6>
+                            <h4 class="mb-0">{{ recent_crops.count }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded p-3">
+                                <i class="fas fa-chart-line fa-2x text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Land Area</h6>
+                            <h4 class="mb-0">{{ profile.land_area|default:"0" }} acres</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded p-3">
+                                <i class="fas fa-calendar-alt fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Upcoming Events</h6>
+                            <h4 class="mb-0">{{ upcoming_events.count }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded p-3">
+                                <i class="fas fa-question-circle fa-2x text-info"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Open Questions</h6>
+                            <h4 class="mb-0">{{ recent_questions.count }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Recent Crops -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Recent Crops</h5>
+                        <a href="{% url 'crops:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if recent_crops %}
+                    <div class="row g-3">
+                        {% for crop in recent_crops %}
+                        <div class="col-md-6">
+                            <a href="{% url 'crops:detail' crop.pk %}" class="text-decoration-none">
+                                <div class="d-flex align-items-center p-3 border rounded hover-shadow">
+                                    {% if crop.image %}
+                                    <img src="{{ crop.image.url }}" alt="{{ crop.name }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-secondary rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-seedling text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 text-dark">{{ crop.name }}</h6>
+                                        <p class="text-muted mb-1">{{ crop.get_category_display }}</p>
+                                        <small class="text-success">{{ crop.get_season_display }}</small>
+                                    </div>
+                                    <div class="ms-2">
+                                        <i class="fas fa-chevron-right text-muted"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-seedling fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No crops added yet. Start by adding your first crop!</p>
+                                                 <a href="{% url 'crops:list' %}" class="btn btn-primary">Add Crop</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Community Activity -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Community Activity</h5>
+                        <a href="{% url 'community:home' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Recent Topics -->
+                    {% if recent_topics %}
+                    <h6 class="text-muted mb-3">Recent Forum Topics</h6>
+                    {% for topic in recent_topics %}
+                    <a href="{% url 'community:topic_detail' topic.pk %}" class="text-decoration-none">
+                        <div class="d-flex align-items-start mb-3 hover-shadow p-2 rounded">
+                            <div class="flex-shrink-0">
+                                <div class="bg-light rounded-circle p-2">
+                                    <i class="fas fa-comments text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-dark">{{ topic.title }}</h6>
+                                <p class="text-muted mb-1">{{ topic.content|truncatewords:20 }}</p>
+                                <small class="text-muted">by {{ topic.author.get_full_name|default:topic.author.username }} • {{ topic.created_at|timesince }} ago</small>
+                            </div>
+                            <div class="ms-2">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+
+                    <!-- Recent Questions -->
+                    {% if recent_questions %}
+                    <h6 class="text-muted mb-3 mt-4">Recent Questions</h6>
+                    {% for question in recent_questions %}
+                    <a href="{% url 'community:question_detail' question.pk %}" class="text-decoration-none">
+                        <div class="d-flex align-items-start mb-3 hover-shadow p-2 rounded">
+                            <div class="flex-shrink-0">
+                                <div class="bg-light rounded-circle p-2">
+                                    <i class="fas fa-question text-warning"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-dark">{{ question.title }}</h6>
+                                <p class="text-muted mb-1">{{ question.content|truncatewords:15 }}</p>
+                                <small class="text-muted">by {{ question.author.get_full_name|default:question.author.username }} • {{ question.created_at|timesince }} ago</small>
+                            </div>
+                            <div class="ms-2">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                                         <div class="d-grid gap-2">
+                         <a href="{% url 'crops:list' %}" class="btn btn-outline-primary">
+                             <i class="fas fa-plus me-2"></i>Add New Crop
+                         </a>
+                         <a href="{% url 'marketplace:home' %}" class="btn btn-outline-success">
+                             <i class="fas fa-store me-2"></i>Browse Marketplace
+                         </a>
+                         <a href="{% url 'weather:home' %}" class="btn btn-outline-info">
+                             <i class="fas fa-cloud-sun me-2"></i>Check Weather
+                         </a>
+                         <a href="{% url 'schemes:home' %}" class="btn btn-outline-warning">
+                             <i class="fas fa-coins me-2"></i>Government Schemes
+                         </a>
+                         <a href="{% url 'community:ask_question' %}" class="btn btn-outline-secondary">
+                             <i class="fas fa-graduation-cap me-2"></i>Ask Expert
+                         </a>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Upcoming Events</h5>
+                        <a href="{% url 'community:events' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events %}
+                    {% for event in upcoming_events %}
+                    <a href="{% url 'community:event_detail' event.pk %}" class="text-decoration-none">
+                        <div class="d-flex align-items-start mb-3 hover-shadow p-2 rounded">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 rounded p-2">
+                                    <i class="fas fa-calendar text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-dark">{{ event.title }}</h6>
+                                <p class="text-muted mb-1">{{ event.description|truncatewords:10 }}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ event.event_date|date:"M d, Y" }}
+                                </small>
+                            </div>
+                            <div class="ms-2">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-calendar fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No upcoming events</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Weather Forecast -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">Weather Forecast</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <h4>{{ weather_data.temperature }}°C</h4>
+                        <p class="text-muted mb-0">{{ weather_data.description }}</p>
+                        <small class="text-muted">{{ weather_data.location }}</small>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h6 class="text-muted">Humidity</h6>
+                                <p class="mb-0">{{ weather_data.humidity }}%</p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h6 class="text-muted">Wind</h6>
+                                <p class="mb-0">{{ weather_data.wind_speed|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-muted">Pressure</h6>
+                            <p class="mb-0">{{ weather_data.pressure|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Notifications -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Recent Notifications</h5>
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'weather:home' %}" class="text-decoration-none">
+                        <div class="d-flex align-items-start mb-3 hover-shadow p-2 rounded">
+                            <div class="flex-shrink-0">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                                    <i class="fas fa-bell text-success"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-dark">Weather Alert</h6>
+                                <p class="text-muted mb-1">Heavy rainfall expected in your area tomorrow.</p>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                            <div class="ms-2">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{% url 'crops:list' %}" class="text-decoration-none">
+                        <div class="d-flex align-items-start mb-3 hover-shadow p-2 rounded">
+                            <div class="flex-shrink-0">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-2">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-dark">Crop Alert</h6>
+                                <p class="text-muted mb-1">Time to apply fertilizer to your wheat crop.</p>
+                                <small class="text-muted">1 day ago</small>
+                            </div>
+                            <div class="ms-2">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{% url 'marketplace:home' %}" class="text-decoration-none">
+                        <div class="d-flex align-items-start hover-shadow p-2 rounded">
+                            <div class="flex-shrink-0">
+                                <div class="bg-info bg-opacity-10 rounded-circle p-2">
+                                    <i class="fas fa-info-circle text-info"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-dark">Market Update</h6>
+                                <p class="text-muted mb-1">Rice prices have increased by 5% this week.</p>
+                                <small class="text-muted">2 days ago</small>
+                            </div>
+                            <div class="ms-2">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.weather-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.quick-actions .btn {
+    text-align: left;
+    padding: 12px 16px;
+}
+
+.notification-item {
+    transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.hover-shadow {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background-color: #f8f9fa;
+}
+
+.text-decoration-none:hover {
+    text-decoration: none !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add refresh functionality to dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for better UX
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Add refresh button functionality
+    const refreshBtn = document.createElement('button');
+    refreshBtn.className = 'btn btn-sm btn-outline-secondary position-fixed';
+    refreshBtn.style.cssText = 'top: 20px; right: 20px; z-index: 1000;';
+    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+    refreshBtn.title = 'Refresh Dashboard';
+    
+    refreshBtn.addEventListener('click', function() {
+        this.classList.add('fa-spin');
+        location.reload();
+    });
+    
+    document.body.appendChild(refreshBtn);
+    
+    // Add loading states for better UX
+    const links = document.querySelectorAll('a[href*=":"]');
+    links.forEach(link => {
+        link.addEventListener('click', function() {
+            const btn = this.querySelector('.btn');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                btn.disabled = true;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+
+

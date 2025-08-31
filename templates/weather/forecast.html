@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Weather Forecast - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-calendar-alt text-success me-2"></i>
+                Weather Forecast
+            </h1>
+        </div>
+    </div>
+
+    <!-- Location Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-8">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="Enter city or location" value="{{ request.GET.location|default:'' }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="days" class="form-label">Forecast Days</label>
+                            <select class="form-select" id="days" name="days">
+                                <option value="7" {% if request.GET.days == "7" %}selected{% endif %}>7 Days</option>
+                                <option value="14" {% if request.GET.days == "14" %}selected{% endif %}>14 Days</option>
+                                <option value="30" {% if request.GET.days == "30" %}selected{% endif %}>30 Days</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Get Forecast
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forecast Results -->
+    {% if forecasts %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                        {{ request.GET.location|default:"Location" }} - {{ request.GET.days|default:"7" }} Day Forecast
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for forecast in forecasts %}
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="text-center p-3 border rounded h-100">
+                                <h6 class="mb-2">{{ forecast.date|date:"D, M d" }}</h6>
+                                
+                                <!-- Weather Icon -->
+                                <div class="mb-3">
+                                    {% if "rain" in forecast.description|lower %}
+                                        <i class="fas fa-cloud-rain fa-2x text-primary"></i>
+                                    {% elif "sun" in forecast.description|lower %}
+                                        <i class="fas fa-sun fa-2x text-warning"></i>
+                                    {% elif "cloud" in forecast.description|lower %}
+                                        <i class="fas fa-cloud fa-2x text-secondary"></i>
+                                    {% elif "storm" in forecast.description|lower %}
+                                        <i class="fas fa-bolt fa-2x text-danger"></i>
+                                    {% else %}
+                                        <i class="fas fa-cloud fa-2x text-info"></i>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Temperature -->
+                                <div class="mb-2">
+                                    <span class="fw-bold text-danger">{{ forecast.max_temperature }}°C</span>
+                                    <span class="text-muted">/</span>
+                                    <span class="text-info">{{ forecast.min_temperature }}°C</span>
+                                </div>
+                                
+                                <!-- Other Details -->
+                                <div class="mb-2">
+                                    <i class="fas fa-tint text-primary me-1"></i>
+                                    <span>{{ forecast.humidity }}%</span>
+                                </div>
+                                
+                                {% if forecast.wind_speed %}
+                                <div class="mb-2">
+                                    <i class="fas fa-wind text-info me-1"></i>
+                                    <span>{{ forecast.wind_speed }} km/h</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if forecast.precipitation_chance %}
+                                <div class="mb-2">
+                                    <i class="fas fa-umbrella text-primary me-1"></i>
+                                    <span>{{ forecast.precipitation_chance }}%</span>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Description -->
+                                <div class="small text-muted">
+                                    {{ forecast.description }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forecast Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-info me-2"></i>
+                        Temperature Trend
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="forecastChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- No Data Message -->
+    {% if not forecasts and request.GET.location %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-cloud-slash fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Forecast Data Available</h4>
+                    <p class="text-muted">Weather forecast for {{ request.GET.location }} is not currently available.</p>
+                    <p class="text-muted">Please try a different location or check back later.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Help Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle text-info me-2"></i>
+                        How to Use
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Getting Started</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Enter your location or city name</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Select forecast period (7, 14, or 30 days)</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Click "Get Forecast" to view weather predictions</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Understanding the Data</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-thermometer-half text-danger me-2"></i>High/Low temperatures</li>
+                                <li><i class="fas fa-tint text-primary me-2"></i>Humidity percentage</li>
+                                <li><i class="fas fa-wind text-info me-2"></i>Wind speed in km/h</li>
+                                <li><i class="fas fa-umbrella text-primary me-2"></i>Precipitation chance</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if forecasts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('forecastChart').getContext('2d');
+    
+    const data = {
+        labels: [{% for forecast in forecasts %}'{{ forecast.date|date:"M d" }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+        datasets: [{
+            label: 'High Temperature (°C)',
+            data: [{% for forecast in forecasts %}{{ forecast.max_temperature }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+            tension: 0.1
+        }, {
+            label: 'Low Temperature (°C)',
+            data: [{% for forecast in forecasts %}{{ forecast.min_temperature }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            tension: 0.1
+        }]
+    };
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

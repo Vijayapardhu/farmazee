@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Community - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-users text-info me-2"></i>
+                Farmer Community
+            </h1>
+        </div>
+    </div>
+
+    <!-- Community Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="fas fa-users fa-2x mb-2"></i>
+                    <h4>{{ total_members|default:0 }}</h4>
+                    <p class="card-text">Community Members</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="fas fa-comments fa-2x mb-2"></i>
+                    <h4>{{ total_topics|default:0 }}</h4>
+                    <p class="card-text">Discussion Topics</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="fas fa-question-circle fa-2x mb-2"></i>
+                    <h4>{{ total_questions|default:0 }}</h4>
+                    <p class="card-text">Questions Asked</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="fas fa-user-graduate fa-2x mb-2"></i>
+                    <h4>{{ total_experts|default:0 }}</h4>
+                    <p class="card-text">Experts Online</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'community:ask_question' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-question-circle me-2"></i>Ask a Question
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'community:forum' %}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-comments me-2"></i>Join Discussions
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'community:experts' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-user-graduate me-2"></i>Connect with Experts
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'community:events' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-calendar-alt me-2"></i>Upcoming Events
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Discussions -->
+    {% if recent_topics %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-comments text-primary me-2"></i>
+                Recent Discussions
+            </h3>
+            <div class="row">
+                {% for topic in recent_topics %}
+                <div class="col-lg-6 col-md-12 mb-3">
+                    <div class="card discussion-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title">
+                                        <a href="{% url 'community:topic_detail' topic.id %}" class="text-decoration-none">
+                                            {{ topic.title }}
+                                        </a>
+                                    </h6>
+                                    <p class="text-muted small">{{ topic.content|truncatewords:20 }}</p>
+                                </div>
+                                <span class="badge bg-primary">{{ topic.category.name }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>{{ topic.author.get_full_name|default:topic.author.username }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ topic.created_at|timesince }} ago
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Questions -->
+    {% if recent_questions %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-question-circle text-warning me-2"></i>
+                Recent Questions
+            </h3>
+            <div class="row">
+                {% for question in recent_questions %}
+                <div class="col-lg-6 col-md-12 mb-3">
+                    <div class="card question-card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a href="{% url 'community:question_detail' question.id %}" class="text-decoration-none">
+                                    {{ question.title }}
+                                </a>
+                            </h6>
+                            <p class="text-muted small">{{ question.content|truncatewords:15 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>{{ question.author.get_full_name|default:question.author.username }}
+                                </small>
+                                <div>
+                                    <span class="badge bg-success me-1">{{ question.answers.count }} answers</span>
+                                    <small class="text-muted">{{ question.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Online Experts -->
+    {% if online_experts %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-user-graduate text-success me-2"></i>
+                Online Experts
+            </h3>
+            <div class="row">
+                {% for expert in online_experts %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <div class="card expert-card text-center">
+                        <div class="card-body">
+                            <div class="expert-avatar mb-3">
+                                <i class="fas fa-user-circle fa-3x text-primary"></i>
+                            </div>
+                            <h6 class="card-title">{{ expert.user.get_full_name|default:expert.user.username }}</h6>
+                            <p class="text-muted small">{{ expert.specialization }}</p>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'community:expert_detail' expert.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-comment me-1"></i>Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Community Guidelines -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book me-2"></i>
+                        Community Guidelines
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-check-circle text-success me-2"></i>Do's</h6>
+                            <ul class="text-muted">
+                                <li>Be respectful and supportive to fellow farmers</li>
+                                <li>Share your experiences and knowledge</li>
+                                <li>Ask clear and specific questions</li>
+                                <li>Use appropriate language and tone</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-times-circle text-danger me-2"></i>Don'ts</h6>
+                            <ul class="text-muted">
+                                <li>Don't spam or post irrelevant content</li>
+                                <li>Don't use offensive or inappropriate language</li>
+                                <li>Don't share personal information of others</li>
+                                <li>Don't promote commercial products without permission</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.discussion-card, .question-card, .expert-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.discussion-card:hover, .question-card:hover, .expert-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.expert-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+</style>
+{% endblock %}
+
+
+

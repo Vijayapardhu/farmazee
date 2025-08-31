@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Weather Dashboard - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Current Weather Section -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-cloud-sun me-2"></i>Current Weather
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if current_weather %}
+                    <div class="row align-items-center">
+                        <div class="col-md-6 text-center">
+                            <div class="display-1 text-primary">
+                                <i class="fas fa-{{ current_weather.icon_class }}"></i>
+                            </div>
+                            <h2 class="text-primary">{{ current_weather.temperature }}°C</h2>
+                            <p class="text-muted">{{ current_weather.description }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-thermometer-half text-danger me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Feels Like</small>
+                                            <div class="fw-bold">{{ current_weather.feels_like }}°C</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-tint text-info me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Humidity</small>
+                                            <div class="fw-bold">{{ current_weather.humidity }}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-wind text-warning me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Wind Speed</small>
+                                            <div class="fw-bold">{{ current_weather.wind_speed }} km/h</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-eye text-secondary me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Visibility</small>
+                                            <div class="fw-bold">{{ current_weather.visibility }} km</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-cloud-rain fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Weather data not available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Location
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Enter Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="City, State" value="{{ user_location|default:'' }}">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-search me-2"></i>Update Location
+                        </button>
+                    </form>
+                    
+                    {% if user_location %}
+                    <hr>
+                    <div class="text-center">
+                        <i class="fas fa-map-marker-alt text-success fa-2x mb-2"></i>
+                        <p class="mb-0 fw-bold">{{ user_location }}</p>
+                        <small class="text-muted">Last updated: {{ last_updated|default:"Just now" }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Forecast Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>7-Day Forecast
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if forecast %}
+                    <div class="row">
+                        {% for day in forecast %}
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">{{ day.date|date:"D, M d" }}</h6>
+                                    <div class="mb-2">
+                                        <i class="fas fa-{{ day.icon_class }} fa-2x text-primary"></i>
+                                    </div>
+                                    <h5 class="text-primary">{{ day.max_temp }}°C</h5>
+                                    <p class="text-muted mb-1">{{ day.min_temp }}°C</p>
+                                    <small class="text-muted">{{ day.description }}</small>
+                                    <div class="mt-2">
+                                        <small class="text-info">
+                                            <i class="fas fa-tint me-1"></i>{{ day.humidity }}%
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Forecast data not available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Alerts Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Weather Alerts
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if weather_alerts %}
+                    <div class="row">
+                        {% for alert in weather_alerts %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="alert alert-warning d-flex align-items-start">
+                                <i class="fas fa-exclamation-triangle text-warning me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="alert-heading">{{ alert.title }}</h6>
+                                    <p class="mb-1">{{ alert.description }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>{{ alert.issued_at|date:"M d, Y H:i" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <p class="text-success mb-0">No weather alerts at this time</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Recommendations Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-seedling me-2"></i>Crop-Specific Weather Recommendations
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if crop_recommendations %}
+                    <div class="row">
+                        {% for crop in crop_recommendations %}
+                        <div class="col-lg-4 mb-3">
+                            <div class="card border-success h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0">{{ crop.name }}</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <strong>Current Status:</strong> {{ crop.status }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Recommendation:</strong> {{ crop.recommendation }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Risk Level:</strong> 
+                                        <span class="badge bg-{{ crop.risk_color }}">{{ crop.risk_level }}</span>
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>Updated: {{ crop.updated_at|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-seedling fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No crop recommendations available</p>
+                        <p class="text-muted">Add your crops to your profile to get personalized recommendations</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

@@ -1,0 +1,561 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}API Endpoints - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-code me-2"></i>API Endpoints
+        </h1>
+        <div>
+            <button class="btn btn-primary" onclick="testEndpoint()">
+                <i class="fas fa-play me-1"></i>Test Endpoint
+            </button>
+            <button class="btn btn-success" onclick="generateDocs()">
+                <i class="fas fa-file-alt me-1"></i>Generate Docs
+            </button>
+        </div>
+    </div>
+
+    <!-- API Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Endpoints</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_endpoints }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-link fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Active Endpoints</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_endpoints }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                API Calls Today</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ api_calls_today }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Error Rate</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ error_rate|default:"0" }}%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Endpoints Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">API Endpoints</h6>
+                    <div>
+                        <input type="text" class="form-control form-control-sm d-inline-block w-auto me-2" 
+                               id="searchEndpoints" placeholder="Search endpoints...">
+                        <select class="form-select form-select-sm d-inline-block w-auto" id="filterMethod">
+                            <option value="">All Methods</option>
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="endpointsTable">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Endpoint</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Rate Limit</th>
+                                    <th>Last Tested</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for endpoint in endpoints %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-{{ endpoint.method|lower }}">{{ endpoint.method }}</span>
+                                    </td>
+                                    <td>
+                                        <code class="text-primary">{{ endpoint.url }}</code>
+                                    </td>
+                                    <td>{{ endpoint.description }}</td>
+                                    <td>
+                                        <span class="badge {% if endpoint.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ endpoint.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>{{ endpoint.rate_limit|default:"Unlimited" }}</td>
+                                    <td>{{ endpoint.last_tested|default:"Never"|timesince }} ago</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Test Endpoint"
+                                                    onclick="testSpecificEndpoint('{{ endpoint.id }}')">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" title="View Documentation"
+                                                    onclick="viewEndpointDocs('{{ endpoint.id }}')">
+                                                <i class="fas fa-book"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning" title="Edit Endpoint"
+                                                    onclick="editEndpoint('{{ endpoint.id }}')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No API endpoints found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Usage Analytics -->
+    <div class="row mb-4">
+        <div class="col-xl-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">API Usage Over Time</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="apiUsageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Top Endpoints</h6>
+                </div>
+                <div class="card-body">
+                    {% for endpoint in top_endpoints %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <div class="fw-bold">{{ endpoint.name }}</div>
+                            <small class="text-muted">{{ endpoint.url }}</small>
+                        </div>
+                        <span class="badge bg-primary">{{ endpoint.call_count }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No usage data available</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Testing Console -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">API Testing Console</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="testMethod" class="form-label">HTTP Method</label>
+                                <select class="form-select" id="testMethod">
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="testUrl" class="form-label">Endpoint URL</label>
+                                <input type="text" class="form-control" id="testUrl" 
+                                       placeholder="https://api.farmazee.com/endpoint">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" onclick="testEndpoint()">
+                                        <i class="fas fa-play me-1"></i>Test
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="testHeaders" class="form-label">Headers (JSON)</label>
+                                <textarea class="form-control" id="testHeaders" rows="3" 
+                                          placeholder='{"Content-Type": "application/json", "Authorization": "Bearer token"}'></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="testBody" class="form-label">Request Body (JSON)</label>
+                                <textarea class="form-control" id="testBody" rows="3" 
+                                          placeholder='{"key": "value"}'></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="testResponse" class="form-label">Response</label>
+                        <textarea class="form-control" id="testResponse" rows="8" readonly 
+                                  placeholder="Response will appear here..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Documentation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">API Documentation</h6>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="apiDocsAccordion">
+                        {% for category in api_categories %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading{{ category.id }}">
+                                <button class="accordion-button collapsed" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}">
+                                    <i class="fas fa-{{ category.icon }} me-2"></i>{{ category.name }}
+                                </button>
+                            </h2>
+                            <div id="collapse{{ category.id }}" class="accordion-collapse collapse" 
+                                 data-bs-parent="#apiDocsAccordion">
+                                <div class="accordion-body">
+                                    {% for endpoint in category.endpoints %}
+                                    <div class="mb-4">
+                                        <h6>
+                                            <span class="badge bg-{{ endpoint.method|lower }} me-2">{{ endpoint.method }}</span>
+                                            {{ endpoint.name }}
+                                        </h6>
+                                        <p class="text-muted">{{ endpoint.description }}</p>
+                                        <div class="bg-light p-3 rounded">
+                                            <code>{{ endpoint.url }}</code>
+                                        </div>
+                                        {% if endpoint.parameters %}
+                                        <div class="mt-3">
+                                            <strong>Parameters:</strong>
+                                            <ul class="list-unstyled">
+                                                {% for param in endpoint.parameters %}
+                                                <li><code>{{ param.name }}</code> - {{ param.description }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center">No API documentation available</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let apiUsageChart;
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    setupEventListeners();
+});
+
+// Initialize charts
+function initializeCharts() {
+    const ctx = document.getElementById('apiUsageChart').getContext('2d');
+    apiUsageChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ api_usage_labels|safe }},
+            datasets: [{
+                label: 'API Calls',
+                data: {{ api_usage_data|safe }},
+                borderColor: 'rgb(78, 115, 223)',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Search functionality
+    document.getElementById('searchEndpoints').addEventListener('input', filterEndpoints);
+    document.getElementById('filterMethod').addEventListener('change', filterEndpoints);
+}
+
+// Filter endpoints
+function filterEndpoints() {
+    const searchTerm = document.getElementById('searchEndpoints').value.toLowerCase();
+    const methodFilter = document.getElementById('filterMethod').value;
+    const rows = document.querySelectorAll('#endpointsTable tbody tr');
+    
+    rows.forEach(row => {
+        const endpoint = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const method = row.querySelector('td:nth-child(1) .badge').textContent;
+        const description = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        
+        const matchesSearch = endpoint.includes(searchTerm) || description.includes(searchTerm);
+        const matchesMethod = !methodFilter || method === methodFilter;
+        
+        row.style.display = matchesSearch && matchesMethod ? '' : 'none';
+    });
+}
+
+// Test endpoint
+function testEndpoint() {
+    const method = document.getElementById('testMethod').value;
+    const url = document.getElementById('testUrl').value;
+    const headers = document.getElementById('testHeaders').value;
+    const body = document.getElementById('testBody').value;
+    const responseArea = document.getElementById('testResponse');
+    
+    if (!url) {
+        alert('Please enter an endpoint URL');
+        return;
+    }
+    
+    // Show loading state
+    responseArea.value = 'Testing endpoint...';
+    
+    // Prepare request options
+    const options = {
+        method: method,
+        headers: {}
+    };
+    
+    // Parse headers
+    if (headers) {
+        try {
+            const parsedHeaders = JSON.parse(headers);
+            Object.assign(options.headers, parsedHeaders);
+        } catch (e) {
+            alert('Invalid headers JSON format');
+            return;
+        }
+    }
+    
+    // Add body for POST/PUT requests
+    if ((method === 'POST' || method === 'PUT') && body) {
+        try {
+            options.body = body;
+            if (!options.headers['Content-Type']) {
+                options.headers['Content-Type'] = 'application/json';
+            }
+        } catch (e) {
+            alert('Invalid body JSON format');
+            return;
+        }
+    }
+    
+    // Make request
+    fetch(url, options)
+        .then(response => {
+            const responseData = {
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries(response.headers.entries())
+            };
+            
+            return response.text().then(text => {
+                responseData.body = text;
+                return responseData;
+            });
+        })
+        .then(data => {
+            responseArea.value = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            responseArea.value = `Error: ${error.message}`;
+        });
+}
+
+// Test specific endpoint
+function testSpecificEndpoint(endpointId) {
+    // Fetch endpoint details and populate test console
+    fetch(`{% url "admin:api_endpoints" %}?action=get_endpoint&id=${endpointId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('testMethod').value = data.endpoint.method;
+                document.getElementById('testUrl').value = data.endpoint.url;
+                document.getElementById('testHeaders').value = JSON.stringify(data.endpoint.default_headers || {}, null, 2);
+                document.getElementById('testBody').value = JSON.stringify(data.endpoint.example_body || {}, null, 2);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+// View endpoint documentation
+function viewEndpointDocs(endpointId) {
+    // Show endpoint documentation in a modal or expand section
+    alert('View documentation for endpoint ' + endpointId);
+}
+
+// Edit endpoint
+function editEndpoint(endpointId) {
+    // Open endpoint editor
+    alert('Edit endpoint ' + endpointId);
+}
+
+// Generate documentation
+function generateDocs() {
+    // Generate API documentation
+    fetch('{% url "admin:api_endpoints" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({action: 'generate_docs'})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Documentation generated successfully!');
+            location.reload();
+        } else {
+            alert('Error generating documentation: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while generating documentation');
+    });
+}
+</script>
+
+<style>
+.chart-area {
+    position: relative;
+    height: 20rem;
+    width: 100%;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fc;
+    color: #5a5c69;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.125);
+}
+
+#testResponse {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+
+.badge.bg-get { background-color: #28a745 !important; }
+.badge.bg-post { background-color: #007bff !important; }
+.badge.bg-put { background-color: #ffc107 !important; }
+.badge.bg-delete { background-color: #dc3545 !important; }
+</style>
+{% endblock %}

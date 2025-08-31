@@ -1,0 +1,396 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Marketplace - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Marketplace Overview Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-store me-2"></i>E-Marketplace Dashboard
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-success text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
+                                </div>
+                                <h4 class="text-success">{{ total_orders }}</h4>
+                                <p class="text-muted mb-0">Total Orders</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-info text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-box fa-2x"></i>
+                                </div>
+                                <h4 class="text-info">{{ active_listings }}</h4>
+                                <p class="text-muted mb-0">Active Listings</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-warning text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-rupee-sign fa-2x"></i>
+                                </div>
+                                <h4 class="text-warning">₹{{ total_revenue }}</h4>
+                                <p class="text-muted mb-0">Total Revenue</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="bg-secondary text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-users fa-2x"></i>
+                                </div>
+                                <h4 class="text-secondary">{{ total_customers }}</h4>
+                                <p class="text-muted mb-0">Customers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Categories Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tags me-2"></i>Product Categories
+                    </h4>
+                    <a href="{% url 'marketplace:add_product' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-2"></i>Add Product
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for category in categories %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="bg-{{ category.color }} text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-{{ category.icon }} fa-2x"></i>
+                                    </div>
+                                    <h6 class="card-title">{{ category.name }}</h6>
+                                    <p class="text-muted mb-2">{{ category.product_count }} products</p>
+                                    <a href="{% url 'marketplace:category_products' category.id %}" class="btn btn-outline-{{ category.color }} btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Products
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list-alt me-2"></i>Recent Orders
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Order Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold">#{{ order.order_number }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user text-primary me-2"></i>
+                                            <span>{{ order.customer.get_full_name|default:order.customer.username }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-secondary me-1">{{ order.items.count }}</span>
+                                            <small class="text-muted">items</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">₹{{ order.total_amount }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ order.status_color }}">{{ order.get_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ order.created_at|date:"M d, Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'marketplace:order_detail' order.id %}" class="btn btn-outline-primary" title="View Order Details" aria-label="View order details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if order.status == 'pending' %}
+                                            <button class="btn btn-outline-success" onclick="updateOrderStatus({{ order.id }}, 'processing')" title="Mark as Processing" aria-label="Mark order as processing">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'marketplace:all_orders' %}" class="btn btn-outline-info">
+                            <i class="fas fa-list me-2"></i>View All Orders
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No orders yet</p>
+                        <p class="text-muted">Start selling your products to see orders here!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-star me-2"></i>Top Performing Products
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if top_products %}
+                    <div class="row">
+                        {% for product in top_products %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ product.name }}</h6>
+                                    <p class="text-muted mb-2">{{ product.category.name }}</p>
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <small class="text-muted">Price</small>
+                                            <div class="fw-bold text-success">₹{{ product.price }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Sold</small>
+                                            <div class="fw-bold">{{ product.sold_count }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Rating</small>
+                                        <div class="d-flex align-items-center">
+                                            {% for i in "12345" %}
+                                            {% if forloop.counter <= product.average_rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                            <i class="far fa-star text-muted"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <small class="text-muted ms-2">({{ product.review_count }})</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'marketplace:product_detail' product.id %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-2"></i>View Details
+                                        </a>
+                                        <a href="{% url 'marketplace:edit_product' product.id %}" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-edit me-2"></i>Edit
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No products added yet</p>
+                        <p class="text-muted">Add your first product to start selling!</p>
+                        <a href="{% url 'marketplace:add_product' %}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-plus me-2"></i>Add Your First Product
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Insights Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Market Insights
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-trending-up me-2"></i>Price Trends
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if price_trends %}
+                                    <div class="mb-2">
+                                        <small class="text-muted">Rice (per kg)</small>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-success">₹45</span>
+                                            <span class="text-muted">₹42</span>
+                                            <span class="text-danger">₹48</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Wheat (per kg)</small>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-success">₹28</span>
+                                            <span class="text-muted">₹26</span>
+                                            <span class="text-danger">₹30</span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Last 7 days: Low | Current | High</small>
+                                    {% else %}
+                                    <p class="text-muted">Price trend data not available</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-3">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-users me-2"></i>Customer Insights
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">{{ new_customers_this_month }}</h5>
+                                            <small class="text-muted">New Customers</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">{{ repeat_customers }}</h5>
+                                            <small class="text-muted">Repeat Customers</small>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="text-center">
+                                        <h6 class="text-muted">Customer Satisfaction</h6>
+                                        <div class="display-6 text-warning">{{ customer_satisfaction }}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:add_product' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                                    <h6 class="card-title">Add Product</h6>
+                                    <p class="card-text text-muted">List a new product for sale</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:inventory' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-boxes fa-3x text-info mb-3"></i>
+                                    <h6 class="card-title">Manage Inventory</h6>
+                                    <p class="card-text text-muted">Update stock levels</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:analytics' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                                    <h6 class="card-title">View Analytics</h6>
+                                    <p class="card-text text-muted">Track your performance</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'marketplace:settings' %}" class="card text-center text-decoration-none h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-cog fa-3x text-secondary mb-3"></i>
+                                    <h6 class="card-title">Store Settings</h6>
+                                    <p class="card-text text-muted">Configure your store</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateOrderStatus(orderId, status) {
+    // Implement order status update logic
+    console.log('Updating order:', orderId, 'to status:', status);
+}
+</script>
+{% endblock %}
+
+
+

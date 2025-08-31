@@ -1,0 +1,317 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Bulk Actions - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tasks me-2"></i>Bulk Actions
+        </h1>
+        <div>
+            <button class="btn btn-success" onclick="executeBulkAction()" id="executeBtn" disabled>
+                <i class="fas fa-play me-1"></i>Execute Actions
+            </button>
+            <button class="btn btn-secondary" onclick="clearSelection()">
+                <i class="fas fa-times me-1"></i>Clear Selection
+            </button>
+        </div>
+    </div>
+
+    <!-- Action Configuration -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Action Configuration</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="actionType" class="form-label">Action Type</label>
+                                <select class="form-select" id="actionType" onchange="updateActionOptions()">
+                                    <option value="">Select Action Type</option>
+                                    <option value="user">User Management</option>
+                                    <option value="crop">Crop Management</option>
+                                    <option value="product">Product Management</option>
+                                    <option value="topic">Community Topics</option>
+                                    <option value="question">Community Questions</option>
+                                    <option value="order">Order Management</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="actionOperation" class="form-label">Operation</label>
+                                <select class="form-select" id="actionOperation" disabled>
+                                    <option value="">Select Operation</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="actionScope" class="form-label">Scope</label>
+                                <select class="form-select" id="actionScope">
+                                    <option value="selected">Selected Items Only</option>
+                                    <option value="filtered">All Filtered Items</option>
+                                    <option value="all">All Items</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action-specific options -->
+                    <div id="actionOptions" class="mt-3" style="display: none;">
+                        <!-- Options will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Selection -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Item Selection</h6>
+                    <div>
+                        <span class="badge bg-secondary me-2">Selected: <span id="selectedCount">0</span></span>
+                        <span class="badge bg-info me-2">Total: <span id="totalCount">0</span></span>
+                        <button class="btn btn-sm btn-outline-primary" onclick="selectAll()">
+                            <i class="fas fa-check-square me-1"></i>Select All
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="selectNone()">
+                            <i class="fas fa-square me-1"></i>Select None
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Search and Filter -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search items...">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterStatus">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterCategory">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" onclick="applyFilters()">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="itemsTable">
+                            <thead>
+                                <tr>
+                                    <th width="30">
+                                        <input type="checkbox" id="selectAllCheckbox">
+                                    </th>
+                                    <th>Item</th>
+                                    <th>Status</th>
+                                    <th>Category</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsTableBody">
+                                <!-- Items will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action History -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Bulk Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Action</th>
+                                    <th>Items Affected</th>
+                                    <th>Status</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for action in recent_actions %}
+                                <tr>
+                                    <td>{{ action.timestamp|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ action.action_type }}</span>
+                                        {{ action.operation }}
+                                    </td>
+                                    <td>{{ action.items_count }}</td>
+                                    <td>
+                                        <span class="badge {% if action.status == 'completed' %}bg-success{% elif action.status == 'failed' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ action.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>{{ action.user.username }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info" onclick="viewActionDetails({{ action.id }})">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No recent bulk actions</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedItems = [];
+
+// Update action options when action type changes
+function updateActionOptions() {
+    const actionType = document.getElementById('actionType').value;
+    const actionOperation = document.getElementById('actionOperation');
+    
+    if (!actionType) {
+        actionOperation.disabled = true;
+        return;
+    }
+    
+    const operations = {
+        user: ['activate', 'deactivate', 'delete', 'change_role'],
+        crop: ['feature', 'unfeature', 'delete', 'change_category'],
+        product: ['activate', 'deactivate', 'delete', 'change_category'],
+        topic: ['approve', 'reject', 'delete', 'pin'],
+        question: ['approve', 'reject', 'delete', 'mark_answered'],
+        order: ['approve', 'reject', 'cancel', 'update_status']
+    };
+    
+    actionOperation.disabled = false;
+    actionOperation.innerHTML = '<option value="">Select Operation</option>';
+    
+    operations[actionType].forEach(operation => {
+        const option = document.createElement('option');
+        option.value = operation;
+        option.textContent = operation.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        actionOperation.appendChild(option);
+    });
+}
+
+// Update selection counts
+function updateSelection() {
+    const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+    selectedItems = Array.from(checkboxes).map(cb => cb.value);
+    
+    document.getElementById('selectedCount').textContent = selectedItems.length;
+    document.getElementById('executeBtn').disabled = selectedItems.length === 0;
+}
+
+// Select all items
+function selectAll() {
+    document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = true);
+    updateSelection();
+}
+
+// Select none
+function selectNone() {
+    document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
+    updateSelection();
+}
+
+// Clear selection
+function clearSelection() {
+    selectNone();
+    document.getElementById('actionType').value = '';
+    document.getElementById('actionOperation').value = '';
+    document.getElementById('executeBtn').disabled = true;
+}
+
+// Execute bulk action
+function executeBulkAction() {
+    const actionType = document.getElementById('actionType').value;
+    const actionOperation = document.getElementById('actionOperation').value;
+    
+    if (!actionType || !actionOperation) {
+        alert('Please select an action type and operation');
+        return;
+    }
+    
+    if (selectedItems.length === 0) {
+        alert('Please select items to perform the action on');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to perform "${actionOperation}" on ${selectedItems.length} ${actionType} items?`)) {
+        return;
+    }
+    
+    // Execute action
+    fetch('{% url "admin:bulk_actions" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            action_type: actionType,
+            operation: actionOperation,
+            item_ids: selectedItems
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`Bulk action executed successfully! ${data.items_affected} items affected.`);
+            location.reload();
+        } else {
+            alert('Error executing bulk action: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while executing the bulk action');
+    });
+}
+
+// View action details
+function viewActionDetails(actionId) {
+    alert('View action details ' + actionId);
+}
+
+// Event listeners
+document.getElementById('actionOperation').addEventListener('change', function() {
+    // Handle operation change
+});
+</script>
+{% endblock %}

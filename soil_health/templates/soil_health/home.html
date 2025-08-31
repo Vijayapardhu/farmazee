@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soil Health - Smart Farmer Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-mountain text-secondary me-2"></i>
+                Soil Health Management
+            </h1>
+        </div>
+    </div>
+
+    <!-- Soil Health Overview -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Understanding Soil Health
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Healthy soil is the foundation of successful farming. It provides essential nutrients, supports root growth, and helps plants resist diseases and pests.</p>
+                    <p>Our soil health management system helps you understand your soil better and provides recommendations for improving soil fertility and structure.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-seedling fa-3x mb-3"></i>
+                    <h4>Healthy Soil = Better Yields</h4>
+                    <p class="mb-0">Improve your soil health to increase crop productivity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soil Types -->
+    {% if soil_types %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-layer-group text-primary me-2"></i>
+                Soil Types
+            </h3>
+            <div class="row">
+                {% for soil_type in soil_types %}
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="card soil-type-card">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-mountain me-2"></i>
+                                {{ soil_type.name }}
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">{{ soil_type.description }}</p>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <small class="text-muted">Water Retention</small><br>
+                                    <strong>{{ soil_type.water_retention }}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Drainage</small><br>
+                                    <strong>{{ soil_type.drainage }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'soil_health:soil_type_detail' soil_type.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-info-circle me-1"></i>Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Soil Tips -->
+    {% if soil_tips %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-lightbulb text-warning me-2"></i>
+                Soil Health Tips
+            </h3>
+            <div class="row">
+                {% for tip in soil_tips %}
+                <div class="col-lg-6 col-md-12 mb-3">
+                    <div class="card tip-card">
+                        <div class="card-header bg-warning text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                {{ tip.title }}
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">{{ tip.content }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-secondary">{{ tip.get_category_display }}</span>
+                                <small class="text-muted">{{ tip.created_at|date:"M j, Y" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Fertilizers -->
+    {% if fertilizers %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-seedling text-success me-2"></i>
+                Fertilizers & Nutrients
+            </h3>
+            <div class="row">
+                {% for fertilizer in fertilizers %}
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="card fertilizer-card">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-seedling me-2"></i>
+                                {{ fertilizer.name }}
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">{{ fertilizer.description }}</p>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <small class="text-muted">N</small><br>
+                                    <strong>{{ fertilizer.nitrogen }}%</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">P</small><br>
+                                    <strong>{{ fertilizer.phosphorus }}%</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">K</small><br>
+                                    <strong>{{ fertilizer.potassium }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'soil_health:fertilizer_detail' fertilizer.id %}" class="btn btn-outline-success btn-sm w-100">
+                                <i class="fas fa-info-circle me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Soil Testing Guide -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-flask me-2"></i>
+                        Soil Testing Guide
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-list-ol text-primary me-2"></i>Testing Steps</h6>
+                            <ol class="text-muted">
+                                <li>Collect soil samples from different areas of your field</li>
+                                <li>Mix the samples thoroughly in a clean container</li>
+                                <li>Air dry the soil for 24-48 hours</li>
+                                <li>Send to a certified soil testing laboratory</li>
+                                <li>Follow the recommendations based on test results</li>
+                            </ol>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-chart-line text-success me-2"></i>Key Parameters</h6>
+                            <ul class="text-muted">
+                                <li><strong>pH Level:</strong> Determines nutrient availability</li>
+                                <li><strong>Organic Matter:</strong> Improves soil structure</li>
+                                <li><strong>Nitrogen (N):</strong> Essential for plant growth</li>
+                                <li><strong>Phosphorus (P):</strong> Important for root development</li>
+                                <li><strong>Potassium (K):</strong> Helps with disease resistance</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>
+                        Soil Health Tools
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'soil_health:soil_test' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-flask me-2"></i>Soil Testing
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'soil_health:calculator' %}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-calculator me-2"></i>Fertilizer Calculator
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'soil_health:recommendations' %}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-lightbulb me-2"></i>Get Recommendations
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'soil_health:resources' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-book me-2"></i>Resources
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.soil-type-card, .tip-card, .fertilizer-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.soil-type-card:hover, .tip-card:hover, .fertilizer-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.card-footer {
+    border-top: 1px solid rgba(0,0,0,0.125);
+}
+</style>
+{% endblock %}
+
+
+
