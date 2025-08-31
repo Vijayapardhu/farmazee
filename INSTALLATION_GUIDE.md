@@ -109,3 +109,19 @@ pip install -r requirements-minimal.txt
 - Check pip version: `pip --version`
 - Try installing with verbose output: `pip install -v package_name`
 - Check for conflicting packages: `pip list`
+
+---
+
+## 📚 **Want to Learn More?**
+
+### 🚀 **Get Started:**
+- **[README_SIMPLE.md](README_SIMPLE.md)** - Super simple explanation for beginners
+- **[STEP_BY_STEP_GUIDE.md](STEP_BY_STEP_GUIDE.md)** - Follow step-by-step setup
+- **[VISUAL_GUIDE.md](VISUAL_GUIDE.md)** - See diagrams and flowcharts
+
+### 🔧 **Technical Help:**
+- **[TROUBLESHOOTING_GUIDE.md](TROUBLESHOOTING_GUIDE.md)** - Fix any problem
+- **[DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)** - Guide to all documentation
+
+### 📖 **Complete Documentation:**
+- **[README.md](README.md)** - Full technical documentation
