@@ -4,22 +4,21 @@ Django settings for farmazee project.
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+"""Load environment variables early so they are available for settings."""
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'True').lower() in ['1', 'true', 'yes']
 
-ALLOWED_HOSTS = [
-    'localhost', 
-    '127.0.0.1',
-    'c127e86eb320.ngrok-free.app',
-    '095f4df4cca3.ngrok-free.app',
-    '523b1e51afd2.ngrok-free.app',
+ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if h.strip()] + [
     '*.ngrok-free.app'
 ]
 
@@ -206,4 +205,5 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # AI Chatbot Settings
-OPENROUTER_API_KEY = None  # Set your OpenRouter API key here for ChatGPT integration
+OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDFCmoQCjp6qbUp_rDErGCgFQoBsJblMVQ')

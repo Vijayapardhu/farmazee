@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}AI Assistant - Chat{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-3"><i class="fas fa-robot me-2"></i>AI Assistant</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div id="chat-window" class="mb-3" data-max-height="50vh">
+                {% for m in recent_messages %}
+                    <div class="mb-2">
+                        <span class="badge bg-{{ 'success' if m.message_type == 'user' else 'secondary' }}">{{ m.message_type|title }}</span>
+                        <div class="mt-1">{{ m.content|linebreaksbr }}</div>
+                    </div>
+                {% empty %}
+                    <div class="text-muted">No messages yet. Ask your first question below.</div>
+                {% endfor %}
+            </div>
+            <form id="chat-form">
+                <input type="hidden" id="session_id" value="{{ chat_session.session_id }}" />
+                <div class="input-group">
+                    <input type="text" id="message" class="form-control" placeholder="Type your question..." aria-label="Type your question" required />
+                    <button class="btn btn-success" type="submit" title="Send message" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Apply max-height from data attribute to avoid inline CSS
+(function(){
+    var chatWindow = document.getElementById('chat-window');
+    if (chatWindow) {
+        var h = chatWindow.getAttribute('data-max-height');
+        if (h) chatWindow.style.maxHeight = h;
+        chatWindow.style.overflowY = 'auto';
+    }
+})();
+document.getElementById('chat-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('message');
+    const sessionId = document.getElementById('session_id').value;
+    const chatWindow = document.getElementById('chat-window');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    // Append user message
+    const userDiv = document.createElement('div');
+    userDiv.className = 'mb-2';
+    userDiv.innerHTML = '<span class="badge bg-success">User</span><div class="mt-1"></div>';
+    userDiv.querySelector('div').textContent = text;
+    chatWindow.appendChild(userDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    try {
+        const res = await fetch('{% url "ai_chatbot:send_message" %}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify({ message: text, session_id: sessionId })
+        });
+        const data = await res.json();
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'mb-2';
+        aiDiv.innerHTML = '<span class="badge bg-secondary">Assistant</span><div class="mt-1"></div>';
+        aiDiv.querySelector('div').textContent = data.ai_response?.content || data.error || 'No response';
+        chatWindow.appendChild(aiDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    } catch (err) {
+        const errDiv = document.createElement('div');
+        errDiv.className = 'mb-2 text-danger';
+        errDiv.textContent = 'Failed to send message.';
+        chatWindow.appendChild(errDiv);
+    }
+});
+</script>
+{% endblock %}
+
+

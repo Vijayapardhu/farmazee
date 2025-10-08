@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.utils import timezone
 from .models import ChatSession, ChatMessage, FarmerQuery, AIKnowledgeBase
+from .gemini_service import get_gemini_service
 
 
 def ai_chat_home(request):
@@ -89,12 +90,16 @@ def send_message(request):
         ai_response = get_ai_response(message_text, request.user)
         response_time = time.time() - start_time
         
+        # Estimate tokens (rough estimate for tracking)
+        tokens_used = len(message_text.split()) + len(ai_response.split())
+        
         # Save AI response
         ai_message = ChatMessage.objects.create(
             session=session,
             message_type='assistant',
             content=ai_response,
-            response_time=response_time
+            response_time=response_time,
+            tokens_used=tokens_used
         )
         
         # Store query for analytics
@@ -129,10 +134,13 @@ def send_message(request):
 
 
 def get_ai_response(message, user):
-    """Get AI response using OpenRouter API or fallback to knowledge base"""
+    """Get AI response using Gemini AI or fallback to knowledge base"""
     try:
-        # Try OpenRouter API first
-        if hasattr(settings, 'OPENROUTER_API_KEY') and settings.OPENROUTER_API_KEY:
+        # Try Gemini AI first
+        if hasattr(settings, 'GEMINI_API_KEY') and settings.GEMINI_API_KEY:
+            return get_gemini_response(message, user)
+        # Fallback to OpenRouter if Gemini is not available
+        elif hasattr(settings, 'OPENROUTER_API_KEY') and settings.OPENROUTER_API_KEY:
             return get_openrouter_response(message, user)
         else:
             # Fallback to knowledge base
@@ -142,8 +150,48 @@ def get_ai_response(message, user):
         return get_fallback_response(message)
 
 
+def get_gemini_response(message, user):
+    """Get response from Gemini AI"""
+    try:
+        # Get conversation history for context
+        active_session = ChatSession.objects.filter(
+            user=user, 
+            is_active=True
+        ).first()
+        
+        conversation_history = []
+        if active_session:
+            recent_messages = ChatMessage.objects.filter(
+                session=active_session
+            ).order_by('-timestamp')[:10]
+            
+            for msg in reversed(recent_messages):
+                conversation_history.append({
+                    'type': msg.message_type,
+                    'content': msg.content
+                })
+        
+        # Get Gemini service and generate response
+        gemini_service = get_gemini_service()
+        result = gemini_service.get_farming_response(
+            message=message,
+            user=user,
+            conversation_history=conversation_history
+        )
+        
+        if result['success']:
+            return result['content']
+        else:
+            # If Gemini fails, try fallback
+            return get_knowledge_base_response(message)
+            
+    except Exception as e:
+        # Fallback to knowledge base if Gemini fails
+        return get_knowledge_base_response(message)
+
+
 def get_openrouter_response(message, user):
-    """Get response from OpenRouter API (ChatGPT)"""
+    """Get response from OpenRouter API (ChatGPT) - Legacy fallback"""
     try:
         # OpenRouter API endpoint
         url = "https://openrouter.ai/api/v1/chat/completions"
@@ -261,22 +309,42 @@ def get_fallback_response(message):
 
 def categorize_query(message):
     """Categorize farmer query for analytics"""
-    message_lower = message.lower()
-    
-    if any(word in message_lower for word in ['crop', 'plant', 'sow', 'harvest']):
-        return 'crop_management'
-    elif any(word in message_lower for word in ['pest', 'disease', 'bug', 'insect']):
-        return 'pest_control'
-    elif any(word in message_lower for word in ['soil', 'fertilizer', 'nutrient']):
-        return 'soil_health'
-    elif any(word in message_lower for word in ['weather', 'rain', 'drought']):
-        return 'weather'
-    elif any(word in message_lower for word in ['market', 'price', 'sell']):
-        return 'market_info'
-    elif any(word in message_lower for word in ['scheme', 'subsidy', 'government']):
-        return 'government_schemes'
-    else:
-        return 'general'
+    try:
+        # Use Gemini service for more accurate categorization
+        gemini_service = get_gemini_service()
+        category = gemini_service.categorize_query(message)
+        
+        # Map to FarmerQuery category choices
+        category_map = {
+            'crop_management': 'crop_management',
+            'pest_control': 'pest_control',
+            'soil_health': 'soil_health',
+            'weather': 'weather',
+            'market_info': 'market_info',
+            'government_schemes': 'government_schemes',
+            'irrigation': 'technical',
+            'general': 'general'
+        }
+        
+        return category_map.get(category, 'general')
+    except:
+        # Fallback to simple categorization
+        message_lower = message.lower()
+        
+        if any(word in message_lower for word in ['crop', 'plant', 'sow', 'harvest']):
+            return 'crop_management'
+        elif any(word in message_lower for word in ['pest', 'disease', 'bug', 'insect']):
+            return 'pest_control'
+        elif any(word in message_lower for word in ['soil', 'fertilizer', 'nutrient']):
+            return 'soil_health'
+        elif any(word in message_lower for word in ['weather', 'rain', 'drought']):
+            return 'weather'
+        elif any(word in message_lower for word in ['market', 'price', 'sell']):
+            return 'market_info'
+        elif any(word in message_lower for word in ['scheme', 'subsidy', 'government']):
+            return 'government_schemes'
+        else:
+            return 'general'
 
 
 @login_required
