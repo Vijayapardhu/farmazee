@@ -248,8 +248,14 @@ function markNotificationAsRead(notificationId, button) {
     });
 }
 
-// Initialize WebSocket for real-time notifications
+// WebSocket for real-time notifications (Disabled for now)
+// Uncomment when Django Channels is configured
 function initializeWebSocket() {
+    // Disabled - configure Django Channels first
+    console.log('WebSocket disabled - configure Django Channels to enable real-time notifications');
+    return;
+    
+    /* Uncomment to enable
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws/notifications/`;
     
@@ -270,6 +276,7 @@ function initializeWebSocket() {
     } catch (error) {
         console.log('WebSocket not available:', error);
     }
+    */
 }
 
 // Show notification toast

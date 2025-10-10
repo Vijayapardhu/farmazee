@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ask Experts - Farmer Problems{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-question-circle text-primary"></i> Farmer Problems & Expert Solutions</h2>
+            <p class="text-muted">Get help from agricultural experts and experienced farmers</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'farmer_problems:create' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle"></i> Ask Question
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="open" {% if current_status == 'open' %}selected{% endif %}>Open</option>
+                        <option value="solved" {% if current_status == 'solved' %}selected{% endif %}>Solved</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="sort" class="form-select">
+                        <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Latest</option>
+                        <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest</option>
+                        <option value="most_voted" {% if sort_by == 'most_voted' %}selected{% endif %}>Most Voted</option>
+                        <option value="most_solutions" {% if sort_by == 'most_solutions' %}selected{% endif %}>Most Solutions</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Problems List -->
+    <div class="row">
+        {% for problem in page_obj %}
+        <div class="col-12 mb-3">
+            <div class="card problem-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-1 text-center">
+                            <div class="vote-section">
+                                <h4 class="mb-0">{{ problem.total_votes }}</h4>
+                                <small class="text-muted">votes</small>
+                            </div>
+                        </div>
+                        <div class="col-md-11">
+                            <h5 class="card-title">
+                                <a href="{% url 'farmer_problems:detail' problem.slug %}" class="text-decoration-none">
+                                    {{ problem.title }}
+                                </a>
+                                {% if problem.status == 'solved' %}
+                                <span class="badge bg-success ms-2">
+                                    <i class="fas fa-check"></i> Solved
+                                </span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text text-muted">{{ problem.description|truncatewords:30 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if problem.category %}
+                                    <span class="badge bg-primary">{{ problem.category.name }}</span>
+                                    {% endif %}
+                                    {% if problem.crop_type %}
+                                    <span class="badge bg-info">{{ problem.crop_type }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-muted small">
+                                    <i class="fas fa-comment"></i> {{ problem.solution_count }} solutions
+                                    <i class="fas fa-eye ms-2"></i> {{ problem.views_count }} views
+                                    <i class="fas fa-user ms-2"></i> {{ problem.author.username }}
+                                    <i class="fas fa-clock ms-2"></i> {{ problem.created_at|timesince }} ago
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No problems found. Be the first to ask a question!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Problem pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<style>
+.problem-card {
+    transition: box-shadow 0.3s;
+}
+.problem-card:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.vote-section {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}
+

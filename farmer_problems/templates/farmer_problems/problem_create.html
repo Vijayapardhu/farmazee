@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Ask a Question{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-question-circle"></i> Ask a Question</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Question Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" required
+                                   placeholder="E.g., How to control aphids in cotton crop?">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Detailed Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="6" required
+                                      placeholder="Describe your problem in detail..."></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category" name="category">
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="crop_type" class="form-label">Crop Type</label>
+                                <input type="text" class="form-control" id="crop_type" name="crop_type"
+                                       placeholder="E.g., Cotton, Rice, Tomato">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location"
+                                   placeholder="Your village/district">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="images" class="form-label">Upload Images</label>
+                            <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
+                            <small class="text-muted">You can upload multiple images showing the problem</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="tags" name="tags"
+                                   placeholder="pest, disease, fertilizer (comma separated)">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-paper-plane"></i> Post Question
+                            </button>
+                            <a href="{% url 'farmer_problems:list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

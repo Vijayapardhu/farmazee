@@ -31,7 +31,7 @@
                             </div>
                             {% if user.is_superuser or user.is_staff %}
                             <div class="mt-2">
-                                <a href="{% url 'admin:dashboard' %}" class="btn btn-sm btn-outline-primary">
+                                <a href="/admin/" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-shield-alt me-1"></i>Admin Panel
                                 </a>
                             </div>
@@ -242,7 +242,7 @@
                          <a href="{% url 'weather:home' %}" class="btn btn-outline-info">
                              <i class="fas fa-cloud-sun me-2"></i>Check Weather
                          </a>
-                         <a href="{% url 'schemes:home' %}" class="btn btn-outline-warning">
+                         <a href="{% url 'schemes:list' %}" class="btn btn-outline-warning">
                              <i class="fas fa-coins me-2"></i>Government Schemes
                          </a>
                          <a href="{% url 'community:ask_question' %}" class="btn btn-outline-secondary">

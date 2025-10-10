@@ -294,17 +294,99 @@ def get_fallback_response(message):
         • Consider crop insurance"""
     
     else:
-        return """Thank you for your question! I'm here to help with farming advice.
+        # Provide specific answers based on common questions
+        message_lower = message.lower()
         
-        I can assist with:
-        • Crop management and cultivation
-        • Pest and disease control
-        • Soil health and fertilizers
-        • Weather and irrigation
-        • Government schemes and subsidies
-        • Market information
+        if 'summer' in message_lower and 'crop' in message_lower:
+            return """Great question about summer crops! Here are crops you can harvest in summer:
+
+**Summer Crops for Harvest:**
+• **Rice** - Main crop in Telangana/AP, harvest May-July
+• **Cotton** - Harvest from October to February (planted in summer)
+• **Maize** - Harvest 90-100 days after planting
+• **Sunflower** - Harvest 90-110 days, good for oil
+• **Groundnut** - Harvest 100-120 days, excellent for oil
+• **Sesame** - Quick crop, 80-90 days
+• **Red Gram (Toor Dal)** - 120-140 days
+• **Green Gram (Moong)** - 65-75 days
+• **Black Gram (Urad)** - 80-90 days
+
+**Best for Telangana/AP:**
+- Rice varieties: BPT 5204, RNR 15048, MTU 1010
+- Cotton: Bt cotton varieties
+- Maize: Hybrid varieties for better yield
+
+**Planting Time:** March-April for summer crops
+**Harvest Time:** May-October depending on crop
+
+Need specific advice on any crop? Ask me about planting, fertilizers, or pest control!"""
         
-        Please ask your specific farming question and I'll provide detailed guidance."""
+        elif 'winter' in message_lower and 'crop' in message_lower:
+            return """Winter crops you can plant and harvest:
+
+**Rabi Season Crops (Winter):**
+• **Wheat** - Plant Oct-Nov, harvest Mar-Apr
+• **Chickpea (Bengal Gram)** - Plant Oct-Nov, harvest Feb-Mar
+• **Mustard** - Plant Oct-Nov, harvest Feb-Mar
+• **Barley** - Plant Oct-Nov, harvest Mar-Apr
+• **Lentil (Masoor)** - Plant Oct-Nov, harvest Feb-Mar
+• **Fenugreek** - Quick crop, 90-100 days
+• **Onion** - Plant Oct-Nov, harvest Mar-Apr
+• **Tomato** - Plant Oct-Nov, harvest Dec-Mar
+
+**Best for Telangana/AP:**
+- Wheat: HD 2967, HD 3086
+- Chickpea: JG 11, JG 14
+- Mustard: Pusa Bold, Varuna
+
+**Planting:** October-November
+**Harvest:** February-April
+
+Need specific cultivation tips for any winter crop?"""
+        
+        elif 'pest' in message_lower or 'disease' in message_lower:
+            return """I can help with pest and disease control! Common issues:
+
+**Major Pests:**
+• **Aphids** - Use neem oil or imidacloprid
+• **Stem Borer** - Use cartap hydrochloride
+• **Whitefly** - Use thiamethoxam
+• **Thrips** - Use spinosad
+
+**Common Diseases:**
+• **Blast (Rice)** - Use tricyclazole
+• **Rust (Wheat)** - Use propiconazole
+• **Wilt (Cotton)** - Use carbendazim
+
+**Organic Solutions:**
+- Neem oil spray (2ml per liter)
+- Cow urine spray (10%)
+- Trichoderma for soil diseases
+
+What specific pest or disease are you facing? Share crop name and symptoms for detailed treatment!"""
+        
+        else:
+            return """I'm your farming expert! I can help with:
+
+**Crop Management:**
+• Seasonal crops and planting times
+• Variety selection for Telangana/AP
+• Fertilizer recommendations
+• Irrigation scheduling
+
+**Problem Solving:**
+• Pest and disease identification
+• Treatment recommendations
+• Soil health improvement
+• Weather-based decisions
+
+**Practical Advice:**
+• Government schemes and subsidies
+• Market prices and selling tips
+• Cost-effective farming methods
+• Organic farming techniques
+
+Ask me anything specific about your crops, soil, pests, or farming challenges!"""
 
 
 def categorize_query(message):

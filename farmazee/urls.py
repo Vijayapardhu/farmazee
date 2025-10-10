@@ -22,6 +22,7 @@ urlpatterns = [
     path('schemes/', include('schemes.urls')),
     path('soil/', include('soil_health.urls')),
     path('ai-chatbot/', include('ai_chatbot.urls')),
+    path('problems/', include('farmer_problems.urls')),
     path('api/', include('core.api_urls')),
 ]
 

@@ -115,6 +115,11 @@
                         </a>
                     </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'farmer_problems:list' %}">
+                            <i class="fas fa-question-circle me-1"></i>Ask Experts
+                        </a>
+                    </li>
                 </ul>
                 
                 <!-- User Menu -->
@@ -297,6 +302,25 @@
             duration: 800,
             easing: 'ease-in-out',
             once: true
+        });
+        
+        // Active Navigation Highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && currentPath.startsWith(href) && href !== '/') {
+                    link.classList.add('active');
+                    link.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    link.style.borderRadius = '5px';
+                } else if (href === '/' && currentPath === '/') {
+                    link.classList.add('active');
+                    link.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    link.style.borderRadius = '5px';
+                }
+            });
         });
     </script>
     

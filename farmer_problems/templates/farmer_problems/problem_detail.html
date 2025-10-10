@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ problem.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Problem Details -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-1 text-center">
+                    <div class="vote-section">
+                        <button class="btn btn-sm vote-btn" onclick="vote('problem', {{ problem.id }}, 'up')">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <h4 id="problem-votes-{{ problem.id }}">{{ problem.total_votes }}</h4>
+                        <button class="btn btn-sm vote-btn" onclick="vote('problem', {{ problem.id }}, 'down')">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-11">
+                    <h2>{{ problem.title }}</h2>
+                    <div class="mb-3">
+                        {% if problem.status == 'solved' %}
+                        <span class="badge bg-success"><i class="fas fa-check"></i> Solved</span>
+                        {% else %}
+                        <span class="badge bg-warning">Open</span>
+                        {% endif %}
+                        {% if problem.category %}
+                        <span class="badge bg-primary">{{ problem.category.name }}</span>
+                        {% endif %}
+                        {% if problem.crop_type %}
+                        <span class="badge bg-info">{{ problem.crop_type }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="lead">{{ problem.description|linebreaks }}</p>
+                    
+                    {% if problem.images.all %}
+                    <div class="row g-2 mb-3">
+                        {% for image in problem.images.all %}
+                        <div class="col-md-4">
+                            <img src="{{ image.image_url }}" class="img-fluid rounded" alt="{{ image.caption }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="text-muted small">
+                        <i class="fas fa-user"></i> {{ problem.author.username }}
+                        {% if problem.location %}
+                        <i class="fas fa-map-marker-alt ms-3"></i> {{ problem.location }}
+                        {% endif %}
+                        <i class="fas fa-clock ms-3"></i> {{ problem.created_at|timesince }} ago
+                        <i class="fas fa-eye ms-3"></i> {{ problem.views_count }} views
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Solutions -->
+    <h4>{{ solutions.count }} {% if solutions.count == 1 %}Solution{% else %}Solutions{% endif %}</h4>
+    
+    {% for solution in solutions %}
+    <div class="card mb-3 {% if solution.is_accepted %}border-success{% endif %}">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-1 text-center">
+                    <div class="vote-section">
+                        <button class="btn btn-sm vote-btn" onclick="vote('solution', {{ solution.id }}, 'up')">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <h5 id="solution-votes-{{ solution.id }}">{{ solution.total_votes }}</h5>
+                        <button class="btn btn-sm vote-btn" onclick="vote('solution', {{ solution.id }}, 'down')">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-11">
+                    {% if solution.is_accepted %}
+                    <div class="badge bg-success mb-2">
+                        <i class="fas fa-check-circle"></i> Accepted Solution
+                    </div>
+                    {% endif %}
+                    {% if solution.is_expert %}
+                    <div class="badge bg-warning mb-2">
+                        <i class="fas fa-star"></i> Expert: {{ solution.expert_badge }}
+                    </div>
+                    {% endif %}
+                    <p>{{ solution.content|linebreaks }}</p>
+                    
+                    {% if solution.images.all %}
+                    <div class="row g-2 mb-2">
+                        {% for image in solution.images.all %}
+                        <div class="col-md-3">
+                            <img src="{{ image.image_url }}" class="img-fluid rounded" alt="{{ image.caption }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            <i class="fas fa-user"></i> {{ solution.author.username }}
+                            <i class="fas fa-clock ms-2"></i> {{ solution.created_at|timesince }} ago
+                        </div>
+                        {% if user == problem.author and not solution.is_accepted %}
+                        <button class="btn btn-sm btn-success" onclick="acceptSolution({{ solution.id }})">
+                            <i class="fas fa-check"></i> Accept Solution
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No solutions yet. Be the first to help!
+    </div>
+    {% endfor %}
+
+    <!-- Add Solution Form -->
+    {% if user.is_authenticated %}
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Add Your Solution</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{% url 'farmer_problems:solution_create' problem.slug %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea class="form-control" name="content" rows="4" required
+                              placeholder="Share your solution or advice..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="solution-images" class="form-label">Upload Images (optional)</label>
+                    <input type="file" class="form-control" id="solution-images" name="images" multiple accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-paper-plane"></i> Post Solution
+                </button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-sign-in-alt"></i> Please <a href="{% url 'account_login' %}">login</a> to add a solution.
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function vote(contentType, contentId, voteType) {
+    fetch('{% url "farmer_problems:vote" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            content_type: contentType,
+            content_id: contentId,
+            vote_type: voteType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const voteElement = document.getElementById(`${contentType}-votes-${contentId}`);
+            if (voteElement) {
+                voteElement.textContent = data.vote_count;
+            }
+        }
+    });
+}
+
+function acceptSolution(solutionId) {
+    if (confirm('Accept this solution? This will mark the problem as solved.')) {
+        fetch(`/problems/solution/${solutionId}/accept/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+
+<style>
+.vote-section {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+}
+.vote-btn {
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+.vote-btn:hover {
+    color: #198754;
+}
+</style>
+{% endblock %}
+

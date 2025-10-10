@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'soil_health',
     'ai_ml',
     'ai_chatbot',
+    'farmer_problems',
 ]
 
 MIDDLEWARE = [
@@ -93,12 +94,32 @@ WSGI_APPLICATION = 'farmazee.wsgi.application'
 ASGI_APPLICATION = 'farmazee.asgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Use environment variable to switch between SQLite (dev) and PostgreSQL (production)
+USE_POSTGRES = os.getenv('USE_POSTGRES', 'True').lower() in ['true', '1', 'yes']
+
+if USE_POSTGRES:
+    # Supabase PostgreSQL Database (Pooler Connection)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'postgres'),
+            'USER': os.getenv('DB_USER', 'postgres.hhixytzsroxmmmlknuck'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'ApenXXFgk6RGYcQc'),
+            'HOST': os.getenv('DB_HOST', 'aws-1-ap-south-1.pooler.supabase.com'),
+            'PORT': os.getenv('DB_PORT', '6543'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
+        }
     }
-}
+else:
+    # SQLite for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -130,8 +151,8 @@ STATICFILES_DIRS = [
 ]
 
 # Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/farmazee media/'
+MEDIA_ROOT = BASE_DIR / 'farmazee media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -143,11 +164,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://c127e86eb320.ngrok-free.app",
     "https://095f4df4cca3.ngrok-free.app",
     "https://523b1e51afd2.ngrok-free.app",
-    "https://*.ngrok-free.app"
+    "https://*.*"
 ]
 
 # Allow all ngrok domains
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"https://.*\.ngrok-free\.app",
     r"http://.*\.ngrok-free\.app",
@@ -173,10 +194,10 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Additional security settings for ngrok
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.ngrok-free.app",
-    "https://c127e86eb320.ngrok-free.app",
-    "https://095f4df4cca3.ngrok-free.app",
-    "https://523b1e51afd2.ngrok-free.app",
+    "https://*.*",
+    "https://hhixytzsroxmmmlknuck.supabase.co",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 # REST Framework settings
@@ -207,3 +228,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # AI Chatbot Settings
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDFCmoQCjp6qbUp_rDErGCgFQoBsJblMVQ')
+
+# Supabase Configuration
+SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://hhixytzsroxmmmlknuck.supabase.co')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXh5dHpzcm94bW1tbGtudWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MjQ1MDksImV4cCI6MjA3NTUwMDUwOX0.riSFKI2AsR6TtDytIBDFbKUJYqAzmSz3_3TXxAw8TwY')
+SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', 'farmazee media')
