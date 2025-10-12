@@ -58,8 +58,8 @@ def admin_dashboard(request):
     recent_queries = FarmerQuery.objects.order_by('-created_at')[:5]
     
     # Popular queries
-    popular_queries = FarmerQuery.objects.values('query').annotate(
-        count=Count('query')
+    popular_queries = FarmerQuery.objects.values('query_text').annotate(
+        count=Count('query_text')
     ).order_by('-count')[:10]
     
     # System health
@@ -1191,3 +1191,4 @@ def community_management(request):
         }
     
     return render(request, 'admin_panel/community_management.html', context)
+

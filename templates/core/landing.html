@@ -589,3 +589,228 @@
 }
 </style>
 {% endblock %}
+
+                        <h5 class="card-title">Knowledge & Support</h5>
+                        <p class="card-text">Learn from experts, access educational content, and get support from the farming community.</p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>Expert consultations</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Educational content</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Community forums</li>
+                            <li><i class="fas fa-check text-success me-2"></i>24/7 support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Crops Section -->
+{% if featured_crops %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Featured Crops</h2>
+            <p class="lead text-muted">Discover the best crops for your region and season</p>
+        </div>
+
+        <div class="row g-4">
+            {% for crop in featured_crops %}
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                <div class="card h-100 border-0 shadow-sm">
+                    {% if crop.image %}
+                    <img src="{{ crop.image.url }}" class="card-img-top" alt="{{ crop.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-seedling fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ crop.name }}</h5>
+                        <p class="card-text text-muted">{{ crop.description|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">{{ crop.get_category_display }}</span>
+                            <span class="badge bg-success">{{ crop.get_season_display }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Government Schemes Section -->
+{% if recent_schemes %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Latest Government Schemes</h2>
+            <p class="lead text-muted">Stay updated with the latest government support for farmers</p>
+        </div>
+
+        <div class="row g-4">
+            {% for scheme in recent_schemes %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-warning text-dark">{{ scheme.get_category_display }}</span>
+                            {% if scheme.deadline %}
+                            <small class="text-muted">Deadline: {{ scheme.deadline|date:"M d, Y" }}</small>
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title">{{ scheme.title }}</h5>
+                        <p class="card-text">{{ scheme.description|truncatewords:20 }}</p>
+                        {% if scheme.scheme_amount %}
+                        <p class="text-success fw-bold">Amount: {{ scheme.scheme_amount }}</p>
+                        {% endif %}
+                        <a href="#" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Statistics Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up">
+                <div class="stat-item">
+                    <i class="fas fa-users fa-3x mb-3"></i>
+                    <h3 class="display-4 fw-bold">10,000+</h3>
+                    <p class="lead">Active Farmers</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-item">
+                    <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
+                    <h3 class="display-4 fw-bold">500+</h3>
+                    <p class="lead">Villages Covered</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-item">
+                    <i class="fas fa-chart-line fa-3x mb-3"></i>
+                    <h3 class="display-4 fw-bold">₹50Cr+</h3>
+                    <p class="lead">Value Generated</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-item">
+                    <i class="fas fa-star fa-3x mb-3"></i>
+                    <h3 class="display-4 fw-bold">4.8</h3>
+                    <p class="lead">User Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-5 fw-bold mb-4">Ready to Transform Your Farming?</h2>
+                <p class="lead mb-4">Join thousands of farmers who are already using Farmazee to improve their productivity and profitability.</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'signup' %}" class="btn btn-primary btn-lg px-4">Start Free Trial</a>
+                                         <a href="{% url 'core:contact' %}" class="btn btn-outline-primary btn-lg px-4">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">What Farmers Say</h2>
+            <p class="lead text-muted">Real stories from real farmers</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4" data-aos="fade-up">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"Farmazee helped me increase my crop yield by 30% with their expert advice and weather alerts."</p>
+                        <h6 class="card-title">Rajesh Kumar</h6>
+                        <small class="text-muted">Wheat Farmer, Punjab</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"The marketplace feature helped me get better prices for my produce and connect with reliable buyers."</p>
+                        <h6 class="card-title">Lakshmi Devi</h6>
+                        <small class="text-muted">Vegetable Farmer, Karnataka</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"The financial services helped me get a loan for new equipment. The process was simple and quick."</p>
+                        <h6 class="card-title">Amit Patel</h6>
+                        <small class="text-muted">Dairy Farmer, Gujarat</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.feature-icon {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .feature-icon {
+    transform: scale(1.1);
+}
+
+.stat-item {
+    padding: 2rem 1rem;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+</style>
+{% endblock %}

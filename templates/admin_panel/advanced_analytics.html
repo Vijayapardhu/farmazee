@@ -199,3 +199,203 @@ new Chart(userGrowthCtx, {
 });
 </script>
 {% endblock %}
+{% load static %}
+
+{% block title %}Advanced Analytics - Admin Panel{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-chart-line me-2"></i>Advanced Analytics</h3>
+    <p class="text-muted mb-0">Deep dive into platform performance metrics</p>
+</div>
+
+<!-- Engagement Metrics -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="analytics-card">
+            <div class="analytics-number">{{ engagement_metrics.daily_active_users }}</div>
+            <div class="analytics-label">Daily Active Users</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="analytics-card">
+            <div class="analytics-number">{{ engagement_metrics.weekly_active_users }}</div>
+            <div class="analytics-label">Weekly Active Users</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="analytics-card">
+            <div class="analytics-number">{{ engagement_metrics.monthly_active_users }}</div>
+            <div class="analytics-label">Monthly Active Users</div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Metrics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="analytics-card">
+            <div class="analytics-number text-warning">{{ content_metrics.problems_this_week }}</div>
+            <div class="analytics-label">Problems This Week</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="analytics-card">
+            <div class="analytics-number text-success">{{ content_metrics.solutions_this_week }}</div>
+            <div class="analytics-label">Solutions This Week</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="analytics-card">
+            <div class="analytics-number text-info">{{ content_metrics.queries_this_week }}</div>
+            <div class="analytics-label">AI Queries This Week</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="analytics-card">
+            <div class="analytics-number text-primary">{{ content_metrics.solution_rate }}</div>
+            <div class="analytics-label">Solution Rate</div>
+        </div>
+    </div>
+</div>
+
+<!-- Platform Health -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="chart-container">
+            <h5><i class="fas fa-heartbeat me-2"></i>Platform Health</h5>
+            <div class="row">
+                <div class="col-md-2 text-center">
+                    <h4 class="text-success">{{ platform_health.server_uptime }}</h4>
+                    <small class="text-muted">Server Uptime</small>
+                </div>
+                <div class="col-md-2 text-center">
+                    <h4 class="text-success">{{ platform_health.avg_response_time }}</h4>
+                    <small class="text-muted">Avg Response</small>
+                </div>
+                <div class="col-md-2 text-center">
+                    <h4 class="text-success">{{ platform_health.error_rate }}</h4>
+                    <small class="text-muted">Error Rate</small>
+                </div>
+                <div class="col-md-2 text-center">
+                    <h4 class="text-info">{{ platform_health.api_calls_today }}</h4>
+                    <small class="text-muted">API Calls Today</small>
+                </div>
+                <div class="col-md-2 text-center">
+                    <h4 class="text-warning">{{ platform_health.storage_used }}</h4>
+                    <small class="text-muted">Storage Used</small>
+                </div>
+                <div class="col-md-2 text-center">
+                    <h4 class="text-primary">{{ platform_health.bandwidth_used }}</h4>
+                    <small class="text-muted">Bandwidth</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="chart-container">
+            <h5><i class="fas fa-chart-area me-2"></i>User Growth (12 Months)</h5>
+            <canvas id="userGrowthChart" height="80"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Top Contributors -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5><i class="fas fa-trophy me-2"></i>Top Farmers This Month</h5>
+            <div class="list-group list-group-flush">
+                {% for farmer in top_farmers %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">{{ farmer.get_full_name }}</h6>
+                        <small class="text-muted">@{{ farmer.username }}</small>
+                    </div>
+                    <span class="badge bg-warning rounded-pill">{{ farmer.problem_count }} problems</span>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-3">
+                    No data available
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5><i class="fas fa-star me-2"></i>Top Experts This Month</h5>
+            <div class="list-group list-group-flush">
+                {% for expert in top_experts %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">{{ expert.get_full_name }}</h6>
+                        <small class="text-muted">@{{ expert.username }}</small>
+                    </div>
+                    <span class="badge bg-success rounded-pill">{{ expert.solution_count }} solutions</span>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-3">
+                    No data available
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// User Growth Chart
+const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+const userGrowthData = {{ user_growth|safe }};
+
+new Chart(userGrowthCtx, {
+    type: 'line',
+    data: {
+        labels: userGrowthData.map(item => item.month),
+        datasets: [{
+            label: 'New Users',
+            data: userGrowthData.map(item => item.users),
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -128,3 +128,132 @@
     </div>
 </div>
 {% endblock %}
+{% load static %}
+
+{% block title %}Add Government Scheme - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3><i class="fas fa-plus me-2"></i>Add Government Scheme</h3>
+            <p class="text-muted mb-0">Create a new government scheme for farmers</p>
+        </div>
+        <div>
+            <a href="{% url 'admin_panel:schemes_management' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Schemes
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="chart-container">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label">Scheme Name *</label>
+                        <input type="text" class="form-control" name="name" required 
+                               placeholder="e.g., PM-Kisan Samman Nidhi">
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category">
+                            <option value="">Select Category</option>
+                            <option value="financial_assistance">Financial Assistance</option>
+                            <option value="crop_insurance">Crop Insurance</option>
+                            <option value="subsidy">Subsidy</option>
+                            <option value="training">Training & Education</option>
+                            <option value="equipment">Equipment Support</option>
+                            <option value="irrigation">Irrigation</option>
+                            <option value="organic_farming">Organic Farming</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Description *</label>
+                    <textarea class="form-control" name="description" rows="4" required 
+                              placeholder="Brief overview of the scheme"></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Eligibility Criteria</label>
+                    <textarea class="form-control" name="eligibility" rows="5" 
+                              placeholder="Who can apply for this scheme? List all eligibility requirements."></textarea>
+                    <div class="form-text">Use bullet points or numbered lists for clarity</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Benefits</label>
+                    <textarea class="form-control" name="benefits" rows="5" 
+                              placeholder="What benefits do farmers receive? Be specific about amounts and services."></textarea>
+                    <div class="form-text">Include financial benefits, subsidies, or services provided</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Application Process</label>
+                    <textarea class="form-control" name="application_process" rows="6" 
+                              placeholder="Step-by-step guide on how to apply"></textarea>
+                    <div class="form-text">Provide clear, step-by-step instructions</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Required Documents</label>
+                    <textarea class="form-control" name="required_documents" rows="4" 
+                              placeholder="List all documents needed for application"></textarea>
+                    <div class="form-text">e.g., Aadhar card, land records, bank passbook, etc.</div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date">
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date">
+                        <div class="form-text">Leave blank if ongoing</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Status</label>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
+                            <label class="form-check-label" for="isActive">
+                                Scheme is Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Tips for Adding Schemes</h6>
+                    <ul class="mb-0">
+                        <li>Use clear, simple language that farmers can understand</li>
+                        <li>Include specific amounts and percentages</li>
+                        <li>Provide direct application links where available</li>
+                        <li>Keep information up-to-date with official sources</li>
+                        <li>Mention contact numbers or websites for more information</li>
+                    </ul>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'admin_panel:schemes_management' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-1"></i>Add Scheme
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

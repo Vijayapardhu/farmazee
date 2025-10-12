@@ -77,6 +77,11 @@ class FarmerProblem(models.Model):
     def solution_count(self):
         return self.solutions.count()
     
+    @solution_count.setter
+    def solution_count(self, value):
+        # This is a read-only property, so we don't actually set anything
+        pass
+    
     @property
     def accepted_solution(self):
         return self.solutions.filter(is_accepted=True).first()

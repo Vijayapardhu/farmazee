@@ -121,3 +121,125 @@
     }
 }
 </style>
+<div class="weather-widget">
+    {% if current_weather %}
+    <div class="card weather-card">
+        <div class="card-header bg-gradient-success text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="fas fa-cloud-sun me-2"></i>
+                    {{ city }} Weather
+                </h6>
+                <small class="opacity-75">{{ current_weather.timestamp|date:"H:i" }}</small>
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="text-center">
+                        <div class="display-4 text-primary fw-bold">
+                            {{ current_weather.temperature }}°
+                        </div>
+                        <div class="text-muted small">{{ current_weather.description }}</div>
+                        <div class="text-muted small">Feels like {{ current_weather.feels_like }}°</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="weather-details">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted">
+                                <i class="fas fa-tint text-info me-1"></i>Humidity
+                            </small>
+                            <small class="fw-bold">{{ current_weather.humidity }}%</small>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted">
+                                <i class="fas fa-wind text-success me-1"></i>Wind
+                            </small>
+                            <small class="fw-bold">{{ current_weather.wind_speed }} km/h</small>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted">
+                                <i class="fas fa-cloud-rain text-info me-1"></i>Rain
+                            </small>
+                            <small class="fw-bold">{{ current_weather.precipitation }}mm</small>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">
+                                <i class="fas fa-sun text-warning me-1"></i>UV
+                            </small>
+                            <small class="fw-bold">{{ current_weather.uv_index }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick farming tip -->
+            {% if recommendations %}
+                {% for rec in recommendations|slice:":1" %}
+                    <div class="mt-3 p-2 bg-light rounded">
+                        <div class="d-flex align-items-start">
+                            <span class="me-2">{{ rec.icon }}</span>
+                            <div>
+                                <small class="fw-bold text-{% if rec.type == 'warning' %}warning{% elif rec.type == 'danger' %}danger{% elif rec.type == 'success' %}success{% else %}info{% endif %}">
+                                    {{ rec.title }}
+                                </small>
+                                <div class="small text-muted">{{ rec.action }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- View full weather -->
+            <div class="text-center mt-3">
+                <a href="{% url 'weather:home' %}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-eye me-1"></i>Full Weather
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card weather-card">
+        <div class="card-body text-center p-4">
+            <i class="fas fa-cloud-rain fa-2x text-muted mb-2"></i>
+            <p class="text-muted small mb-3">Weather data loading...</p>
+            <a href="{% url 'weather:home' %}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-cloud-sun me-1"></i>Check Weather
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.weather-widget .weather-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.weather-widget .card-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    border: none;
+}
+
+.weather-widget .weather-details {
+    font-size: 0.85rem;
+}
+
+.weather-widget .display-4 {
+    line-height: 1;
+}
+
+@media (max-width: 768px) {
+    .weather-widget .display-4 {
+        font-size: 2rem;
+    }
+    
+    .weather-widget .weather-details {
+        font-size: 0.8rem;
+    }
+}
+</style>

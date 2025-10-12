@@ -162,3 +162,14 @@ def faq(request):
     """FAQ page"""
     faqs = FAQ.objects.filter(is_active=True).order_by('category', 'order')
     return render(request, 'core/faq.html', {'faqs': faqs})
+
+    return render(request, 'core/privacy_policy.html')
+
+def terms_of_service(request):
+    """Terms of service page"""
+    return render(request, 'core/terms_of_service.html')
+
+def faq(request):
+    """FAQ page"""
+    faqs = FAQ.objects.filter(is_active=True).order_by('category', 'order')
+    return render(request, 'core/faq.html', {'faqs': faqs})

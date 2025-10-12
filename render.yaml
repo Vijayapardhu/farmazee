@@ -37,3 +37,41 @@ services:
       - key: SUPABASE_STORAGE_BUCKET
         value: farmazee media
 
+  - type: web
+    name: farmazee
+    env: python
+    region: singapore
+    plan: free
+    branch: master
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn farmazee.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: USE_POSTGRES
+        value: True
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 6543
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: farmazee media
+

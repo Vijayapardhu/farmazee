@@ -39,3 +39,4 @@ else:
 admin.site.site_header = "Farmazee Admin"
 admin.site.site_title = "Farmazee Admin Portal"
 admin.site.index_title = "Welcome to Farmazee Administration"
+

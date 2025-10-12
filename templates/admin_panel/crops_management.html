@@ -173,3 +173,177 @@
 </nav>
 {% endif %}
 {% endblock %}
+{% load static %}
+
+{% block title %}Crops Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-seedling me-2"></i>Crops & Varieties Management</h3>
+    <p class="text-muted mb-0">Manage crop database and varieties</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-10">
+            <label class="form-label">Search Crops</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search by crop name or scientific name">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Crop Statistics -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_crops }}</div>
+            <div class="stats-label">Total Crops in Database</div>
+        </div>
+    </div>
+</div>
+
+<!-- Crops Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Crop Name</th>
+                <th>Scientific Name</th>
+                <th>Season</th>
+                <th>Duration</th>
+                <th>Climate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for crop in crops %}
+            <tr>
+                <td>
+                    <h6 class="mb-0">{{ crop.name }}</h6>
+                    <small class="text-muted">{{ crop.category|default:"General" }}</small>
+                </td>
+                <td>
+                    <em class="text-muted">{{ crop.scientific_name|default:"Not specified" }}</em>
+                </td>
+                <td>
+                    {% if crop.season %}
+                        <span class="badge bg-success">{{ crop.season|title }}</span>
+                    {% else %}
+                        <span class="text-muted">All seasons</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <small class="text-muted">{{ crop.duration_days|default:"N/A" }} days</small>
+                </td>
+                <td>
+                    <small class="text-muted">{{ crop.suitable_climate|default:"All climates"|truncatechars:30 }}</small>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCrop{{ crop.id }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editCrop{{ crop.id }}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            
+            <!-- View Crop Modal -->
+            <div class="modal fade" id="viewCrop{{ crop.id }}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ crop.name }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <strong>Scientific Name:</strong><br>
+                                    <span class="text-muted">{{ crop.scientific_name|default:"Not specified" }}</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Season:</strong><br>
+                                    <span class="text-muted">{{ crop.season|default:"All seasons" }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if crop.description %}
+                            <div class="mb-3">
+                                <strong>Description:</strong>
+                                <p>{{ crop.description }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Duration:</strong><br>
+                                    <span class="text-muted">{{ crop.duration_days|default:"N/A" }} days</span>
+                                </div>
+                                <div class="col-md-8">
+                                    <strong>Suitable Climate:</strong><br>
+                                    <span class="text-muted">{{ crop.suitable_climate|default:"All climates" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="fas fa-seedling fa-3x mb-3 d-block"></i>
+                    No crops found matching your search.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if crops.has_other_pages %}
+<nav aria-label="Crops pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if crops.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ crops.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">Previous</a>
+            </li>
+        {% endif %}
+        
+        {% for num in crops.paginator.page_range %}
+            {% if crops.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if crops.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ crops.next_page_number }}{% if search %}&search={{ search }}{% endif %}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

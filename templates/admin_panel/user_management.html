@@ -246,3 +246,250 @@ function confirmBulkAction() {
 }
 </script>
 {% endblock %}
+
+
+{% block title %}User Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-users me-2"></i>User Management</h3>
+    <p class="text-muted mb-0">Manage farmers, experts, and platform users</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Search Users</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search by name, username, or email">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">User Type</label>
+            <select class="form-select" name="type">
+                <option value="all" {% if user_type == 'all' %}selected{% endif %}>All Users</option>
+                <option value="farmers" {% if user_type == 'farmers' %}selected{% endif %}>Farmers</option>
+                <option value="experts" {% if user_type == 'experts' %}selected{% endif %}>Experts</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status">
+                <option value="all" {% if status == 'all' %}selected{% endif %}>All</option>
+                <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Filter
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- User Statistics -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_users }}</div>
+            <div class="stats-label">Total Users</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">{{ active_users }}</div>
+            <div class="stats-label">Active Users</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">{{ experts }}</div>
+            <div class="stats-label">Experts</div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions -->
+<div class="mb-3">
+    <form method="post" action="{% url 'admin_panel:bulk_user_actions' %}" id="bulkActionForm">
+        {% csrf_token %}
+        <div class="d-flex align-items-center gap-2">
+            <select class="form-select" name="action" style="width: auto;">
+                <option value="">Select Bulk Action</option>
+                <option value="activate">Activate Selected Users</option>
+                <option value="deactivate">Deactivate Selected Users</option>
+                <option value="make_expert">Mark as Experts</option>
+                <option value="send_email">Send Email to Selected</option>
+            </select>
+            <button type="submit" class="btn btn-primary" onclick="return confirmBulkAction()">
+                <i class="fas fa-check me-1"></i>Apply to Selected
+            </button>
+            <span id="selectedCount" class="text-muted ms-2"></span>
+        </div>
+    </form>
+</div>
+
+<!-- Users Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAll" class="form-check-input">
+                </th>
+                <th>User</th>
+                <th>Email</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="user_ids" value="{{ user.id }}" class="form-check-input user-checkbox" form="bulkActionForm">
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-3">
+                            {% if user.userprofile.profile_picture %}
+                                <img src="{{ user.userprofile.profile_picture.url }}" alt="Avatar" class="rounded-circle" width="40" height="40">
+                            {% else %}
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    {{ user.first_name|first|default:user.username|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h6 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h6>
+                            <small class="text-muted">@{{ user.username }}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.userprofile.is_expert %}
+                        <span class="badge bg-success">Expert</span>
+                    {% else %}
+                        <span class="badge bg-primary">Farmer</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_active %}
+                        <span class="status-badge status-active">Active</span>
+                    {% else %}
+                        <span class="status-badge status-inactive">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    {% if user.last_login %}
+                        {{ user.last_login|date:"M d, Y" }}
+                    {% else %}
+                        <span class="text-muted">Never</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{% url 'admin_panel:user_detail' user.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'admin_panel:toggle_user_status' user.id %}" class="btn btn-outline-{% if user.is_active %}warning{% else %}success{% endif %} toggle-status-btn">
+                            <i class="fas fa-{% if user.is_active %}ban{% else %}check{% endif %}"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    <i class="fas fa-users fa-3x mb-3 d-block"></i>
+                    No users found matching your criteria.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if users.has_other_pages %}
+<nav aria-label="User pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if users.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ users.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if user_type %}&type={{ user_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}">Previous</a>
+            </li>
+        {% endif %}
+        
+        {% for num in users.paginator.page_range %}
+            {% if users.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if user_type %}&type={{ user_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if users.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ users.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if user_type %}&type={{ user_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Select all checkbox
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+    updateSelectedCount();
+});
+
+// Update selected count
+document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectedCount);
+});
+
+function updateSelectedCount() {
+    const count = document.querySelectorAll('.user-checkbox:checked').length;
+    const countElement = document.getElementById('selectedCount');
+    if (count > 0) {
+        countElement.textContent = `${count} users selected`;
+        countElement.classList.add('text-primary', 'fw-bold');
+    } else {
+        countElement.textContent = '';
+    }
+}
+
+function confirmBulkAction() {
+    const count = document.querySelectorAll('.user-checkbox:checked').length;
+    if (count === 0) {
+        alert('Please select at least one user');
+        return false;
+    }
+    
+    const action = document.querySelector('select[name="action"]').value;
+    if (!action) {
+        alert('Please select an action');
+        return false;
+    }
+    
+    return confirm(`Apply this action to ${count} selected users?`);
+}
+</script>
+{% endblock %}

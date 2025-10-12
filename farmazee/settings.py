@@ -234,3 +234,4 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDFCmoQCjp6qbUp_rDErGCgFQoBsJ
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://hhixytzsroxmmmlknuck.supabase.co')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXh5dHpzcm94bW1tbGtudWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MjQ1MDksImV4cCI6MjA3NTUwMDUwOX0.riSFKI2AsR6TtDytIBDFbKUJYqAzmSz3_3TXxAw8TwY')
 SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', 'farmazee media')
+

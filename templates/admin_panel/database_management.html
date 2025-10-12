@@ -308,3 +308,312 @@ function confirmRestore() {
 }
 </script>
 {% endblock %}
+{% load static %}
+
+{% block title %}Database Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-database me-2"></i>Database Management</h3>
+    <p class="text-muted mb-0">Backup, optimize, and manage your database</p>
+</div>
+
+<!-- Database Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ db_stats.total_users }}</div>
+            <div class="stats-label">Total Users</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ db_stats.total_problems }}</div>
+            <div class="stats-label">Total Problems</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ db_stats.total_queries }}</div>
+            <div class="stats-label">AI Queries</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ db_stats.database_size }}</div>
+            <div class="stats-label">Database Size</div>
+        </div>
+    </div>
+</div>
+
+<!-- Backup Management -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-download me-2"></i>Backup Management</h5>
+            
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Last Backup:</span>
+                    <span class="text-success fw-bold">{{ db_stats.last_backup }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Next Scheduled:</span>
+                    <span class="text-muted">{{ db_stats.next_backup }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Backup Frequency:</span>
+                    <span class="text-muted">Daily at 2:00 AM</span>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="backup">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-download me-1"></i>Create Backup Now
+                    </button>
+                </form>
+                
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#backupHistoryModal">
+                    <i class="fas fa-history me-1"></i>View Backup History
+                </button>
+                
+                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#restoreModal">
+                    <i class="fas fa-upload me-1"></i>Restore from Backup
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Database Operations -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-tools me-2"></i>Database Operations</h5>
+            
+            <div class="mb-4">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>Database Health</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                    </div>
+                    <small>Database is healthy and optimized (85%)</small>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="optimize">
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="fas fa-tools me-1"></i>Optimize Database
+                    </button>
+                </form>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="clean">
+                    <button type="submit" class="btn btn-outline-warning w-100" onclick="return confirm('Clean old session data and temporary files?')">
+                        <i class="fas fa-broom me-1"></i>Clean Database
+                    </button>
+                </form>
+                
+                <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#databaseInfoModal">
+                    <i class="fas fa-info-circle me-1"></i>Database Information
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Export -->
+    <div class="col-md-12">
+        <div class="chart-container">
+            <h5><i class="fas fa-file-export me-2"></i>Data Export</h5>
+            
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:export_data' %}?type=users" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-users me-1"></i>Export Users
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:export_data' %}?type=queries" class="btn btn-outline-info w-100">
+                        <i class="fas fa-search me-1"></i>Export Queries
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <button class="btn btn-outline-warning w-100" onclick="exportProblems()">
+                        <i class="fas fa-question-circle me-1"></i>Export Problems
+                    </button>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <button class="btn btn-outline-success w-100" onclick="exportSolutions()">
+                        <i class="fas fa-lightbulb me-1"></i>Export Solutions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Backup History Modal -->
+<div class="modal fade" id="backupHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Backup History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Size</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Oct 12, 2025 2:00 AM</td>
+                                <td>245 MB</td>
+                                <td>Automatic</td>
+                                <td><span class="badge bg-success">Success</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Oct 11, 2025 2:00 AM</td>
+                                <td>242 MB</td>
+                                <td>Automatic</td>
+                                <td><span class="badge bg-success">Success</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restore Modal -->
+<div class="modal fade" id="restoreModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Restore from Backup</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Warning</h6>
+                    <p class="mb-0">This will restore your database from a backup. Current data will be replaced. Make sure you have a recent backup before proceeding.</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Select Backup File</label>
+                    <select class="form-select">
+                        <option>Oct 12, 2025 2:00 AM (245 MB)</option>
+                        <option>Oct 11, 2025 2:00 AM (242 MB)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmRestore()">Restore Database</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Database Info Modal -->
+<div class="modal fade" id="databaseInfoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Database Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Connection Details</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Engine:</td>
+                                <td>PostgreSQL</td>
+                            </tr>
+                            <tr>
+                                <td>Version:</td>
+                                <td>14.5</td>
+                            </tr>
+                            <tr>
+                                <td>Host:</td>
+                                <td>Supabase</td>
+                            </tr>
+                            <tr>
+                                <td>Status:</td>
+                                <td><span class="badge bg-success">Connected</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Statistics</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Total Tables:</td>
+                                <td>{{ db_stats.total_users|add:db_stats.total_problems|add:15 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total Records:</td>
+                                <td>{{ db_stats.total_users|add:db_stats.total_problems|add:db_stats.total_solutions|add:db_stats.total_queries }}</td>
+                            </tr>
+                            <tr>
+                                <td>Database Size:</td>
+                                <td>{{ db_stats.database_size }}</td>
+                            </tr>
+                            <tr>
+                                <td>Index Size:</td>
+                                <td>45 MB</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function exportProblems() {
+    window.location.href = '{% url "admin_panel:export_data" %}?type=problems';
+}
+
+function exportSolutions() {
+    window.location.href = '{% url "admin_panel:export_data" %}?type=solutions';
+}
+
+function confirmRestore() {
+    if (confirm('Are you ABSOLUTELY SURE you want to restore from backup? This cannot be undone!')) {
+        if (confirm('Final confirmation: This will replace ALL current data!')) {
+            alert('Database restore initiated. This may take several minutes.');
+            // In production, implement actual restore
+        }
+    }
+}
+</script>
+{% endblock %}

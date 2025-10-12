@@ -95,3 +95,99 @@
     </div>
 </div>
 {% endblock %}
+{% load static %}
+
+{% block title %}Add Knowledge Item - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3><i class="fas fa-plus me-2"></i>Add Knowledge Item</h3>
+            <p class="text-muted mb-0">Add new content to the AI knowledge base</p>
+        </div>
+        <div>
+            <a href="{% url 'admin_panel:knowledge_base' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Knowledge Base
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="chart-container">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="form-label">Title *</label>
+                    <input type="text" class="form-control" name="title" required 
+                           placeholder="Enter a descriptive title for this knowledge item">
+                    <div class="form-text">A clear, descriptive title that summarizes the content.</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Category *</label>
+                    <select class="form-select" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="crop_management">Crop Management</option>
+                        <option value="pest_control">Pest Control</option>
+                        <option value="soil_health">Soil Health</option>
+                        <option value="weather">Weather</option>
+                        <option value="market_info">Market Info</option>
+                        <option value="government_schemes">Government Schemes</option>
+                        <option value="general">General</option>
+                    </select>
+                    <div class="form-text">Choose the most appropriate category for this content.</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Keywords</label>
+                    <input type="text" class="form-control" name="keywords" 
+                           placeholder="Enter keywords separated by commas (e.g., rice, planting, irrigation)">
+                    <div class="form-text">Keywords help the AI find relevant content when users ask questions.</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Content *</label>
+                    <textarea class="form-control" name="content" rows="15" required 
+                              placeholder="Enter the detailed content for this knowledge item. Be specific and provide actionable advice."></textarea>
+                    <div class="form-text">
+                        <strong>Tips for writing effective content:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Be specific and actionable</li>
+                            <li>Include step-by-step instructions when applicable</li>
+                            <li>Mention relevant crop varieties, quantities, and timing</li>
+                            <li>Use simple language that farmers can understand</li>
+                            <li>Include safety precautions where necessary</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Content Guidelines</h6>
+                        <ul class="mb-0">
+                            <li>Focus on practical, actionable advice</li>
+                            <li>Include specific crop names and varieties when relevant</li>
+                            <li>Mention quantities, timing, and conditions</li>
+                            <li>Use simple, clear language</li>
+                            <li>Provide step-by-step instructions for complex procedures</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'admin_panel:knowledge_base' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Add Knowledge Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

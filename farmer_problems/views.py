@@ -32,7 +32,7 @@ def problem_list(request):
     # Base queryset
     problems = FarmerProblem.objects.select_related('author', 'category').annotate(
         vote_count=Count('votes', filter=Q(votes__vote_type='up')) - Count('votes', filter=Q(votes__vote_type='down')),
-        solution_count=Count('solutions')
+        solutions_count=Count('solutions')
     )
     
     # Apply filters
@@ -54,7 +54,7 @@ def problem_list(request):
         '-created_at': '-created_at',
         'oldest': 'created_at',
         'most_voted': '-vote_count',
-        'most_solutions': '-solution_count',
+        'most_solutions': '-solutions_count',
     }
     problems = problems.order_by(sort_options.get(sort_by, '-created_at'))
     

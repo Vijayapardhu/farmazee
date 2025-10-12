@@ -108,3 +108,112 @@
     </div>
 </div>
 {% endblock %}
+{% load static %}
+
+{% block title %}Edit {{ scheme.name }} - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3><i class="fas fa-edit me-2"></i>Edit Scheme</h3>
+            <p class="text-muted mb-0">Update scheme information</p>
+        </div>
+        <div>
+            <a href="{% url 'admin_panel:schemes_management' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Schemes
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="chart-container">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label">Scheme Name *</label>
+                        <input type="text" class="form-control" name="name" value="{{ scheme.name }}" required>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category">
+                            <option value="">Select Category</option>
+                            <option value="financial_assistance" {% if scheme.category == 'financial_assistance' %}selected{% endif %}>Financial Assistance</option>
+                            <option value="crop_insurance" {% if scheme.category == 'crop_insurance' %}selected{% endif %}>Crop Insurance</option>
+                            <option value="subsidy" {% if scheme.category == 'subsidy' %}selected{% endif %}>Subsidy</option>
+                            <option value="training" {% if scheme.category == 'training' %}selected{% endif %}>Training & Education</option>
+                            <option value="equipment" {% if scheme.category == 'equipment' %}selected{% endif %}>Equipment Support</option>
+                            <option value="irrigation" {% if scheme.category == 'irrigation' %}selected{% endif %}>Irrigation</option>
+                            <option value="organic_farming" {% if scheme.category == 'organic_farming' %}selected{% endif %}>Organic Farming</option>
+                            <option value="other" {% if scheme.category == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Description *</label>
+                    <textarea class="form-control" name="description" rows="4" required>{{ scheme.description }}</textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Eligibility Criteria</label>
+                    <textarea class="form-control" name="eligibility" rows="5">{{ scheme.eligibility }}</textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Benefits</label>
+                    <textarea class="form-control" name="benefits" rows="5">{{ scheme.benefits }}</textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Application Process</label>
+                    <textarea class="form-control" name="application_process" rows="6">{{ scheme.application_process }}</textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Required Documents</label>
+                    <textarea class="form-control" name="required_documents" rows="4">{{ scheme.required_documents }}</textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" 
+                               value="{% if scheme.start_date %}{{ scheme.start_date|date:'Y-m-d' }}{% endif %}">
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" 
+                               value="{% if scheme.end_date %}{{ scheme.end_date|date:'Y-m-d' }}{% endif %}">
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Status</label>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" {% if scheme.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="isActive">
+                                Scheme is Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'admin_panel:schemes_management' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-1"></i>Update Scheme
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
