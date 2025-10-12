@@ -1,0 +1,158 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Soil Health Tests - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-vial me-2"></i>Soil Health Tests Management</h3>
+    <p class="text-muted mb-0">Monitor farmer soil test results</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-10">
+            <label class="form-label">Search Tests</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search by farmer name or location">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Test Statistics -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_tests }}</div>
+            <div class="stats-label">Total Soil Tests Recorded</div>
+        </div>
+    </div>
+</div>
+
+<!-- Tests Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Farmer</th>
+                <th>Location</th>
+                <th>Test Date</th>
+                <th>pH Level</th>
+                <th>NPK Values</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test in soil_tests %}
+            <tr>
+                <td>
+                    <h6 class="mb-0">{{ test.user.get_full_name }}</h6>
+                    <small class="text-muted">@{{ test.user.username }}</small>
+                </td>
+                <td>{{ test.location|default:"Not specified" }}</td>
+                <td>{{ test.test_date|date:"M d, Y" }}</td>
+                <td>
+                    {% if test.ph_level %}
+                        <span class="badge {% if test.ph_level >= 6.5 and test.ph_level <= 7.5 %}bg-success{% else %}bg-warning{% endif %}">
+                            pH {{ test.ph_level }}
+                        </span>
+                    {% else %}
+                        <span class="text-muted">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <small class="text-muted">
+                        N: {{ test.nitrogen|default:"N/A" }} | 
+                        P: {{ test.phosphorus|default:"N/A" }} | 
+                        K: {{ test.potassium|default:"N/A" }}
+                    </small>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewTest{{ test.id }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            
+            <!-- View Test Modal -->
+            <div class="modal fade" id="viewTest{{ test.id }}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Soil Test Results</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Farmer:</strong><br>
+                                    {{ test.user.get_full_name }} (@{{ test.user.username }})
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Location:</strong><br>
+                                    {{ test.location|default:"Not specified" }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Test Date:</strong><br>
+                                    {{ test.test_date|date:"F d, Y" }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>pH Level:</strong><br>
+                                    {{ test.ph_level|default:"Not specified" }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <strong>Nitrogen (N):</strong><br>
+                                    {{ test.nitrogen|default:"Not specified" }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Phosphorus (P):</strong><br>
+                                    {{ test.phosphorus|default:"Not specified" }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Potassium (K):</strong><br>
+                                    {{ test.potassium|default:"Not specified" }}
+                                </div>
+                            </div>
+                            
+                            {% if test.recommendations %}
+                            <div class="mb-3">
+                                <strong>Recommendations:</strong>
+                                <p>{{ test.recommendations }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="fas fa-vial fa-3x mb-3 d-block"></i>
+                    No soil tests found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Platform Statistics - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-chart-pie me-2"></i>Platform Statistics</h3>
+    <p class="text-muted mb-0">Comprehensive platform metrics and insights</p>
+</div>
+
+<!-- User Statistics -->
+<div class="chart-container mb-4">
+    <h5><i class="fas fa-users me-2"></i>User Statistics</h5>
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="analytics-number">{{ stats.users.total }}</div>
+            <div class="analytics-label">Total Users</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-success">{{ stats.users.active }}</div>
+            <div class="analytics-label">Active Users</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-primary">{{ stats.users.farmers }}</div>
+            <div class="analytics-label">Farmers</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-warning">{{ stats.users.experts }}</div>
+            <div class="analytics-label">Experts</div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-12 text-center">
+            <span class="badge bg-success">{{ stats.users.verified_experts }} Verified Experts</span>
+        </div>
+    </div>
+</div>
+
+<!-- Content Statistics -->
+<div class="chart-container mb-4">
+    <h5><i class="fas fa-file-alt me-2"></i>Content Statistics</h5>
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-warning">{{ stats.content.problems }}</div>
+            <div class="analytics-label">Total Problems</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-success">{{ stats.content.solved_problems }}</div>
+            <div class="analytics-label">Solved Problems</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-info">{{ stats.content.solutions }}</div>
+            <div class="analytics-label">Solutions</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-primary">{{ stats.content.ai_queries }}</div>
+            <div class="analytics-label">AI Queries</div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6 text-center">
+            <span class="badge bg-success">{{ stats.content.accepted_solutions }} Accepted Solutions</span>
+        </div>
+        <div class="col-md-6 text-center">
+            <span class="badge bg-info">{{ stats.content.knowledge_items }} Knowledge Items</span>
+        </div>
+    </div>
+</div>
+
+<!-- Community Statistics -->
+<div class="chart-container mb-4">
+    <h5><i class="fas fa-comments me-2"></i>Community Statistics</h5>
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="analytics-number">{{ stats.community.topics }}</div>
+            <div class="analytics-label">Forum Topics</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number">{{ stats.community.questions }}</div>
+            <div class="analytics-label">Questions</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-success">{{ stats.community.answers }}</div>
+            <div class="analytics-label">Answers</div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="analytics-number text-warning">{{ stats.community.products }}</div>
+            <div class="analytics-label">Products</div>
+        </div>
+    </div>
+</div>
+
+<!-- Engagement Statistics -->
+<div class="chart-container">
+    <h5><i class="fas fa-chart-line me-2"></i>Engagement Metrics</h5>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <h4 class="text-primary">{{ stats.engagement.avg_problems_per_user }}</h4>
+            <small class="text-muted">Avg Problems per User</small>
+        </div>
+        <div class="col-md-4 text-center">
+            <h4 class="text-success">{{ stats.engagement.avg_solutions_per_problem }}</h4>
+            <small class="text-muted">Avg Solutions per Problem</small>
+        </div>
+        <div class="col-md-4 text-center">
+            <h4 class="text-warning">{{ stats.engagement.problem_solve_rate }}</h4>
+            <small class="text-muted">Problem Solve Rate</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

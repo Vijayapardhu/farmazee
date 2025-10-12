@@ -5,29 +5,254 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section bg-gradient-primary text-white py-5">
+<section class="hero-section text-white py-5" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6" data-aos="fade-right">
-                <h1 class="display-4 fw-bold mb-4">Transform Your Farming with Smart Solutions</h1>
-                <p class="lead mb-4">Farmazee is your comprehensive digital platform for modern farming. Get expert advice, market insights, weather updates, and financial support all in one place.</p>
-                <div class="d-flex gap-3">
-                    <a href="{% url 'signup' %}" class="btn btn-light btn-lg px-4">Get Started Free</a>
-                    <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-4">ఫార్మజీ - రైతుల కోసం</h1>
+                <h2 class="h3 mb-4">Practical Farming Solutions for Telugu Farmers</h2>
+                <p class="lead mb-4">✓ Today's Market Prices  ✓ Weather Alerts  ✓ Expert Advice  ✓ Government Schemes</p>
+                
+                <!-- Quick Value Props -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="value-card">
+                            <i class="fas fa-rupee-sign fa-2x mb-2"></i>
+                            <h5>Know Today's Prices</h5>
+                            <p class="mb-0">Rice, Cotton, Chilli - Live Mandi Rates</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="value-card">
+                            <i class="fas fa-robot fa-2x mb-2"></i>
+                            <h5>Ask AI in Telugu</h5>
+                            <p class="mb-0">Get instant farming advice in your language</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'signup' %}" class="btn btn-light btn-lg px-5">
+                        <i class="fas fa-user-plus me-2"></i>Start Free Now
+                    </a>
+                    <a href="#tools" class="btn btn-outline-light btn-lg px-5">
+                        <i class="fas fa-tools me-2"></i>See Tools
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6" data-aos="fade-left">
-                <div class="hero-placeholder bg-light d-flex align-items-center justify-content-center rounded shadow" style="height: 400px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                    <div class="text-center text-white">
-                        <i class="fas fa-seedling fa-5x mb-3"></i>
-                        <h3>Smart Farming Solutions</h3>
-                        <p class="mb-0">Empowering farmers with technology</p>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-stats p-4 bg-white rounded shadow-lg">
+                    <h4 class="text-success mb-4"><i class="fas fa-chart-line me-2"></i>Today's Stats</h4>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Rice (Paddy)</span>
+                            <strong class="text-success">₹2,150 <small class="text-success">+50↑</small></strong>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Cotton</span>
+                            <strong class="text-success">₹6,800 <small class="text-success">+100↑</small></strong>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Weather Today</span>
+                            <strong class="text-info">28°C <i class="fas fa-cloud-sun"></i></strong>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Farmers Helped</span>
+                            <strong class="text-warning">5,000+ <i class="fas fa-users"></i></strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Practical Tools Section -->
+<section id="tools" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Daily Farming Tools</h2>
+            <p class="lead">Everything you need, every day</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-primary">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                    </div>
+                    <h5>Weather</h5>
+                    <p>7-day forecast</p>
+                    <a href="{% url 'weather:home' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-success">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h5>Market Prices</h5>
+                    <p>Live mandi rates</p>
+                    <a href="{% url 'marketplace:home' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-info">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h5>AI Assistant</h5>
+                    <p>Ask anything</p>
+                    <a href="{% url 'ai_chatbot:chat' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-warning">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5>Ask Experts</h5>
+                    <p>Real farmers help</p>
+                    <a href="{% url 'farmer_problems:list' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-danger">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h5>Crop Guide</h5>
+                    <p>When to plant</p>
+                    <a href="{% url 'crops:list' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-secondary">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h5>Soil Health</h5>
+                    <p>Test & improve</p>
+                    <a href="{% url 'soil_health:home' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-primary">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h5>Govt Schemes</h5>
+                    <p>Get benefits</p>
+                    <a href="{% url 'schemes:list' %}" class="stretched-link"></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="tool-card">
+                    <div class="icon-circle bg-success">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h5>Community</h5>
+                    <p>Connect farmers</p>
+                    <a href="{% url 'community:home' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.value-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.value-card h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.value-card p {
+    font-size: 0.9rem;
+}
+
+.hero-stats {
+    color: #333;
+}
+
+.stat-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.tool-card {
+    background: white;
+    padding: 2rem 1rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    height: 100%;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 24px;
+    color: white;
+}
+
+.tool-card h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.tool-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .tool-card {
+        padding: 1.5rem 0.75rem;
+    }
+    
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .tool-card h5 {
+        font-size: 0.95rem;
+    }
+}
+</style>
 
 <!-- Features Section -->
 <section id="features" class="py-5">

@@ -1,216 +1,374 @@
+"""
+Enhanced Weather Services with Real-Time Data and Regional Language Support
+"""
 import requests
-import json
-from django.conf import settings
-from django.utils import timezone
+import os
 from datetime import datetime, timedelta
-from .models import WeatherData, WeatherForecast, WeatherAlert
+from django.core.cache import cache
+from django.utils import timezone
 
 
 class WeatherService:
-    """Weather service for API integration"""
+    """
+    Hyperlocal weather service with regional language support
+    Uses OpenWeatherMap API for real-time data
+    """
     
     def __init__(self):
-        self.api_key = settings.OPENWEATHER_API_KEY
-        self.base_url = "http://api.openweathermap.org/data/2.5"
+        self.api_key = os.getenv('OPENWEATHER_API_KEY', 'demo_key')
+        self.base_url = 'https://api.openweathermap.org/data/2.5'
+        
+        # Regional language translations for weather conditions
+        self.translations = {
+            'en': {
+                'clear': 'Clear Sky',
+                'clouds': 'Cloudy',
+                'rain': 'Rain',
+                'thunderstorm': 'Thunderstorm',
+                'snow': 'Snow',
+                'mist': 'Mist',
+                'good_farming': 'Good day for farming',
+                'avoid_farming': 'Avoid farming activities',
+                'irrigation_recommended': 'Irrigation recommended',
+                'harvest_weather': 'Good for harvesting'
+            },
+            'hi': {
+                'clear': 'साफ आसमान',
+                'clouds': 'बादल',
+                'rain': 'बारिश',
+                'thunderstorm': 'आंधी-तूफान',
+                'snow': 'बर्फबारी',
+                'mist': 'कोहरा',
+                'good_farming': 'खेती के लिए अच्छा दिन',
+                'avoid_farming': 'खेती से बचें',
+                'irrigation_recommended': 'सिंचाई की सिफारिश',
+                'harvest_weather': 'कटाई के लिए अच्छा'
+            },
+            'te': {
+                'clear': 'స్పష్టమైన ఆకాశం',
+                'clouds': 'మేఘావృతం',
+                'rain': 'వర్షం',
+                'thunderstorm': 'ఉరుములతో కూడిన వర్షం',
+                'snow': 'మంచు',
+                'mist': 'పొగమంచు',
+                'good_farming': 'వ్యవసాయానికి మంచి రోజు',
+                'avoid_farming': 'వ్యవసాయ కార్యకలాపాలను నివారించండి',
+                'irrigation_recommended': 'నీటిపారుదల సిఫార్సు చేయబడింది',
+                'harvest_weather': 'పంట కోతకు మంచిది'
+            },
+            'ta': {
+                'clear': 'தெளிவான வானம்',
+                'clouds': 'மேகமூட்டம்',
+                'rain': 'மழை',
+                'thunderstorm': 'இடி மின்னல்',
+                'snow': 'பனி',
+                'mist': 'மூடுபனி',
+                'good_farming': 'விவசாயத்திற்கு நல்ல நாள்',
+                'avoid_farming': 'விவசாய நடவடிக்கைகளை தவிர்க்கவும்',
+                'irrigation_recommended': 'நீர்ப்பாசனம் பரிந்துரைக்கப்படுகிறது',
+                'harvest_weather': 'அறுவடைக்கு நல்லது'
+            },
+            'mr': {
+                'clear': 'स्वच्छ आकाश',
+                'clouds': 'ढगाळ',
+                'rain': 'पाऊस',
+                'thunderstorm': 'वादळी वीज',
+                'snow': 'बर्फ',
+                'mist': 'धुके',
+                'good_farming': 'शेतीसाठी चांगला दिवस',
+                'avoid_farming': 'शेती टाळा',
+                'irrigation_recommended': 'सिंचनाची शिफारस',
+                'harvest_weather': 'कापणीसाठी चांगले'
+            }
+        }
     
-    def get_current_weather(self, location):
-        """Get current weather for a location"""
-        if not self.api_key:
-            return self._get_mock_weather_data(location)
+    def get_current_weather(self, lat, lon, lang='en'):
+        """
+        Get current weather for specific coordinates
+        """
+        cache_key = f'weather_current_{lat}_{lon}_{lang}'
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            return cached_data
         
         try:
-            url = f"{self.base_url}/weather"
+            url = f'{self.base_url}/weather'
             params = {
-                'q': location,
+                'lat': lat,
+                'lon': lon,
                 'appid': self.api_key,
-                'units': 'metric'
+                'units': 'metric',
+                'lang': lang
             }
             
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
-            
             data = response.json()
-            return self._parse_current_weather(data, location)
             
-        except requests.RequestException as e:
-            print(f"Weather API error: {e}")
-            return self._get_mock_weather_data(location)
-    
-    def get_forecast(self, location):
-        """Get weather forecast for a location"""
-        if not self.api_key:
-            return self._get_mock_forecast_data(location)
-        
-        try:
-            url = f"{self.base_url}/forecast"
-            params = {
-                'q': location,
-                'appid': self.api_key,
-                'units': 'metric'
-            }
+            weather_data = self._process_current_weather(data, lang)
             
-            response = requests.get(url, params=params, timeout=10)
-            response.raise_for_status()
-            
-            data = response.json()
-            return self._parse_forecast_data(data, location)
-            
-        except requests.RequestException as e:
-            print(f"Weather forecast API error: {e}")
-            return self._get_mock_forecast_data(location)
-    
-    def _parse_current_weather(self, data, location):
-        """Parse current weather data from API response"""
-        try:
-            weather_data = {
-                'location': location,
-                'temperature': data['main']['temp'],
-                'humidity': data['main']['humidity'],
-                'pressure': data['main']['pressure'],
-                'description': data['weather'][0]['description'],
-                'icon': data['weather'][0]['icon'],
-                'wind_speed': data['wind']['speed'],
-                'wind_direction': self._get_wind_direction(data['wind'].get('deg', 0)),
-                'visibility': data.get('visibility', 0) / 1000,  # Convert to km
-                'recorded_at': timezone.now(),
-            }
-            
-            # Save to database
-            self._save_weather_data(weather_data)
+            # Cache for 30 minutes
+            cache.set(cache_key, weather_data, 1800)
             
             return weather_data
             
-        except KeyError as e:
-            print(f"Error parsing weather data: {e}")
-            return self._get_mock_weather_data(location)
-    
-    def _parse_forecast_data(self, data, location):
-        """Parse forecast data from API response"""
-        try:
-            forecasts = []
-            daily_data = {}
-            
-            for item in data['list']:
-                date = datetime.fromtimestamp(item['dt']).date()
-                
-                if date not in daily_data:
-                    daily_data[date] = {
-                        'min_temp': float('inf'),
-                        'max_temp': float('-inf'),
-                        'humidity': [],
-                        'wind_speed': [],
-                        'descriptions': set(),
-                    }
-                
-                daily_data[date]['min_temp'] = min(daily_data[date]['min_temp'], item['main']['temp'])
-                daily_data[date]['max_temp'] = max(daily_data[date]['max_temp'], item['main']['temp'])
-                daily_data[date]['humidity'].append(item['main']['humidity'])
-                daily_data[date]['wind_speed'].append(item['wind']['speed'])
-                daily_data[date]['descriptions'].add(item['weather'][0]['description'])
-            
-            for date, day_data in daily_data.items():
-                if date > timezone.now().date():
-                    forecast = {
-                        'location': location,
-                        'date': date,
-                        'min_temperature': day_data['min_temp'],
-                        'max_temperature': day_data['max_temp'],
-                        'humidity': sum(day_data['humidity']) // len(day_data['humidity']),
-                        'wind_speed': sum(day_data['wind_speed']) / len(day_data['wind_speed']),
-                        'description': ', '.join(day_data['descriptions']),
-                        'precipitation_probability': 0,  # API doesn't provide this in free tier
-                    }
-                    
-                    forecasts.append(forecast)
-                    self._save_forecast_data(forecast)
-            
-            return forecasts
-            
-        except KeyError as e:
-            print(f"Error parsing forecast data: {e}")
-            return self._get_mock_forecast_data(location)
-    
-    def _get_wind_direction(self, degrees):
-        """Convert wind degrees to direction"""
-        directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-                     'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
-        index = round(degrees / 22.5) % 16
-        return directions[index]
-    
-    def _save_weather_data(self, weather_data):
-        """Save weather data to database"""
-        try:
-            # Mark existing current weather as not current
-            WeatherData.objects.filter(
-                location__icontains=weather_data['location'],
-                is_current=True
-            ).update(is_current=False)
-            
-            # Create new weather data
-            WeatherData.objects.create(
-                location=weather_data['location'],
-                temperature=weather_data['temperature'],
-                humidity=weather_data['humidity'],
-                pressure=weather_data['pressure'],
-                description=weather_data['description'],
-                icon=weather_data['icon'],
-                wind_speed=weather_data['wind_speed'],
-                wind_direction=weather_data['wind_direction'],
-                visibility=weather_data['visibility'],
-                is_current=True
-            )
         except Exception as e:
-            print(f"Error saving weather data: {e}")
+            return self._get_fallback_weather(lang)
     
-    def _save_forecast_data(self, forecast_data):
-        """Save forecast data to database"""
+    def get_forecast(self, lat, lon, days=7, lang='en'):
+        """
+        Get weather forecast for next N days
+        """
+        cache_key = f'weather_forecast_{lat}_{lon}_{days}_{lang}'
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            return cached_data
+        
         try:
-            WeatherForecast.objects.update_or_create(
-                location=forecast_data['location'],
-                date=forecast_data['date'],
-                defaults={
-                    'min_temperature': forecast_data['min_temperature'],
-                    'max_temperature': forecast_data['max_temperature'],
-                    'humidity': forecast_data['humidity'],
-                    'wind_speed': forecast_data['wind_speed'],
-                    'description': forecast_data['description'],
-                    'precipitation_probability': forecast_data['precipitation_probability'],
-                }
-            )
+            url = f'{self.base_url}/forecast'
+            params = {
+                'lat': lat,
+                'lon': lon,
+                'appid': self.api_key,
+                'units': 'metric',
+                'lang': lang
+            }
+            
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            forecast_data = self._process_forecast(data, days, lang)
+            
+            # Cache for 1 hour
+            cache.set(cache_key, forecast_data, 3600)
+            
+            return forecast_data
+            
         except Exception as e:
-            print(f"Error saving forecast data: {e}")
+            return self._get_fallback_forecast(days, lang)
     
-    def _get_mock_weather_data(self, location):
-        """Get mock weather data for testing"""
+    def get_weather_alerts(self, lat, lon, lang='en'):
+        """
+        Get weather alerts and warnings
+        """
+        try:
+            url = f'{self.base_url}/onecall'
+            params = {
+                'lat': lat,
+                'lon': lon,
+                'appid': self.api_key,
+                'exclude': 'minutely,hourly',
+                'units': 'metric'
+            }
+            
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            alerts = []
+            if 'alerts' in data:
+                for alert in data['alerts']:
+                    alerts.append({
+                        'event': alert.get('event'),
+                        'description': alert.get('description'),
+                        'start': datetime.fromtimestamp(alert.get('start')),
+                        'end': datetime.fromtimestamp(alert.get('end')),
+                        'severity': self._determine_severity(alert),
+                        'farming_impact': self._get_farming_impact(alert, lang)
+                    })
+            
+            return alerts
+            
+        except Exception:
+            return []
+    
+    def get_farming_recommendations(self, weather_data, crop_type=None, lang='en'):
+        """
+        Get farming recommendations based on weather
+        """
+        recommendations = []
+        trans = self.translations.get(lang, self.translations['en'])
+        
+        temp = weather_data.get('temperature', 25)
+        condition = weather_data.get('condition', 'clear').lower()
+        humidity = weather_data.get('humidity', 50)
+        wind_speed = weather_data.get('wind_speed', 5)
+        
+        # Temperature-based recommendations
+        if temp > 35:
+            recommendations.append({
+                'type': 'warning',
+                'message': 'High temperature alert' if lang == 'en' else 'उच्च तापमान चेतावनी' if lang == 'hi' else 'అధిక ఉష్ణోగ్రత హెచ్చరిక',
+                'action': 'Ensure adequate irrigation' if lang == 'en' else 'पर्याप्त सिंचाई सुनिश्चित करें' if lang == 'hi' else 'తగినంత నీటిపారుదల నిర్ధారించండి'
+            })
+        elif temp < 10:
+            recommendations.append({
+                'type': 'warning',
+                'message': 'Low temperature alert' if lang == 'en' else 'कम तापमान चेतावनी' if lang == 'hi' else 'తక్కువ ఉష్ణోగ్రత హెచ్చరిక',
+                'action': 'Protect sensitive crops' if lang == 'en' else 'संवेदनशील फसलों की रक्षा करें' if lang == 'hi' else 'సున్నితమైన పంటలను రక్షించండి'
+            })
+        
+        # Rain-based recommendations
+        if 'rain' in condition:
+            recommendations.append({
+                'type': 'info',
+                'message': 'Rain expected' if lang == 'en' else 'बारिश की उम्मीद' if lang == 'hi' else 'వర్షం అంచనా',
+                'action': 'Skip irrigation, protect harvested crops' if lang == 'en' else 'सिंचाई छोड़ें, कटाई की फसलों की रक्षा करें' if lang == 'hi' else 'నీటిపారుదల వదులుకోండి, కోసిన పంటలను రక్షించండి'
+            })
+        elif humidity < 30:
+            recommendations.append({
+                'type': 'info',
+                'message': trans.get('irrigation_recommended', 'Irrigation recommended'),
+                'action': 'Plan irrigation for today' if lang == 'en' else 'आज के लिए सिंचाई की योजना बनाएं' if lang == 'hi' else 'ఈరోజు నీటిపారుదల ప్రణాళిక చేయండి'
+            })
+        
+        # Good farming weather
+        if 20 <= temp <= 30 and 'clear' in condition and wind_speed < 15:
+            recommendations.append({
+                'type': 'success',
+                'message': trans.get('good_farming', 'Good day for farming'),
+                'action': 'Ideal for planting and field activities' if lang == 'en' else 'रोपण और खेत की गतिविधियों के लिए आदर्श' if lang == 'hi' else 'నాటడం మరియు పొలం కార్యకలాపాలకు అనువైనది'
+            })
+        
+        return recommendations
+    
+    def _process_current_weather(self, data, lang):
+        """Process API response for current weather"""
         return {
-            'location': location,
-            'temperature': 25.0,
-            'humidity': 65,
-            'pressure': 1013.25,
-            'description': 'Partly cloudy',
-            'icon': '02d',
-            'wind_speed': 5.2,
-            'wind_direction': 'NE',
-            'visibility': 10.0,
-            'recorded_at': timezone.now(),
+            'temperature': data['main']['temp'],
+            'feels_like': data['main']['feels_like'],
+            'temp_min': data['main']['temp_min'],
+            'temp_max': data['main']['temp_max'],
+            'humidity': data['main']['humidity'],
+            'pressure': data['main']['pressure'],
+            'condition': data['weather'][0]['main'],
+            'description': data['weather'][0]['description'],
+            'icon': data['weather'][0]['icon'],
+            'wind_speed': data['wind']['speed'],
+            'wind_direction': data['wind'].get('deg', 0),
+            'clouds': data['clouds']['all'],
+            'visibility': data.get('visibility', 10000) / 1000,  # km
+            'sunrise': datetime.fromtimestamp(data['sys']['sunrise']),
+            'sunset': datetime.fromtimestamp(data['sys']['sunset']),
+            'location': data['name'],
+            'timestamp': datetime.fromtimestamp(data['dt'])
         }
     
-    def _get_mock_forecast_data(self, location):
-        """Get mock forecast data for testing"""
-        forecasts = []
-        for i in range(1, 8):
-            date = timezone.now().date() + timedelta(days=i)
-            forecasts.append({
-                'location': location,
+    def _process_forecast(self, data, days, lang):
+        """Process API response for forecast"""
+        forecast_list = []
+        processed_dates = set()
+        
+        for item in data['list'][:days * 8]:  # 8 readings per day
+            date = datetime.fromtimestamp(item['dt']).date()
+            
+            if date not in processed_dates:
+                forecast_list.append({
+                    'date': date,
+                    'temperature': item['main']['temp'],
+                    'temp_min': item['main']['temp_min'],
+                    'temp_max': item['main']['temp_max'],
+                    'condition': item['weather'][0]['main'],
+                    'description': item['weather'][0]['description'],
+                    'icon': item['weather'][0]['icon'],
+                    'humidity': item['main']['humidity'],
+                    'wind_speed': item['wind']['speed'],
+                    'rain_probability': item.get('pop', 0) * 100
+                })
+                processed_dates.add(date)
+        
+        return forecast_list
+    
+    def _get_fallback_weather(self, lang):
+        """Fallback weather data when API fails"""
+        return {
+            'temperature': 28,
+            'feels_like': 30,
+            'temp_min': 24,
+            'temp_max': 32,
+            'humidity': 65,
+            'pressure': 1013,
+            'condition': 'Clear',
+            'description': 'Partly cloudy',
+            'icon': '02d',
+            'wind_speed': 8,
+            'wind_direction': 180,
+            'clouds': 20,
+            'visibility': 10,
+            'sunrise': datetime.now().replace(hour=6, minute=0),
+            'sunset': datetime.now().replace(hour=18, minute=30),
+            'location': 'Your Location',
+            'timestamp': datetime.now(),
+            'is_fallback': True
+        }
+    
+    def _get_fallback_forecast(self, days, lang):
+        """Fallback forecast data"""
+        forecast = []
+        for i in range(days):
+            date = datetime.now().date() + timedelta(days=i)
+            forecast.append({
                 'date': date,
-                'min_temperature': 20.0 + i,
-                'max_temperature': 30.0 + i,
-                'humidity': 60 + (i % 20),
-                'wind_speed': 3.0 + (i % 5),
-                'description': 'Sunny',
-                'precipitation_probability': 10 + (i % 30),
+                'temperature': 28 + i,
+                'temp_min': 22 + i,
+                'temp_max': 33 + i,
+                'condition': 'Partly Cloudy',
+                'description': 'Partly cloudy',
+                'icon': '02d',
+                'humidity': 65 - (i * 2),
+                'wind_speed': 8,
+                'rain_probability': 20
             })
-        return forecasts
+        return forecast
+    
+    def _determine_severity(self, alert):
+        """Determine alert severity"""
+        event = alert.get('event', '').lower()
+        if any(word in event for word in ['severe', 'extreme', 'emergency']):
+            return 'high'
+        elif any(word in event for word in ['warning', 'watch']):
+            return 'medium'
+        return 'low'
+    
+    def _get_farming_impact(self, alert, lang):
+        """Get farming impact description for alert"""
+        event = alert.get('event', '').lower()
+        
+        impacts = {
+            'en': {
+                'thunderstorm': 'Postpone field activities, secure equipment',
+                'rain': 'Skip irrigation, protect harvested crops',
+                'wind': 'Secure structures, protect young plants',
+                'heat': 'Increase irrigation, provide shade for sensitive crops',
+                'cold': 'Protect frost-sensitive crops, delay planting'
+            },
+            'hi': {
+                'thunderstorm': 'खेत की गतिविधियों को स्थगित करें, उपकरण सुरक्षित करें',
+                'rain': 'सिंचाई छोड़ें, कटाई की फसलों की रक्षा करें',
+                'wind': 'संरचनाओं को सुरक्षित करें, युवा पौधों की रक्षा करें',
+                'heat': 'सिंचाई बढ़ाएं, संवेदनशील फसलों के लिए छाया प्रदान करें',
+                'cold': 'पाले-संवेदनशील फसलों की रक्षा करें, रोपण में देरी करें'
+            },
+            'te': {
+                'thunderstorm': 'పొలం కార్యకలాపాలను వాయిదా వేయండి, పరికరాలను సురక్షితంగా ఉంచండి',
+                'rain': 'నీటిపారుదల వదులుకోండి, కోసిన పంటలను రక్షించండి',
+                'wind': 'నిర్మాణాలను సురక్షితంగా ఉంచండి, చిన్న మొక్కలను రక్షించండి',
+                'heat': 'నీటిపారుదల పెంచండి, సున్నితమైన పంటలకు నీడ అందించండి',
+                'cold': 'మంచుకు సున్నితమైన పంటలను రక్షించండి, నాటడం ఆలస్యం చేయండి'
+            }
+        }
+        
+        lang_impacts = impacts.get(lang, impacts['en'])
+        
+        for key, impact in lang_impacts.items():
+            if key in event:
+                return impact
+        
+        return 'Monitor weather conditions closely' if lang == 'en' else 'मौसम की स्थिति की बारीकी से निगरानी करें' if lang == 'hi' else 'వాతావరణ పరిస్థితులను నిశితంగా పర్యవేక్షించండి'
 
 
-
+# Initialize weather service
+weather_service = WeatherService()

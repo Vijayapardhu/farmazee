@@ -1,0 +1,361 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard - Admin Panel{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.chart-wrapper {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #495057;
+}
+
+.analytics-card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-2px);
+}
+
+.analytics-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 10px;
+}
+
+.analytics-label {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.trend-up {
+    color: #28a745;
+}
+
+.trend-down {
+    color: #dc3545;
+}
+
+.trend-neutral {
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-chart-bar me-2"></i>Analytics Dashboard</h3>
+    <p class="text-muted mb-0">Platform performance and user engagement metrics</p>
+</div>
+
+<!-- Key Metrics -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="analytics-card">
+            <div class="analytics-number">{{ total_queries }}</div>
+            <div class="analytics-label">Total AI Queries</div>
+            <div class="mt-2">
+                <small class="trend-up">
+                    <i class="fas fa-arrow-up me-1"></i>+12% this month
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="analytics-card">
+            <div class="analytics-number">{{ total_problems }}</div>
+            <div class="analytics-label">Farmer Problems</div>
+            <div class="mt-2">
+                <small class="trend-up">
+                    <i class="fas fa-arrow-up me-1"></i>+8% this month
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="analytics-card">
+            <div class="analytics-number">{{ total_solutions }}</div>
+            <div class="analytics-label">Expert Solutions</div>
+            <div class="mt-2">
+                <small class="trend-up">
+                    <i class="fas fa-arrow-up me-1"></i>+15% this month
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="analytics-card">
+            <div class="analytics-number">
+                {% if total_problems > 0 %}
+                    {{ total_solutions|floatformat:0 }}{{ total_problems|floatformat:0 }}
+                {% else %}
+                    0
+                {% endif %}%
+            </div>
+            <div class="analytics-label">Solution Rate</div>
+            <div class="mt-2">
+                <small class="trend-up">
+                    <i class="fas fa-arrow-up me-1"></i>+5% this month
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="chart-wrapper">
+            <h5 class="chart-title"><i class="fas fa-users me-2"></i>User Signups (Last 30 Days)</h5>
+            <canvas id="userSignupsChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="chart-wrapper">
+            <h5 class="chart-title"><i class="fas fa-search me-2"></i>Query Categories</h5>
+            <canvas id="queryCategoriesChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="chart-wrapper">
+            <h5 class="chart-title"><i class="fas fa-question-circle me-2"></i>Problem Categories</h5>
+            <canvas id="problemCategoriesChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="chart-wrapper">
+            <h5 class="chart-title"><i class="fas fa-chart-line me-2"></i>Daily Activity (Last 30 Days)</h5>
+            <canvas id="dailyActivityChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Data Tables -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="chart-wrapper">
+            <h5 class="chart-title"><i class="fas fa-trophy me-2"></i>Top Query Categories</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Queries</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in query_categories %}
+                        <tr>
+                            <td>{{ category.category|default:"General"|title }}</td>
+                            <td>{{ category.count }}</td>
+                            <td>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar" style="width: {{ category.count|floatformat:0 }}%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="chart-wrapper">
+            <h5 class="chart-title"><i class="fas fa-exclamation-triangle me-2"></i>Top Problem Categories</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Problems</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in problem_categories %}
+                        <tr>
+                            <td>{{ category.category__name|default:"Uncategorized"|title }}</td>
+                            <td>{{ category.count }}</td>
+                            <td>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar bg-warning" style="width: {{ category.count|floatformat:0 }}%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// User Signups Chart
+const userSignupsCtx = document.getElementById('userSignupsChart').getContext('2d');
+const userSignupsData = {{ user_signups|safe }};
+
+new Chart(userSignupsCtx, {
+    type: 'line',
+    data: {
+        labels: userSignupsData.map(item => new Date(item.date).toLocaleDateString()),
+        datasets: [{
+            label: 'New Users',
+            data: userSignupsData.map(item => item.count),
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Query Categories Chart
+const queryCategoriesCtx = document.getElementById('queryCategoriesChart').getContext('2d');
+const queryCategoriesData = {{ query_categories|safe }};
+
+new Chart(queryCategoriesCtx, {
+    type: 'doughnut',
+    data: {
+        labels: queryCategoriesData.map(item => item.category || 'General'),
+        datasets: [{
+            data: queryCategoriesData.map(item => item.count),
+            backgroundColor: [
+                '#28a745',
+                '#007bff',
+                '#ffc107',
+                '#dc3545',
+                '#6f42c1',
+                '#20c997',
+                '#fd7e14'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Problem Categories Chart
+const problemCategoriesCtx = document.getElementById('problemCategoriesChart').getContext('2d');
+const problemCategoriesData = {{ problem_categories|safe }};
+
+new Chart(problemCategoriesCtx, {
+    type: 'bar',
+    data: {
+        labels: problemCategoriesData.map(item => item.category__name || 'Uncategorized'),
+        datasets: [{
+            label: 'Problems',
+            data: problemCategoriesData.map(item => item.count),
+            backgroundColor: '#ffc107',
+            borderColor: '#e0a800',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Daily Activity Chart
+const dailyActivityCtx = document.getElementById('dailyActivityChart').getContext('2d');
+const dailyActivityData = {{ daily_activity|safe }};
+
+new Chart(dailyActivityCtx, {
+    type: 'line',
+    data: {
+        labels: dailyActivityData.map(item => new Date(item.date).toLocaleDateString()),
+        datasets: [{
+            label: 'Queries',
+            data: dailyActivityData.map(item => item.queries),
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Problems',
+            data: dailyActivityData.map(item => item.problems),
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -10,6 +10,7 @@ from core.views import signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin-panel/', include('admin_panel.urls')),
     path('accounts/', include('allauth.urls')),
     path('signup/', signup, name='signup'),
     # Redirect users/register/ to signup/ for compatibility

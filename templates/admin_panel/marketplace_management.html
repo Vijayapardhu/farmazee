@@ -1,0 +1,203 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Marketplace Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-store me-2"></i>Marketplace Management</h3>
+    <p class="text-muted mb-0">Manage products and vendors</p>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link {% if tab == 'products' %}active{% endif %}" href="?tab=products">
+            <i class="fas fa-box me-1"></i>Products {% if total_products %}({{ total_products }}){% endif %}
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link {% if tab == 'vendors' %}active{% endif %}" href="?tab=vendors">
+            <i class="fas fa-store me-1"></i>Vendors {% if total_vendors %}({{ total_vendors }}){% endif %}
+        </a>
+    </li>
+</ul>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <input type="hidden" name="tab" value="{{ tab }}">
+        <div class="col-md-10">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search {% if tab == 'products' %}products{% else %}vendors{% endif %}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if tab == 'products' %}
+<!-- Products Stats -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_products }}</div>
+            <div class="stats-label">Total Products</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="stats-number text-success">{{ active_products }}</div>
+            <div class="stats-label">Active Products</div>
+        </div>
+    </div>
+</div>
+
+<!-- Products Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Vendor</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    <h6 class="mb-0">{{ product.name }}</h6>
+                    <small class="text-muted">{{ product.category.name|default:"Uncategorized" }}</small>
+                </td>
+                <td>{{ product.vendor.business_name }}</td>
+                <td>
+                    <strong>₹{{ product.current_price }}</strong>
+                    {% if product.sale_price %}
+                        <br><small class="text-success">Sale: ₹{{ product.sale_price }}</small>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if product.stock_quantity > 0 %}
+                        <span class="badge bg-success">{{ product.stock_quantity }} {{ product.unit }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">Out of Stock</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if product.is_active %}
+                        <span class="status-badge status-active">Active</span>
+                    {% else %}
+                        <span class="status-badge status-inactive">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-warning">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="fas fa-box fa-3x mb-3 d-block"></i>
+                    No products found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<!-- Vendors Stats -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_vendors }}</div>
+            <div class="stats-label">Total Vendors</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="stats-number text-success">{{ verified_vendors }}</div>
+            <div class="stats-label">Verified Vendors</div>
+        </div>
+    </div>
+</div>
+
+<!-- Vendors Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Business</th>
+                <th>Owner</th>
+                <th>Location</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vendor in vendors %}
+            <tr>
+                <td>
+                    <h6 class="mb-0">{{ vendor.business_name }}</h6>
+                    <small class="text-muted">{{ vendor.total_orders }} orders</small>
+                </td>
+                <td>{{ vendor.user.get_full_name }}</td>
+                <td>{{ vendor.city }}, {{ vendor.state }}</td>
+                <td>
+                    <span class="badge bg-warning">
+                        <i class="fas fa-star"></i> {{ vendor.rating|default:0 }}
+                    </span>
+                </td>
+                <td>
+                    {% if vendor.is_verified %}
+                        <span class="status-badge status-active">Verified ✓</span>
+                    {% else %}
+                        <span class="status-badge status-pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        {% if not vendor.is_verified %}
+                        <button class="btn btn-outline-success">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="fas fa-store fa-3x mb-3 d-block"></i>
+                    No vendors found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

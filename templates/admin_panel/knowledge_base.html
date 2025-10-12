@@ -1,0 +1,237 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Knowledge Base Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3><i class="fas fa-brain me-2"></i>Knowledge Base Management</h3>
+            <p class="text-muted mb-0">Manage AI knowledge base content</p>
+        </div>
+        <div>
+            <a href="{% url 'admin_panel:add_knowledge' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Add Knowledge Item
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Search Knowledge</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search by title, content, or keywords">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category">
+                <option value="all" {% if category == 'all' %}selected{% endif %}>All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat|title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Filter
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Knowledge Items Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Keywords</th>
+                <th>Content Preview</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in knowledge_items %}
+            <tr>
+                <td>
+                    <h6 class="mb-0">{{ item.title }}</h6>
+                    <small class="text-muted">ID: {{ item.id }}</small>
+                </td>
+                <td>
+                    <span class="badge bg-info">{{ item.category|title }}</span>
+                </td>
+                <td>
+                    <small class="text-muted">{{ item.keywords|truncatechars:50 }}</small>
+                </td>
+                <td>
+                    <small class="text-muted">{{ item.content|truncatechars:100 }}</small>
+                </td>
+                <td>{{ item.created_at|date:"M d, Y" }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewModal{{ item.id }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ item.id }}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger delete-btn" data-item-id="{{ item.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            
+            <!-- View Modal -->
+            <div class="modal fade" id="viewModal{{ item.id }}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ item.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <strong>Category:</strong> {{ item.category|title }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Keywords:</strong> {{ item.keywords }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Content:</strong>
+                                <div class="border p-3 mt-2 rounded">
+                                    {{ item.content|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal{{ item.id }}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Knowledge Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form method="post" action="{% url 'admin_panel:edit_knowledge' item.id %}">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control" name="title" value="{{ item.title }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" name="category" required>
+                                        <option value="crop_management" {% if item.category == 'crop_management' %}selected{% endif %}>Crop Management</option>
+                                        <option value="pest_control" {% if item.category == 'pest_control' %}selected{% endif %}>Pest Control</option>
+                                        <option value="soil_health" {% if item.category == 'soil_health' %}selected{% endif %}>Soil Health</option>
+                                        <option value="weather" {% if item.category == 'weather' %}selected{% endif %}>Weather</option>
+                                        <option value="market_info" {% if item.category == 'market_info' %}selected{% endif %}>Market Info</option>
+                                        <option value="government_schemes" {% if item.category == 'government_schemes' %}selected{% endif %}>Government Schemes</option>
+                                        <option value="general" {% if item.category == 'general' %}selected{% endif %}>General</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Keywords</label>
+                                    <input type="text" class="form-control" name="keywords" value="{{ item.keywords }}" 
+                                           placeholder="Comma-separated keywords">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Content</label>
+                                    <textarea class="form-control" name="content" rows="10" required>{{ item.content }}</textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="fas fa-brain fa-3x mb-3 d-block"></i>
+                    No knowledge items found matching your criteria.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if knowledge_items.has_other_pages %}
+<nav aria-label="Knowledge pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if knowledge_items.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ knowledge_items.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Previous</a>
+            </li>
+        {% endif %}
+        
+        {% for num in knowledge_items.paginator.page_range %}
+            {% if knowledge_items.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if category %}&category={{ category }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if knowledge_items.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ knowledge_items.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Delete knowledge item
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.delete-btn')) {
+        const itemId = e.target.closest('.delete-btn').dataset.itemId;
+        if (confirm('Are you sure you want to delete this knowledge item?')) {
+            fetch(`/admin-panel/knowledge-base/${itemId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error deleting item');
+                }
+            });
+        }
+    }
+});
+</script>
+{% endblock %}

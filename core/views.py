@@ -8,6 +8,7 @@ from .forms import UserProfileForm, ContactForm, CustomUserCreationForm
 from .models import UserProfile, Contact, FAQ
 from crops.models import Crop
 from weather.models import WeatherData
+from weather.advanced_weather_service import advanced_weather_service
 from marketplace.models import Product
 from schemes.models import GovernmentScheme
 from community.models import ForumTopic, Question, Expert, CommunityEvent
@@ -31,7 +32,7 @@ def landing_page(request):
         'featured_crops': featured_crops,
         'recent_schemes': recent_schemes,
     }
-    return render(request, 'core/landing.html', context)
+    return render(request, 'core/simple_landing.html', context)
 
 @login_required
 def dashboard(request):
@@ -45,13 +46,20 @@ def dashboard(request):
     recent_questions = Question.objects.filter(status='open')[:3]
     upcoming_events = CommunityEvent.objects.filter(is_active=True)[:3]
     
-    # Get weather data (placeholder)
-    weather_data = {
-        'temperature': 28,
-        'humidity': 65,
-        'description': 'Partly Cloudy',
-        'location': 'Hyderabad'
-    }
+    # Get weather data using advanced service
+    weather_data = None
+    weather_recommendations = []
+    try:
+        weather_data = advanced_weather_service.get_current_weather("hyderabad")
+        weather_recommendations = advanced_weather_service.get_farming_recommendations(weather_data)
+    except Exception as e:
+        print(f"Weather data error: {e}")
+        weather_data = {
+            'temperature': 28,
+            'humidity': 65,
+            'description': 'Partly Cloudy',
+            'location': 'Hyderabad'
+        }
     
     context = {
         'profile': profile,
@@ -60,8 +68,11 @@ def dashboard(request):
         'recent_questions': recent_questions,
         'upcoming_events': upcoming_events,
         'weather_data': weather_data,
+        'current_weather': weather_data,
+        'recommendations': weather_recommendations,
+        'city': 'Hyderabad'
     }
-    return render(request, 'core/dashboard.html', context)
+    return render(request, 'core/farmer_dashboard.html', context)
 
 @login_required
 def profile(request):

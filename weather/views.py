@@ -4,59 +4,65 @@ from django.http import JsonResponse
 from django.utils.translation import gettext as _
 from django.db.models import Q
 from .models import WeatherData, WeatherForecast, WeatherAlert
+from .advanced_weather_service import advanced_weather_service
 from crops.models import Crop
 
 
 def weather_home(request):
-    """Weather home page"""
-    # Get current weather for major cities
-    major_cities = ['Hyderabad', 'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata']
-    current_weather = {}
+    """Weather home page with advanced Open-Meteo data"""
+    # Default city
+    city = "hyderabad"
     
-    for city in major_cities:
-        weather = WeatherData.objects.filter(
-            location__icontains=city,
-            is_current=True
-        ).first()
-        if weather:
-            current_weather[city] = weather
+    # Get current weather using advanced service
+    current_weather = advanced_weather_service.get_current_weather(city)
     
-    # Get active weather alerts
-    active_alerts = WeatherAlert.objects.filter(is_active=True)[:5]
+    # Get 5-day forecast
+    forecast = advanced_weather_service.get_5_day_forecast(city)
+    
+    # Get farming recommendations
+    recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
+    
+    # Get weather alerts
+    alerts = advanced_weather_service.get_weather_alerts(city)
     
     context = {
         'current_weather': current_weather,
-        'active_alerts': active_alerts,
+        'forecast': forecast,
+        'recommendations': recommendations,
+        'alerts': alerts,
+        'city': city.title(),
+        'coordinates': advanced_weather_service.city_coordinates.get(city.lower(), {'lat': 17.3850, 'lon': 78.4867})
     }
-    return render(request, 'weather/home.html', context)
+    return render(request, 'weather/advanced_home.html', context)
 
 
 def weather_detail(request, location):
-    """Weather detail for specific location"""
-    # Get current weather
-    current_weather = WeatherData.objects.filter(
-        location__icontains=location,
-        is_current=True
-    ).first()
+    """Weather detail for specific location using advanced service"""
+    # Convert location to lowercase for city lookup
+    city = location.lower()
     
-    # Get 7-day forecast
-    forecasts = WeatherForecast.objects.filter(
-        location__icontains=location
-    ).order_by('date')[:7]
+    # Get current weather using advanced service
+    current_weather = advanced_weather_service.get_current_weather(city)
     
-    # Get weather alerts for location
-    alerts = WeatherAlert.objects.filter(
-        location__icontains=location,
-        is_active=True
-    )
+    # Get 5-day forecast
+    forecasts = advanced_weather_service.get_5_day_forecast(city)
+    
+    # Get weather alerts
+    alerts = advanced_weather_service.get_weather_alerts(city)
+    
+    # Get farming recommendations
+    recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
     
     context = {
         'location': location,
+        'city': city,
         'current_weather': current_weather,
         'forecasts': forecasts,
         'alerts': alerts,
+        'recommendations': recommendations,
+        'coordinates': advanced_weather_service.city_coordinates.get(city, {'lat': 17.3850, 'lon': 78.4867})
     }
-    return render(request, 'weather/detail.html', context)
+    return render(request, 'weather/advanced_home.html', context)
 
 
 @login_required
@@ -116,20 +122,23 @@ def weather_alerts(request):
 
 
 def weather_forecast(request):
-    """Weather forecast page"""
-    location = request.GET.get('location', '')
-    forecasts = []
+    """Weather forecast page using advanced service"""
+    city = request.GET.get('location', 'hyderabad').lower()
     
-    if location:
-        forecasts = WeatherForecast.objects.filter(
-            location__icontains=location
-        ).order_by('date')[:7]
+    # Get forecast data
+    forecasts = advanced_weather_service.get_5_day_forecast(city)
+    
+    # Get current weather for comparison
+    current_weather = advanced_weather_service.get_current_weather(city)
     
     context = {
-        'location': location,
+        'location': city.title(),
+        'city': city,
         'forecasts': forecasts,
+        'current_weather': current_weather,
+        'coordinates': advanced_weather_service.city_coordinates.get(city, {'lat': 17.3850, 'lon': 78.4867})
     }
-    return render(request, 'weather/forecast.html', context)
+    return render(request, 'weather/advanced_home.html', context)
 
 
 def weather_api(request, location):

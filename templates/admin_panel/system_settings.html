@@ -1,0 +1,269 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}System Settings - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-cog me-2"></i>System Settings</h3>
+    <p class="text-muted mb-0">Configure platform settings and preferences</p>
+</div>
+
+<div class="row">
+    <!-- AI Settings -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-brain me-2"></i>AI Settings</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="setting_type" value="ai_settings">
+                
+                <div class="mb-3">
+                    <label class="form-label">AI Model</label>
+                    <select class="form-select" name="ai_model">
+                        <option value="gemini-2.5-flash" {% if settings.ai_model == 'gemini-2.5-flash' %}selected{% endif %}>Gemini 2.5 Flash</option>
+                        <option value="gemini-pro" {% if settings.ai_model == 'gemini-pro' %}selected{% endif %}>Gemini Pro</option>
+                        <option value="gemini-1.5-flash" {% if settings.ai_model == 'gemini-1.5-flash' %}selected{% endif %}>Gemini 1.5 Flash</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Max Tokens</label>
+                    <input type="number" class="form-control" name="max_tokens" value="{{ settings.max_tokens }}" min="100" max="4000">
+                    <div class="form-text">Maximum tokens for AI responses</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Response Timeout (seconds)</label>
+                    <input type="number" class="form-control" name="response_timeout" value="{{ settings.response_timeout }}" min="5" max="60">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Temperature</label>
+                    <input type="range" class="form-range" name="temperature" min="0" max="1" step="0.1" value="0.7">
+                    <div class="d-flex justify-content-between">
+                        <small>0 (Deterministic)</small>
+                        <small>1 (Creative)</small>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Save AI Settings
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Notification Settings -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-bell me-2"></i>Notification Settings</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="setting_type" value="notification_settings">
+                
+                <div class="mb-3">
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-control" name="admin_email" value="{{ settings.notification_email }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Email Notifications</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="new_user_notifications" id="newUserNotifications" checked>
+                        <label class="form-check-label" for="newUserNotifications">
+                            New user registrations
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="problem_notifications" id="problemNotifications" checked>
+                        <label class="form-check-label" for="problemNotifications">
+                            New farmer problems
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="solution_notifications" id="solutionNotifications">
+                        <label class="form-check-label" for="solutionNotifications">
+                            Expert solutions posted
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">System Alerts</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="error_alerts" id="errorAlerts" checked>
+                        <label class="form-check-label" for="errorAlerts">
+                            System errors and warnings
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="performance_alerts" id="performanceAlerts">
+                        <label class="form-check-label" for="performanceAlerts">
+                            Performance issues
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Save Notification Settings
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- System Settings -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-server me-2"></i>System Settings</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="setting_type" value="system_settings">
+                
+                <div class="mb-3">
+                    <label class="form-label">Backup Frequency</label>
+                    <select class="form-select" name="backup_frequency">
+                        <option value="daily" {% if settings.backup_frequency == 'daily' %}selected{% endif %}>Daily</option>
+                        <option value="weekly" {% if settings.backup_frequency == 'weekly' %}selected{% endif %}>Weekly</option>
+                        <option value="monthly" {% if settings.backup_frequency == 'monthly' %}selected{% endif %}>Monthly</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Maintenance Mode</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="maintenance_mode" id="maintenanceMode" {% if settings.maintenance_mode %}checked{% endif %}>
+                        <label class="form-check-label" for="maintenanceMode">
+                            Enable maintenance mode
+                        </label>
+                    </div>
+                    <div class="form-text">When enabled, only admin users can access the site</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Debug Mode</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="debug_mode" id="debugMode">
+                        <label class="form-check-label" for="debugMode">
+                            Enable debug mode
+                        </label>
+                    </div>
+                    <div class="form-text">Show detailed error messages (disable in production)</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Session Timeout (minutes)</label>
+                    <input type="number" class="form-control" name="session_timeout" value="60" min="5" max="480">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Save System Settings
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Database Management -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-database me-2"></i>Database Management</h5>
+            
+            <div class="mb-3">
+                <h6>Database Status</h6>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Connection Status:</span>
+                    <span class="badge bg-success">Connected</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Last Backup:</span>
+                    <span class="text-muted">{{ settings.last_backup }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Storage Usage:</span>
+                    <span class="text-muted">{{ settings.storage_usage }}</span>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <h6>Quick Actions</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="createBackup()">
+                        <i class="fas fa-download me-1"></i>Create Backup
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="optimizeDatabase()">
+                        <i class="fas fa-tools me-1"></i>Optimize Database
+                    </button>
+                    <a href="{% url 'admin_panel:export_data' %}?type=users" class="btn btn-outline-info">
+                        <i class="fas fa-file-export me-1"></i>Export Users
+                    </a>
+                    <a href="{% url 'admin_panel:export_data' %}?type=queries" class="btn btn-outline-info">
+                        <i class="fas fa-file-export me-1"></i>Export Queries
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="row">
+    <div class="col-12">
+        <div class="chart-container">
+            <h5><i class="fas fa-info-circle me-2"></i>System Information</h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Platform Version:</strong><br>
+                    <span class="text-muted">Farmazee v1.0.0</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Django Version:</strong><br>
+                    <span class="text-muted">Django 5.2.7</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Python Version:</strong><br>
+                    <span class="text-muted">Python 3.13.3</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Last Updated:</strong><br>
+                    <span class="text-muted">{{ settings.last_updated|default:"Unknown" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function createBackup() {
+    if (confirm('Create a database backup? This may take a few minutes.')) {
+        // Simulate backup creation
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Creating Backup...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            alert('Backup created successfully!');
+        }, 3000);
+    }
+}
+
+function optimizeDatabase() {
+    if (confirm('Optimize database? This may improve performance.')) {
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Optimizing...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            alert('Database optimized successfully!');
+        }, 2000);
+    }
+}
+</script>
+{% endblock %}

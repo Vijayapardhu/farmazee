@@ -1,0 +1,248 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Farmazee{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h3>
+    <p class="text-muted mb-0">Monitor your platform's performance and activity</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stats-number">{{ total_users }}</div>
+                    <div class="stats-label">Total Users</div>
+                </div>
+                <div class="text-primary">
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    +{{ new_users_week }} this week
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stats-number">{{ total_messages }}</div>
+                    <div class="stats-label">AI Messages</div>
+                </div>
+                <div class="text-info">
+                    <i class="fas fa-robot fa-2x"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    +{{ ai_queries_week }} queries this week
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stats-number">{{ total_problems }}</div>
+                    <div class="stats-label">Farmer Problems</div>
+                </div>
+                <div class="text-warning">
+                    <i class="fas fa-question-circle fa-2x"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <small class="text-info">
+                    <i class="fas fa-check-circle me-1"></i>
+                    {{ solved_problems }} solved
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stats-number">{{ expert_count }}</div>
+                    <div class="stats-label">Experts</div>
+                </div>
+                <div class="text-success">
+                    <i class="fas fa-user-graduate fa-2x"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <small class="text-muted">
+                    <i class="fas fa-users me-1"></i>
+                    Active experts
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Health -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5><i class="fas fa-heartbeat me-2"></i>System Health</h5>
+            <div class="row">
+                <div class="col-6">
+                    <div class="text-center">
+                        <div class="text-success">
+                            <i class="fas fa-database fa-2x mb-2"></i>
+                        </div>
+                        <h6>{{ system_health.database_status }}</h6>
+                        <small class="text-muted">Database</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="text-center">
+                        <div class="text-success">
+                            <i class="fas fa-brain fa-2x mb-2"></i>
+                        </div>
+                        <h6>{{ system_health.ai_service_status }}</h6>
+                        <small class="text-muted">AI Service</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5><i class="fas fa-chart-pie me-2"></i>Quick Stats</h5>
+            <div class="row text-center">
+                <div class="col-6">
+                    <h4 class="text-primary">{{ total_questions }}</h4>
+                    <small class="text-muted">Community Questions</small>
+                </div>
+                <div class="col-6">
+                    <h4 class="text-success">{{ total_answers }}</h4>
+                    <small class="text-muted">Community Answers</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-clock me-2"></i>Recent Users</h5>
+            <div class="list-group list-group-flush">
+                {% for user in recent_users %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h6>
+                        <small class="text-muted">@{{ user.username }}</small>
+                    </div>
+                    <small class="text-muted">{{ user.date_joined|date:"M d" }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-exclamation-triangle me-2"></i>Recent Problems</h5>
+            <div class="list-group list-group-flush">
+                {% for problem in recent_problems %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">{{ problem.title|truncatechars:30 }}</h6>
+                        <small class="text-muted">by {{ problem.user.username }}</small>
+                    </div>
+                    <span class="badge {% if problem.is_solved %}bg-success{% else %}bg-warning{% endif %}">
+                        {% if problem.is_solved %}Solved{% else %}Pending{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-search me-2"></i>Popular Queries</h5>
+            <div class="list-group list-group-flush">
+                {% for query in popular_queries %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">{{ query.query|truncatechars:25 }}</h6>
+                        <small class="text-muted">{{ query.category|default:"General" }}</small>
+                    </div>
+                    <span class="badge bg-info">{{ query.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="chart-container">
+            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:user_management' %}" class="btn btn-primary btn-admin w-100">
+                        <i class="fas fa-users me-1"></i>Manage Users
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:content_moderation' %}" class="btn btn-danger btn-admin w-100">
+                        <i class="fas fa-shield-alt me-1"></i>Moderate Content
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:expert_verification' %}" class="btn btn-success btn-admin w-100">
+                        <i class="fas fa-user-check me-1"></i>Verify Experts
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:broadcast_notification' %}" class="btn btn-info btn-admin w-100">
+                        <i class="fas fa-bullhorn me-1"></i>Broadcast
+                    </a>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:advanced_analytics' %}" class="btn btn-outline-primary btn-admin w-100">
+                        <i class="fas fa-chart-line me-1"></i>Advanced Analytics
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:activity_logs' %}" class="btn btn-outline-info btn-admin w-100">
+                        <i class="fas fa-history me-1"></i>Activity Logs
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:database_management' %}" class="btn btn-outline-warning btn-admin w-100">
+                        <i class="fas fa-database me-1"></i>Database
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'admin_panel:platform_statistics' %}" class="btn btn-outline-success btn-admin w-100">
+                        <i class="fas fa-chart-pie me-1"></i>Statistics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

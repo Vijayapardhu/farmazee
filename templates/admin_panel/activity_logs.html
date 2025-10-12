@@ -1,0 +1,137 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Activity Logs - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-history me-2"></i>System Activity Logs</h3>
+    <p class="text-muted mb-0">Monitor all platform activities and events</p>
+</div>
+
+<!-- Log Filters -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Event Type</label>
+            <select class="form-select" name="event_type">
+                <option value="all">All Events</option>
+                <option value="user_registration">User Registration</option>
+                <option value="problem_created">Problem Created</option>
+                <option value="solution_posted">Solution Posted</option>
+                <option value="admin_action">Admin Action</option>
+                <option value="error">Errors</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Severity</label>
+            <select class="form-select" name="severity">
+                <option value="all">All Severities</option>
+                <option value="info">Info</option>
+                <option value="warning">Warning</option>
+                <option value="error">Error</option>
+                <option value="critical">Critical</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Date Range</label>
+            <select class="form-select" name="date_range">
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="all">All Time</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+<!-- Activity Timeline -->
+<div class="chart-container">
+    <h5><i class="fas fa-stream me-2"></i>Activity Timeline</h5>
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>User</th>
+                    <th>Severity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in activities %}
+                <tr>
+                    <td>
+                        <small>{{ activity.timestamp|date:"M d, Y g:i A" }}</small>
+                    </td>
+                    <td>
+                        {% if activity.type == 'user_registration' %}
+                            <span class="badge bg-primary"><i class="fas fa-user-plus me-1"></i>Registration</span>
+                        {% elif activity.type == 'problem_created' %}
+                            <span class="badge bg-warning"><i class="fas fa-question-circle me-1"></i>Problem</span>
+                        {% elif activity.type == 'solution_posted' %}
+                            <span class="badge bg-success"><i class="fas fa-lightbulb me-1"></i>Solution</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ activity.type|title }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ activity.description }}</td>
+                    <td>
+                        <small class="text-muted">{{ activity.user }}</small>
+                    </td>
+                    <td>
+                        {% if activity.severity == 'error' or activity.severity == 'critical' %}
+                            <span class="badge bg-danger">{{ activity.severity|upper }}</span>
+                        {% elif activity.severity == 'warning' %}
+                            <span class="badge bg-warning">{{ activity.severity|upper }}</span>
+                        {% else %}
+                            <span class="badge bg-info">{{ activity.severity|upper }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                        No activity logs found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if activities.has_other_pages %}
+<nav aria-label="Activity pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if activities.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ activities.previous_page_number }}">Previous</a>
+            </li>
+        {% endif %}
+        
+        {% for num in activities.paginator.page_range %}
+            {% if activities.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if activities.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ activities.next_page_number }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

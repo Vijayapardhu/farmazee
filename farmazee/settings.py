@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'ai_ml',
     'ai_chatbot',
     'farmer_problems',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [

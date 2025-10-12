@@ -1,0 +1,181 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}{{ user.username }} - User Detail{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3><i class="fas fa-user me-2"></i>{{ user.first_name }} {{ user.last_name }}</h3>
+            <p class="text-muted mb-0">@{{ user.username }} - User Details</p>
+        </div>
+        <div>
+            <a href="{% url 'admin_panel:toggle_user_status' user.id %}" class="btn btn-{% if user.is_active %}warning{% else %}success{% endif %} toggle-status-btn">
+                <i class="fas fa-{% if user.is_active %}ban{% else %}check{% endif %} me-1"></i>
+                {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+            </a>
+            <a href="{% url 'admin_panel:user_management' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Users
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Information -->
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h5><i class="fas fa-user-circle me-2"></i>User Information</h5>
+            
+            <div class="text-center mb-4">
+                {% if user.userprofile.profile_picture %}
+                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle mb-3" width="100" height="100">
+                {% else %}
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px; font-size: 2rem;">
+                        {{ user.first_name|first|default:user.username|first|upper }}
+                    </div>
+                {% endif %}
+                
+                <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-muted">@{{ user.username }}</p>
+                
+                {% if user.userprofile.is_expert %}
+                    <span class="badge bg-success fs-6">Expert</span>
+                {% else %}
+                    <span class="badge bg-primary fs-6">Farmer</span>
+                {% endif %}
+            </div>
+            
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <strong>Email:</strong><br>
+                    <span class="text-muted">{{ user.email }}</span>
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <strong>Phone:</strong><br>
+                    <span class="text-muted">{{ user.userprofile.phone_number|default:"Not provided" }}</span>
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <strong>Location:</strong><br>
+                    <span class="text-muted">{{ user.userprofile.village|default:"Not provided" }}, {{ user.userprofile.district|default:"" }}</span>
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <strong>Land Area:</strong><br>
+                    <span class="text-muted">{{ user.userprofile.land_area|default:"Not provided" }} acres</span>
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <strong>Status:</strong><br>
+                    {% if user.is_active %}
+                        <span class="status-badge status-active">Active</span>
+                    {% else %}
+                        <span class="status-badge status-inactive">Inactive</span>
+                    {% endif %}
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <strong>Joined:</strong><br>
+                    <span class="text-muted">{{ user.date_joined|date:"F d, Y" }}</span>
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <strong>Last Login:</strong><br>
+                    <span class="text-muted">
+                        {% if user.last_login %}
+                            {{ user.last_login|date:"F d, Y g:i A" }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Activity -->
+    <div class="col-md-8">
+        <div class="row">
+            <!-- Activity Stats -->
+            <div class="col-12 mb-4">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">{{ user_chats }}</div>
+                            <div class="stats-label">Chat Sessions</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">{{ user_queries }}</div>
+                            <div class="stats-label">AI Queries</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">{{ user_problems }}</div>
+                            <div class="stats-label">Problems Posted</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">{{ user_solutions }}</div>
+                            <div class="stats-label">Solutions Given</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Queries -->
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-search me-2"></i>Recent AI Queries</h5>
+                    {% if recent_queries %}
+                        <div class="list-group list-group-flush">
+                            {% for query in recent_queries %}
+                            <div class="list-group-item">
+                                <h6 class="mb-1">{{ query.query|truncatechars:40 }}</h6>
+                                <small class="text-muted">
+                                    {{ query.category|default:"General" }} • {{ query.created_at|date:"M d" }}
+                                </small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No recent queries</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Problems -->
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-question-circle me-2"></i>Recent Problems</h5>
+                    {% if recent_problems %}
+                        <div class="list-group list-group-flush">
+                            {% for problem in recent_problems %}
+                            <div class="list-group-item">
+                                <h6 class="mb-1">{{ problem.title|truncatechars:30 }}</h6>
+                                <small class="text-muted">
+                                    {% if problem.status == 'solved' %}
+                                        <span class="text-success">Solved</span>
+                                    {% else %}
+                                        <span class="text-warning">{{ problem.status|title }}</span>
+                                    {% endif %}
+                                    • {{ problem.created_at|date:"M d" }}
+                                </small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No problems posted</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

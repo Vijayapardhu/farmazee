@@ -1,0 +1,108 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Community Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-comments me-2"></i>Community Management</h3>
+    <p class="text-muted mb-0">Manage forum topics and questions</p>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link {% if tab == 'topics' %}active{% endif %}" href="?tab=topics">
+            <i class="fas fa-comments me-1"></i>Forum Topics {% if total_topics %}({{ total_topics }}){% endif %}
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link {% if tab == 'questions' %}active{% endif %}" href="?tab=questions">
+            <i class="fas fa-question-circle me-1"></i>Q&A {% if total_questions %}({{ total_questions }}){% endif %}
+        </a>
+    </li>
+</ul>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <input type="hidden" name="tab" value="{{ tab }}">
+        <div class="col-md-10">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search {% if tab == 'topics' %}topics{% else %}questions{% endif %}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Content Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>{% if tab == 'topics' %}Replies{% else %}Answers{% endif %}</th>
+                <th>Views</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <h6 class="mb-0">{{ item.title }}</h6>
+                    <small class="text-muted">{{ item.content|truncatechars:60 }}</small>
+                </td>
+                <td>{{ item.author.username }}</td>
+                <td>
+                    {% if tab == 'topics' and item.category %}
+                        <span class="badge bg-info">{{ item.category.name }}</span>
+                    {% elif tab == 'questions' %}
+                        <span class="badge bg-info">{{ item.get_category_display }}</span>
+                    {% else %}
+                        <span class="text-muted">General</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if tab == 'topics' %}
+                        <span class="badge bg-secondary">{{ item.reply_count }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ item.answer_count }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ item.views }}</td>
+                <td>{{ item.created_at|date:"M d, Y" }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                    No {% if tab == 'topics' %}topics{% else %}questions{% endif %} found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

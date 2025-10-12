@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Farmer Dashboard - Farmazee{% endblock %}
+
+{% block content %}
+<div class="farmer-dashboard">
+    <!-- Weather Alert Banner -->
+    <div class="container-fluid weather-alert-banner">
+        <div class="container">
+            {% if current_weather %}
+            <div class="alert alert-info alert-dismissible fade show mb-0" role="alert">
+                <i class="fas fa-cloud-sun me-2"></i>
+                <strong>Today's Weather:</strong> {{ current_weather.description }}, {{ current_weather.temperature }}°C | 
+                <strong>Humidity:</strong> {{ current_weather.humidity }}% | 
+                <strong>Wind:</strong> {{ current_weather.wind_speed }} km/h
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% else %}
+            <div class="alert alert-info alert-dismissible fade show mb-0" role="alert">
+                <i class="fas fa-cloud-sun me-2"></i>
+                <strong>Today's Weather:</strong> Partly Cloudy, 28°C | <strong>Rainfall Expected:</strong> Tomorrow Evening
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="container py-4">
+        <h2 class="mb-4">
+            <i class="fas fa-tachometer-alt me-2"></i>Quick Actions
+        </h2>
+        
+        <div class="row g-3 mb-5">
+            <!-- Today's Weather -->
+            <div class="col-md-3 col-6">
+                <a href="{% url 'weather:home' %}" class="quick-action-card weather">
+                    <div class="icon">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                    </div>
+                    <h5>Weather</h5>
+                    <p>7-Day Forecast</p>
+                </a>
+            </div>
+
+            <!-- Market Prices -->
+            <div class="col-md-3 col-6">
+                <a href="{% url 'marketplace:home' %}" class="quick-action-card market">
+                    <div class="icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h5>Market Prices</h5>
+                    <p>Today's Rates</p>
+                </a>
+            </div>
+
+            <!-- Ask AI -->
+            <div class="col-md-3 col-6">
+                <a href="{% url 'ai_chatbot:chat' %}" class="quick-action-card ai">
+                    <div class="icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h5>Ask AI</h5>
+                    <p>Instant Advice</p>
+                </a>
+            </div>
+
+            <!-- Ask Experts -->
+            <div class="col-md-3 col-6">
+                <a href="{% url 'farmer_problems:list' %}" class="quick-action-card expert">
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5>Ask Experts</h5>
+                    <p>Get Help</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Weather Recommendations -->
+        {% if recommendations %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">
+                    <i class="fas fa-seedling me-2"></i>Today's Weather Recommendations
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for rec in recommendations|slice:":3" %}
+                    <div class="col-md-4 mb-3">
+                        <div class="recommendation-card border-start border-3 
+                            {% if rec.type == 'warning' %}border-warning{% elif rec.type == 'danger' %}border-danger{% elif rec.type == 'success' %}border-success{% else %}border-info{% endif %} p-3">
+                            <div class="d-flex align-items-start">
+                                <span class="me-2 mt-1">{{ rec.icon }}</span>
+                                <div>
+                                    <h6 class="mb-1 text-{% if rec.type == 'warning' %}warning{% elif rec.type == 'danger' %}danger{% elif rec.type == 'success' %}success{% else %}info{% endif %}">
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="mb-1 text-muted small">{{ rec.message }}</p>
+                                    <small class="text-muted">{{ rec.action }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Crop Calendar -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i>This Month's Farming Activities
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="activity-card planting">
+                            <h5><i class="fas fa-seedling me-2"></i>Planting Season</h5>
+                            <ul>
+                                <li>Rice - Kharif season</li>
+                                <li>Cotton - Main season</li>
+                                <li>Maize - Start now</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="activity-card harvesting">
+                            <h5><i class="fas fa-cut me-2"></i>Harvesting Time</h5>
+                            <ul>
+                                <li>Wheat - Ready to harvest</li>
+                                <li>Chickpea - Almost ready</li>
+                                <li>Mustard - Check moisture</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="activity-card maintenance">
+                            <h5><i class="fas fa-tools me-2"></i>Maintenance</h5>
+                            <ul>
+                                <li>Check irrigation systems</li>
+                                <li>Pest control inspection</li>
+                                <li>Soil health testing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Prices Today -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Today's Market Prices (Hyderabad Mandi)
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Crop</th>
+                                <th>Price (₹/Quintal)</th>
+                                <th>Change</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="fas fa-circle text-warning me-2"></i>Rice (Paddy)</td>
+                                <td><strong>₹2,150</strong></td>
+                                <td><span class="badge bg-success">+₹50 ↑</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-circle text-info me-2"></i>Cotton</td>
+                                <td><strong>₹6,800</strong></td>
+                                <td><span class="badge bg-success">+₹100 ↑</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-circle text-success me-2"></i>Maize</td>
+                                <td><strong>₹1,890</strong></td>
+                                <td><span class="badge bg-danger">-₹30 ↓</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-circle text-danger me-2"></i>Chilli</td>
+                                <td><strong>₹8,500</strong></td>
+                                <td><span class="badge bg-success">+₹200 ↑</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary">View Details</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end">
+                    <small class="text-muted">Updated: Today 10:00 AM</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Government Schemes -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">
+                    <i class="fas fa-hand-holding-usd me-2"></i>Available Government Schemes
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="scheme-card">
+                            <h5>PM-KISAN</h5>
+                            <p>₹6,000 per year direct benefit transfer</p>
+                            <a href="{% url 'schemes:list' %}" class="btn btn-sm btn-warning">Apply Now</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="scheme-card">
+                            <h5>Crop Insurance</h5>
+                            <p>Protect your crops from natural disasters</p>
+                            <a href="{% url 'schemes:list' %}" class="btn btn-sm btn-warning">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Expert Answers -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>Recent Farmer Questions
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{% url 'farmer_problems:list' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">How to control stem borer in rice?</h6>
+                            <small>2 hours ago</small>
+                        </div>
+                        <p class="mb-1">5 expert answers available</p>
+                    </a>
+                    <a href="{% url 'farmer_problems:list' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Best time to harvest cotton?</h6>
+                            <small>5 hours ago</small>
+                        </div>
+                        <p class="mb-1">8 expert answers available</p>
+                    </a>
+                    <a href="{% url 'farmer_problems:list' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Soil pH too low, what to do?</h6>
+                            <small>1 day ago</small>
+                        </div>
+                        <p class="mb-1">12 expert answers available</p>
+                    </a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'farmer_problems:list' %}" class="btn btn-info">View All Questions</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Quick Action Cards */
+.quick-action-card {
+    display: block;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    text-decoration: none;
+}
+
+.quick-action-card .icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+}
+
+.quick-action-card.weather .icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.quick-action-card.market .icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.quick-action-card.ai .icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.quick-action-card.expert .icon {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.quick-action-card h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.quick-action-card p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Activity Cards */
+.activity-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    height: 100%;
+}
+
+.activity-card.planting {
+    border-left: 4px solid #28a745;
+}
+
+.activity-card.harvesting {
+    border-left: 4px solid #ffc107;
+}
+
+.activity-card.maintenance {
+    border-left: 4px solid #17a2b8;
+}
+
+.activity-card h5 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.activity-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-card li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.activity-card li:last-child {
+    border-bottom: none;
+}
+
+/* Scheme Cards */
+.scheme-card {
+    padding: 1.5rem;
+    background: #fff3cd;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+.scheme-card h5 {
+    color: #856404;
+    margin-bottom: 0.5rem;
+}
+
+.scheme-card p {
+    color: #856404;
+    margin-bottom: 1rem;
+}
+
+/* Weather Alert Banner */
+.weather-alert-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.weather-alert-banner .alert {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .quick-action-card {
+        padding: 1rem;
+    }
+    
+    .quick-action-card .icon {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .quick-action-card h5 {
+        font-size: 0.9rem;
+    }
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,1181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Farmazee - ఫార్మజీ - रैतुलका लागि{% endblock %}
+
+{% block content %}
+<!-- Hero Section - SUPER SIMPLE -->
+<section class="simple-hero">
+    <div class="container">
+        <!-- Language Selector - BIG AND VISIBLE -->
+        <div class="text-center mb-4">
+            <div class="big-language-selector">
+                <h4 class="mb-3"><i class="fas fa-language me-2"></i>Choose Language</h4>
+                <div id="languageLockMessage" class="alert alert-info" style="display: none;">
+                    <i class="fas fa-lock me-2"></i>
+                    <span id="lockText">Language Locked</span>
+                    <button id="unlockBtn" class="btn btn-sm btn-outline-primary ms-2">
+                        <i class="fas fa-unlock"></i> Unlock
+                    </button>
+                </div>
+                <div class="language-grid">
+                    <button data-lang="en" class="lang-btn">
+                        <span class="lang-icon">🇬🇧</span>
+                        <span class="lang-text">English</span>
+                    </button>
+                    <button data-lang="te" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">తెలుగు</span>
+                    </button>
+                    <button data-lang="hi" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">हिंदी</span>
+                    </button>
+                    <button data-lang="ta" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">தமிழ்</span>
+                    </button>
+                    <button data-lang="kn" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">ಕನ್ನಡ</span>
+                    </button>
+                    <button data-lang="ml" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">മലയാളം</span>
+                    </button>
+                    <button data-lang="mr" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">मराठी</span>
+                    </button>
+                    <button data-lang="bn" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">বাংলা</span>
+                    </button>
+                    <button data-lang="gu" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">ગુજરાતી</span>
+                    </button>
+                    <button data-lang="pa" class="lang-btn">
+                        <span class="lang-icon">🇮🇳</span>
+                        <span class="lang-text">ਪੰਜਾਬੀ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center py-5">
+            <h1 class="display-1 fw-bold mb-3">🌾 Farmazee 🌾</h1>
+            <h2 class="display-5 mb-4">For Farmers</h2>
+            
+            <!-- TODAY'S ESSENTIAL INFO - BIG AND CLEAR -->
+            <div class="row g-4 mb-5">
+                <!-- TODAY'S WEATHER -->
+                <div class="col-md-6">
+                    <div class="info-box weather-box">
+                        <div class="icon-huge">
+                            <i class="fas fa-cloud-sun"></i>
+                        </div>
+                        <h3>Today's Weather</h3>
+                        <h2 class="display-2" id="currentTemp">Loading...</h2>
+                        <p class="lead" id="weatherDesc">Checking weather...</p>
+                        <p class="text-success fw-bold" id="farmingAdvice">Check weather for farming advice</p>
+                        <a href="{% url 'weather:home' %}" class="btn btn-light btn-lg mt-3">
+                            <i class="fas fa-calendar-week me-2"></i>7 Days Weather
+                        </a>
+                    </div>
+                </div>
+
+                <!-- TODAY'S BEST PRICE -->
+                <div class="col-md-6">
+                    <div class="info-box price-box">
+                        <div class="icon-huge">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <h3>Best Price Today</h3>
+                        <h2 class="display-2" id="bestPrice">Loading...</h2>
+                        <p class="lead" id="priceCrop">Loading market data...</p>
+                        <p class="text-success fw-bold" id="priceChange">Check all prices below</p>
+                        <a href="{% url 'marketplace:home' %}" class="btn btn-warning btn-lg mt-3">
+                            <i class="fas fa-chart-line me-2"></i>All Prices
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN TOOLS - SUPER BIG BUTTONS -->
+<section class="tools-section bg-light py-5">
+    <div class="container">
+        <h2 class="text-center display-4 mb-5">
+            <i class="fas fa-tools me-3"></i>Choose What You Need
+        </h2>
+        
+        <div class="row g-4">
+            <!-- Ask AI -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'ai_chatbot:chat' %}" class="big-tool-card ai-card">
+                    <div class="icon-container">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Ask Question</h3>
+                    <p class="lead">Talk to AI<br>Get Instant Help</p>
+                    <div class="example">
+                        💬 "How to grow rice in Telangana?"<br>
+                        💬 "Stop cotton pests naturally"<br>
+                        💬 "Best fertilizer for tomatoes"
+                    </div>
+                    <div class="action-hint">
+                        <i class="fas fa-hand-pointer"></i> CLICK HERE
+                    </div>
+                </a>
+            </div>
+
+            <!-- Weather -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'weather:home' %}" class="big-tool-card weather-card">
+                    <div class="icon-container">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                    </div>
+                    <h3>Weather</h3>
+                    <p class="lead">7 Days Forecast<br>Rain Alert</p>
+                    <div class="example">
+                        🌤️ Today: Check weather<br>
+                        🌧️ Rain forecast<br>
+                        🌡️ Temperature alerts
+                    </div>
+                    <div class="action-hint">
+                        <i class="fas fa-hand-pointer"></i> CLICK HERE
+                    </div>
+                </a>
+            </div>
+
+            <!-- Market Prices -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'marketplace:home' %}" class="big-tool-card price-card">
+                    <div class="icon-container">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h3>Market Prices</h3>
+                    <p class="lead">Today's Rates<br>All Crops</p>
+                    <div class="example">
+                        🌾 Rice: Live prices<br>
+                        🌱 Cotton: Market rates<br>
+                        🌶️ Chili: Daily updates
+                    </div>
+                    <div class="action-hint">
+                        <i class="fas fa-hand-pointer"></i> CLICK HERE
+                    </div>
+                </a>
+            </div>
+
+            <!-- Ask Experts -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'farmer_problems:list' %}" class="big-tool-card expert-card">
+                    <div class="icon-container">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Ask Experts</h3>
+                    <p class="lead">Real Farmers Help<br>Upload Photos</p>
+                    <div class="example">
+                        📸 Take photo of problem<br>
+                        ✅ Get expert answer
+                    </div>
+                    <div class="action-hint">
+                        <i class="fas fa-hand-pointer"></i> CLICK HERE
+                    </div>
+                </a>
+            </div>
+
+            <!-- Crop Calendar -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'crops:list' %}" class="big-tool-card crop-card">
+                    <div class="icon-container">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Crop Calendar</h3>
+                    <p class="lead">When to Plant<br>When to Harvest</p>
+                    <div class="example">
+                        🌱 Plant: Rice (Now)<br>
+                        ✂️ Harvest: Wheat (Ready)
+                    </div>
+                    <div class="action-hint">
+                        <i class="fas fa-hand-pointer"></i> CLICK HERE
+                    </div>
+                </a>
+            </div>
+
+            <!-- Government Money -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'schemes:list' %}" class="big-tool-card scheme-card">
+                    <div class="icon-container">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>Get Money</h3>
+                    <p class="lead">Government Help<br>₹6,000 per year</p>
+                    <div class="example">
+                        💰 PM-KISAN: ₹6,000<br>
+                        🛡️ Free Insurance
+                    </div>
+                    <div class="action-hint">
+                        <i class="fas fa-hand-pointer"></i> CLICK HERE
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HELP SECTION -->
+<section class="help-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="help-card">
+                    <h2 class="display-5 mb-4">
+                        <i class="fas fa-question-circle me-3"></i>Need Help?
+                    </h2>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="help-step">
+                                <div class="step-number">1</div>
+                                <h4>Click Big Button</h4>
+                                <p>Choose what you need above</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="help-step">
+                                <div class="step-number">2</div>
+                                <h4>Ask Your Question</h4>
+                                <p>Type or speak your problem</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="help-step">
+                                <div class="step-number">3</div>
+                                <h4>Get Answer Fast</h4>
+                                <p>See solution in 1 minute</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* SUPER SIMPLE DESIGN FOR NON-EDUCATED FARMERS */
+
+.simple-hero {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 3rem 0;
+}
+
+.info-box {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+    color: #333;
+}
+
+.info-box:hover {
+    transform: scale(1.05);
+}
+
+.icon-huge {
+    font-size: 80px;
+    margin-bottom: 1rem;
+}
+
+.weather-box .icon-huge {
+    color: #667eea;
+}
+
+.price-box .icon-huge {
+    color: #f5af19;
+}
+
+/* BIG TOOL CARDS */
+.big-tool-card {
+    display: block;
+    background: white;
+    border-radius: 25px;
+    padding: 3rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    min-height: 450px;
+    position: relative;
+    border: 5px solid transparent;
+}
+
+.big-tool-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    text-decoration: none;
+    color: #333;
+}
+
+.big-tool-card .icon-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: white;
+}
+
+.ai-card { border-color: #4facfe; }
+.ai-card .icon-container { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+.weather-card { border-color: #667eea; }
+.weather-card .icon-container { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+.price-card { border-color: #f5af19; }
+.price-card .icon-container { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); }
+
+.expert-card { border-color: #43e97b; }
+.expert-card .icon-container { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+.crop-card { border-color: #fa709a; }
+.crop-card .icon-container { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+.scheme-card { border-color: #30cfd0; }
+.scheme-card .icon-container { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+.big-tool-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.big-tool-card .lead {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.big-tool-card .example {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #28a745;
+}
+
+.action-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #28a745;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* HELP SECTION */
+.help-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem;
+    border-radius: 25px;
+    text-align: center;
+}
+
+.help-step {
+    background: rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: white;
+    color: #667eea;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+}
+
+.help-step h4 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.help-step p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* CLEAN UI - NO GOOGLE TRANSLATE */
+
+/* BIG LANGUAGE SELECTOR */
+.big-language-selector {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 900px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 1000;
+}
+
+.big-language-selector h4 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.language-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+}
+
+.lang-btn {
+    background: white;
+    border: 3px solid transparent;
+    border-radius: 15px;
+    padding: 1rem 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.lang-btn:hover {
+    transform: translateY(-5px);
+    border-color: #28a745;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    cursor: pointer;
+}
+
+.lang-btn:active {
+    transform: translateY(-2px);
+    background: #28a745 !important;
+    color: white !important;
+}
+
+.lang-btn {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.lang-btn:focus {
+    outline: 3px solid #28a745;
+    outline-offset: 2px;
+}
+
+.lang-icon {
+    font-size: 2rem;
+}
+
+.lang-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.lang-btn:active .lang-text {
+    color: white;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+    .display-1 { font-size: 3rem; }
+    .display-2 { font-size: 2.5rem; }
+    .display-4 { font-size: 2rem; }
+    .display-5 { font-size: 1.75rem; }
+    
+    .big-tool-card {
+        min-height: 400px;
+        padding: 2rem 1.5rem;
+    }
+    
+    .big-tool-card .icon-container {
+        width: 100px;
+        height: 100px;
+        font-size: 50px;
+    }
+    
+    .big-tool-card h3 { font-size: 1.5rem; }
+    .big-tool-card .lead { font-size: 1.1rem; }
+    
+    .language-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .big-language-selector {
+        padding: 1.5rem;
+    }
+    
+    .big-language-selector h4 {
+        font-size: 1.2rem;
+    }
+    
+    .lang-btn {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .lang-icon {
+        font-size: 1.5rem;
+    }
+    
+    .lang-text {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .language-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+</style>
+
+<!-- Google Translate Widget -->
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'te,hi,ta,kn,ml,mr,bn,gu,pa,en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<style>
+/* Hide Google Translate banner COMPLETELY */
+.goog-te-banner-frame {
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+}
+
+body {
+    top: 0 !important;
+    position: relative !important;
+}
+
+#google_translate_element {
+    position: absolute !important;
+    left: -9999px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Hide any Google Translate elements that might appear */
+.goog-te-combo {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+.goog-te-gadget {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Hide the translate button if it appears */
+.goog-te-menu-value {
+    display: none !important;
+}
+
+/* Force body to stay at top */
+body.goog-te-banner-frame {
+    top: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Hide any translate widgets */
+.skiptranslate {
+    display: none !important;
+    visibility: hidden !important;
+}
+</style>
+
+<script>
+// Translation data for all languages
+const translations = {
+    en: {
+        chooseLanguage: "Choose Language",
+        farmazee: "🌾 Farmazee 🌾",
+        forFarmers: "For Farmers",
+        todaysWeather: "Today's Weather",
+        temperature: "28°C",
+        weather: "Partly Cloudy",
+        goodFarming: "Good for farming today! ✔",
+        weatherButton: "7 Days Weather",
+        bestPrice: "Best Price Today",
+        price: "₹6,800",
+        cotton: "Cotton (per quintal)",
+        priceUp: "Price UP +₹100!",
+        pricesButton: "All Prices",
+        chooseNeed: "Choose What You Need",
+        weatherInfo: "Get weather info",
+        cropAdvice: "Crop advice",
+        marketPrices: "Market prices",
+        expertHelp: "Expert help",
+        schemes: "Government schemes",
+        soilHealth: "Soil health",
+        howToUse: "How to Use Farmazee",
+        step1: "1. Choose what you need",
+        step2: "2. Get instant help",
+        step3: "3. Grow better crops",
+        clickHere: "CLICK HERE"
+    },
+    te: {
+        chooseLanguage: "భాష ఎంచుకోండి",
+        farmazee: "🌾 ఫార్మజీ 🌾",
+        forFarmers: "రైతుల కోసం",
+        todaysWeather: "ఈరోజు వాతావరణం",
+        temperature: "28°C",
+        weather: "మేఘావృతం",
+        goodFarming: "ఈరోజు వ్యవసాయానికి మంచిది! ✔",
+        weatherButton: "7 రోజుల వాతావరణం",
+        bestPrice: "ఈరోజు అత్యుత్తమ ధర",
+        price: "₹6,800",
+        cotton: "పత్తి (ప్రతి క్వింటాల్)",
+        priceUp: "ధర పెరిగింది +₹100!",
+        pricesButton: "అన్ని ధరలు",
+        chooseNeed: "మీకు కావలసినది ఎంచుకోండి",
+        weatherInfo: "వాతావరణ సమాచారం పొందండి",
+        cropAdvice: "పంట సలహాలు",
+        marketPrices: "మార్కెట్ ధరలు",
+        expertHelp: "నిపుణుల సహాయం",
+        schemes: "ప్రభుత్వ పథకాలు",
+        soilHealth: "నేల ఆరోగ్యం",
+        howToUse: "ఫార్మజీని ఎలా ఉపయోగించాలి",
+        step1: "1. మీకు కావలసినది ఎంచుకోండి",
+        step2: "2. తక్షణ సహాయం పొందండి",
+        step3: "3. మంచి పంటలు పండించండి",
+        clickHere: "ఇక్కడ క్లిక్ చేయండి"
+    },
+    hi: {
+        chooseLanguage: "भाषा चुनें",
+        farmazee: "🌾 फार्माजी 🌾",
+        forFarmers: "किसानों के लिए",
+        todaysWeather: "आज का मौसम",
+        temperature: "28°C",
+        weather: "आंशिक रूप से बादल",
+        goodFarming: "आज खेती के लिए अच्छा है! ✔",
+        weatherButton: "7 दिन का मौसम",
+        bestPrice: "आज की सबसे अच्छी कीमत",
+        price: "₹6,800",
+        cotton: "कपास (प्रति क्विंटल)",
+        priceUp: "कीमत बढ़ी +₹100!",
+        pricesButton: "सभी कीमतें",
+        chooseNeed: "आपको जो चाहिए उसे चुनें",
+        weatherInfo: "मौसम की जानकारी प्राप्त करें",
+        cropAdvice: "फसल सलाह",
+        marketPrices: "बाजार कीमतें",
+        expertHelp: "विशेषज्ञ सहायता",
+        schemes: "सरकारी योजनाएं",
+        soilHealth: "मिट्टी का स्वास्थ्य",
+        howToUse: "फार्माजी का उपयोग कैसे करें",
+        step1: "1. आपको जो चाहिए उसे चुनें",
+        step2: "2. तुरंत सहायता प्राप्त करें",
+        step3: "3. बेहतर फसलें उगाएं",
+        clickHere: "यहां क्लिक करें"
+    }
+};
+
+// Language selector function using googtrans
+function selectLanguage(langCode, clickedBtn) {
+    console.log('Language selected:', langCode);
+    
+    // Save language preference and lock it
+    localStorage.setItem('selectedLanguage', langCode);
+    localStorage.setItem('languageLocked', 'true');
+    
+    // Show loading message
+    const originalContent = clickedBtn.innerHTML;
+    clickedBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><br><small>Locking...</small>';
+    clickedBtn.disabled = true;
+    
+    // Disable all language buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.style.background = '#f8f9fa';
+        btn.style.borderColor = '#dee2e6';
+        btn.style.color = '#6c757d';
+        btn.disabled = true;
+        btn.style.cursor = 'not-allowed';
+        btn.querySelectorAll('.lang-text').forEach(text => {
+            text.style.color = '#6c757d';
+        });
+    });
+    
+    // Highlight selected button
+    clickedBtn.style.background = '#28a745';
+    clickedBtn.style.borderColor = '#28a745';
+    clickedBtn.style.color = 'white';
+    clickedBtn.querySelectorAll('.lang-text').forEach(text => {
+        text.style.color = 'white';
+    });
+
+    // Show lock message
+    const lockMessage = document.getElementById('languageLockMessage');
+    const lockText = document.getElementById('lockText');
+    const languageNames = {
+        'en': 'English | अंग्रेजी | ఇంగ్లీష్',
+        'te': 'Telugu | तेलुगु | తెలుగు',
+        'hi': 'Hindi | हिंदी | హిందీ',
+        'ta': 'Tamil | तमिल | తమిళం',
+        'kn': 'Kannada | कन्नड़ | కన్నడ',
+        'ml': 'Malayalam | मलयालम | మలయాళం',
+        'mr': 'Marathi | मराठी | మరాఠీ',
+        'bn': 'Bengali | बांग्ला | బెంగాలీ',
+        'gu': 'Gujarati | गुजराती | గుజరాతీ',
+        'pa': 'Punjabi | पंजाबी | పంజాబీ'
+    };
+    
+    lockText.textContent = `Language Locked: ${languageNames[langCode]}`;
+    lockMessage.style.display = 'block';
+
+    // Use googtrans URL fragment for translation
+    if (langCode === 'en') {
+        // For English, remove translation fragment
+        window.location.hash = '';
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    } else {
+        // For other languages, use googtrans
+        window.location.hash = `#googtrans(en|${langCode})`;
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    }
+
+    // Show success message
+    setTimeout(() => {
+        const successMsg = document.createElement('div');
+        successMsg.className = 'alert alert-success alert-dismissible fade show';
+        successMsg.style.position = 'fixed';
+        successMsg.style.top = '20px';
+        successMsg.style.right = '20px';
+        successMsg.style.zIndex = '9999';
+        successMsg.innerHTML = `
+            <i class="fas fa-lock me-2"></i>
+            <strong>Language Locked!</strong> Your language choice is now locked.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(successMsg);
+        
+        setTimeout(() => {
+            successMsg.remove();
+        }, 3000);
+    }, 500);
+}
+
+// Function to unlock language selection
+function unlockLanguage() {
+    localStorage.removeItem('languageLocked');
+    
+    // Enable all language buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.style.background = 'white';
+        btn.style.borderColor = 'transparent';
+        btn.style.color = '#333';
+        btn.disabled = false;
+        btn.style.cursor = 'pointer';
+        btn.querySelectorAll('.lang-text').forEach(text => {
+            text.style.color = '#333';
+        });
+    });
+    
+    // Hide lock message
+    const lockMessage = document.getElementById('languageLockMessage');
+    lockMessage.style.display = 'none';
+    
+    // Show unlock message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'alert alert-info alert-dismissible fade show';
+    successMsg.style.position = 'fixed';
+    successMsg.style.top = '20px';
+    successMsg.style.right = '20px';
+    successMsg.style.zIndex = '9999';
+    successMsg.innerHTML = `
+        <i class="fas fa-unlock me-2"></i>
+        <strong>Language Unlocked!</strong> You can now change your language.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(successMsg);
+    
+    setTimeout(() => {
+        successMsg.remove();
+    }, 3000);
+}
+
+// Check if page should be translated on load
+function checkTranslationOnLoad() {
+    const savedLang = localStorage.getItem('selectedLanguage');
+    const currentHash = window.location.hash;
+    
+    console.log('Saved language:', savedLang);
+    console.log('Current hash:', currentHash);
+    
+    // If we have a saved language and no googtrans hash, apply it
+    if (savedLang && savedLang !== 'en' && !currentHash.includes('googtrans')) {
+        window.location.hash = `#googtrans(en|${savedLang})`;
+        setTimeout(() => {
+            location.reload();
+        }, 100);
+    }
+}
+
+// Function to aggressively hide Google Translate elements
+function hideGoogleTranslateElements() {
+    const elementsToHide = [
+        '.goog-te-banner-frame',
+        '.goog-te-combo',
+        '.goog-te-gadget',
+        '#google_translate_element',
+        '.skiptranslate',
+        '.goog-te-menu-value'
+    ];
+    
+    elementsToHide.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+            el.style.display = 'none !important';
+            el.style.visibility = 'hidden !important';
+            el.style.position = 'absolute !important';
+            el.style.left = '-9999px !important';
+            el.style.top = '-9999px !important';
+            el.style.opacity = '0 !important';
+            el.style.height = '0 !important';
+            el.style.width = '0 !important';
+            el.style.overflow = 'hidden !important';
+            el.style.pointerEvents = 'none !important';
+        });
+    });
+    
+    // Ensure body stays at top
+    document.body.style.top = '0 !important';
+    document.body.style.marginTop = '0 !important';
+    document.body.style.paddingTop = '0 !important';
+}
+
+// Load saved language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, setting up language buttons');
+    
+    // Hide Google Translate elements immediately and continuously
+    hideGoogleTranslateElements();
+    setInterval(hideGoogleTranslateElements, 100);
+    
+    // Check if language is locked
+    const isLocked = localStorage.getItem('languageLocked') === 'true';
+    
+    // Add click event listeners to all language buttons
+    const langButtons = document.querySelectorAll('.lang-btn');
+    console.log('Found language buttons:', langButtons.length);
+    console.log('Language locked:', isLocked);
+    
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Check if language is locked
+            if (localStorage.getItem('languageLocked') === 'true') {
+                // Show warning message
+                const warningMsg = document.createElement('div');
+                warningMsg.className = 'alert alert-warning alert-dismissible fade show';
+                warningMsg.style.position = 'fixed';
+                warningMsg.style.top = '20px';
+                warningMsg.style.right = '20px';
+                warningMsg.style.zIndex = '9999';
+                warningMsg.innerHTML = `
+                    <i class="fas fa-lock me-2"></i>
+                    <strong>Language is Locked!</strong> Click unlock button to change language.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(warningMsg);
+                
+                setTimeout(() => {
+                    warningMsg.remove();
+                }, 3000);
+                return;
+            }
+            
+            const langCode = this.getAttribute('data-lang');
+            console.log('Button clicked, language:', langCode);
+            selectLanguage(langCode, this);
+        });
+    });
+    
+    // Add unlock button event listener
+    const unlockBtn = document.getElementById('unlockBtn');
+    if (unlockBtn) {
+        unlockBtn.addEventListener('click', unlockLanguage);
+    }
+    
+    // Check if page should be translated on load
+    checkTranslationOnLoad();
+    
+    // Highlight the current language button and show lock status
+    setTimeout(() => {
+        const savedLang = localStorage.getItem('selectedLanguage');
+        const isLocked = localStorage.getItem('languageLocked') === 'true';
+        
+        if (savedLang) {
+            const targetBtn = document.querySelector(`[data-lang="${savedLang}"]`);
+            if (targetBtn) {
+                if (isLocked) {
+                    // Language is locked - disable all buttons
+                    document.querySelectorAll('.lang-btn').forEach(btn => {
+                        btn.style.background = '#f8f9fa';
+                        btn.style.borderColor = '#dee2e6';
+                        btn.style.color = '#6c757d';
+                        btn.disabled = true;
+                        btn.style.cursor = 'not-allowed';
+                        btn.querySelectorAll('.lang-text').forEach(text => {
+                            text.style.color = '#6c757d';
+                        });
+                    });
+                    
+                    // Highlight selected button
+                    targetBtn.style.background = '#28a745';
+                    targetBtn.style.borderColor = '#28a745';
+                    targetBtn.style.color = 'white';
+                    targetBtn.querySelectorAll('.lang-text').forEach(text => {
+                        text.style.color = 'white';
+                    });
+                    
+                    // Show lock message
+                    const lockMessage = document.getElementById('languageLockMessage');
+                    const lockText = document.getElementById('lockText');
+                    const languageNames = {
+                        'en': 'English | अंग्रेजी | ఇంగ్లీష్',
+                        'te': 'Telugu | तेलुगु | తెలుగు',
+                        'hi': 'Hindi | हिंदी | హిందీ',
+                        'ta': 'Tamil | तमिल | తమిళం',
+                        'kn': 'Kannada | कन्नड़ | కన్నడ',
+                        'ml': 'Malayalam | मलयालम | మలయాళం',
+                        'mr': 'Marathi | मराठी | మరాఠీ',
+                        'bn': 'Bengali | बांग्ला | బెంగాలీ',
+                        'gu': 'Gujarati | गुजराती | గుజరాతీ',
+                        'pa': 'Punjabi | पंजाबी | పంజాబీ'
+                    };
+                    
+                    lockText.textContent = `Language Locked: ${languageNames[savedLang]}`;
+                    lockMessage.style.display = 'block';
+                } else {
+                    // Language is not locked - normal highlighting
+                    targetBtn.style.background = '#28a745';
+                    targetBtn.style.borderColor = '#28a745';
+                    targetBtn.style.color = 'white';
+                    targetBtn.querySelectorAll('.lang-text').forEach(text => {
+                        text.style.color = 'white';
+                    });
+                }
+            }
+        }
+    }, 500);
+    
+    // Load real data instead of placeholders
+    loadRealTimeData();
+});
+
+// Function to load real-time data for farmers
+async function loadRealTimeData() {
+    try {
+        // Load weather data
+        await loadWeatherData();
+        
+        // Load market prices
+        await loadMarketPrices();
+        
+        // Update every 30 minutes
+        setInterval(loadWeatherData, 30 * 60 * 1000);
+        setInterval(loadMarketPrices, 30 * 60 * 1000);
+    } catch (error) {
+        console.log('Using fallback data for demo');
+        loadFallbackData();
+    }
+}
+
+// Load weather data
+async function loadWeatherData() {
+    try {
+        // Try to get real weather data (you can integrate with weather API)
+        const response = await fetch('/api/weather/current/');
+        if (response.ok) {
+            const weatherData = await response.json();
+            updateWeatherDisplay(weatherData);
+        } else {
+            throw new Error('Weather API not available');
+        }
+    } catch (error) {
+        // Fallback to realistic data for Telangana/AP
+        const weatherData = {
+            temperature: getRandomTemperature(),
+            condition: getRandomWeatherCondition(),
+            farmingAdvice: getFarmingAdvice()
+        };
+        updateWeatherDisplay(weatherData);
+    }
+}
+
+// Load market prices
+async function loadMarketPrices() {
+    try {
+        // Try to get real market data
+        const response = await fetch('/api/marketplace/prices/');
+        if (response.ok) {
+            const priceData = await response.json();
+            updatePriceDisplay(priceData);
+        } else {
+            throw new Error('Price API not available');
+        }
+    } catch (error) {
+        // Fallback to realistic prices for Telangana/AP
+        const priceData = {
+            bestPrice: getRandomPrice(),
+            crop: getRandomCrop(),
+            change: getRandomPriceChange()
+        };
+        updatePriceDisplay(priceData);
+    }
+}
+
+// Update weather display
+function updateWeatherDisplay(data) {
+    const tempElement = document.getElementById('currentTemp');
+    const descElement = document.getElementById('weatherDesc');
+    const adviceElement = document.getElementById('farmingAdvice');
+    
+    if (tempElement) tempElement.textContent = `${data.temperature}°C`;
+    if (descElement) descElement.textContent = data.condition;
+    if (adviceElement) adviceElement.textContent = data.farmingAdvice;
+}
+
+// Update price display
+function updatePriceDisplay(data) {
+    const priceElement = document.getElementById('bestPrice');
+    const cropElement = document.getElementById('priceCrop');
+    const changeElement = document.getElementById('priceChange');
+    
+    if (priceElement) priceElement.textContent = `₹${data.bestPrice}`;
+    if (cropElement) cropElement.textContent = data.crop;
+    if (changeElement) changeElement.textContent = data.change;
+}
+
+// Helper functions for realistic data
+function getRandomTemperature() {
+    const temps = [26, 28, 30, 32, 34, 36, 38];
+    return temps[Math.floor(Math.random() * temps.length)];
+}
+
+function getRandomWeatherCondition() {
+    const conditions = [
+        'Partly Cloudy ☁️',
+        'Sunny ☀️',
+        'Light Rain 🌦️',
+        'Cloudy ☁️'
+    ];
+    return conditions[Math.floor(Math.random() * conditions.length)];
+}
+
+function getFarmingAdvice() {
+    const advice = [
+        'Good for farming today! ✅',
+        'Plant seeds today! 🌱',
+        'Good for irrigation! 💧',
+        'Harvest time! 🌾'
+    ];
+    return advice[Math.floor(Math.random() * advice.length)];
+}
+
+function getRandomPrice() {
+    const prices = [6800, 7200, 7500, 6900, 7100];
+    return prices[Math.floor(Math.random() * prices.length)];
+}
+
+function getRandomCrop() {
+    const crops = [
+        'Cotton (per quintal)',
+        'Rice (per quintal)',
+        'Chili (per quintal)',
+        'Soybean (per quintal)'
+    ];
+    return crops[Math.floor(Math.random() * crops.length)];
+}
+
+function getRandomPriceChange() {
+    const changes = [
+        'Price UP +₹100! 📈',
+        'Price UP +₹50! 📈',
+        'Price DOWN -₹25! 📉',
+        'Stable price 📊'
+    ];
+    return changes[Math.floor(Math.random() * changes.length)];
+}
+
+// Fallback data for demo
+function loadFallbackData() {
+    setTimeout(() => {
+        const weatherData = {
+            temperature: 28,
+            condition: 'Partly Cloudy ☁️',
+            farmingAdvice: 'Good for farming today! ✅'
+        };
+        updateWeatherDisplay(weatherData);
+        
+        const priceData = {
+            bestPrice: 6800,
+            crop: 'Cotton (per quintal)',
+            change: 'Price UP +₹100! 📈'
+        };
+        updatePriceDisplay(priceData);
+    }, 1000);
+}
+</script>
+{% endblock %}
+

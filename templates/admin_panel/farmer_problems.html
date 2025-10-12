@@ -1,0 +1,212 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Farmer Problems Management - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-question-circle me-2"></i>Farmer Problems Management</h3>
+    <p class="text-muted mb-0">Manage farmer problems and expert solutions</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-5">
+            <label class="form-label">Search Problems</label>
+            <input type="text" class="form-control" name="search" value="{{ search }}" 
+                   placeholder="Search by title or description">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status">
+                <option value="all" {% if status == 'all' %}selected{% endif %}>All Problems</option>
+                <option value="solved" {% if status == 'solved' %}selected{% endif %}>Solved</option>
+                <option value="unsolved" {% if status == 'unsolved' %}selected{% endif %}>Unsolved</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Category</label>
+            <input type="text" class="form-control" name="category" value="{{ category }}" 
+                   placeholder="Filter by category">
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Filter
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Statistics -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_problems }}</div>
+            <div class="stats-label">Total Problems</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="stats-number">{{ solved_problems }}</div>
+            <div class="stats-label">Solved Problems</div>
+        </div>
+    </div>
+</div>
+
+<!-- Problems Table -->
+<div class="admin-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Problem</th>
+                <th>Farmer</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Solutions</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for problem in problems %}
+            <tr>
+                <td>
+                    <div>
+                        <h6 class="mb-1">{{ problem.title|truncatechars:40 }}</h6>
+                        <small class="text-muted">{{ problem.description|truncatechars:60 }}</small>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <h6 class="mb-0">{{ problem.user.first_name }} {{ problem.user.last_name }}</h6>
+                        <small class="text-muted">@{{ problem.user.username }}</small>
+                    </div>
+                </td>
+                <td>
+                    {% if problem.category %}
+                        <span class="badge bg-info">{{ problem.category.name }}</span>
+                    {% else %}
+                        <span class="text-muted">No category</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if problem.status == 'solved' %}
+                        <span class="status-badge status-solved">Solved</span>
+                    {% else %}
+                        <span class="status-badge status-pending">{{ problem.status|title }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge bg-secondary">{{ problem.solution_set.count }}</span>
+                </td>
+                <td>{{ problem.created_at|date:"M d, Y" }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{% url 'admin_panel:problem_detail' problem.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        {% if problem.status != 'solved' %}
+                        <button class="btn btn-outline-success" onclick="markAsSolved({{ problem.id }})">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-outline-danger delete-btn" data-problem-id="{{ problem.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    <i class="fas fa-question-circle fa-3x mb-3 d-block"></i>
+                    No problems found matching your criteria.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if problems.has_other_pages %}
+<nav aria-label="Problems pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if problems.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ problems.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Previous</a>
+            </li>
+        {% endif %}
+        
+        {% for num in problems.paginator.page_range %}
+            {% if problems.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if problems.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ problems.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mark problem as solved
+function markAsSolved(problemId) {
+    if (confirm('Are you sure you want to mark this problem as solved?')) {
+        fetch(`/admin-panel/farmer-problems/${problemId}/mark-solved/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error updating problem status');
+            }
+        });
+    }
+}
+
+// Delete problem
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.delete-btn')) {
+        const problemId = e.target.closest('.delete-btn').dataset.problemId;
+        if (confirm('Are you sure you want to delete this problem? This action cannot be undone.')) {
+            fetch(`/admin-panel/farmer-problems/${problemId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error deleting problem');
+                }
+            });
+        }
+    }
+});
+</script>
+{% endblock %}

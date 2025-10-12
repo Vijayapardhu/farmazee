@@ -1,0 +1,222 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Content Moderation - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-shield-alt me-2"></i>Content Moderation</h3>
+    <p class="text-muted mb-0">Review and moderate user-generated content</p>
+</div>
+
+<!-- Moderation Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number text-warning">{{ pending_problems|length }}</div>
+            <div class="stats-label">Pending Problems</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number text-info">{{ pending_solutions|length }}</div>
+            <div class="stats-label">Pending Solutions</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number text-primary">{{ recent_comments|length }}</div>
+            <div class="stats-label">Recent Comments</div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs for Different Content Types -->
+<ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#problems-tab">
+            <i class="fas fa-question-circle me-1"></i>Problems ({{ pending_problems|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#solutions-tab">
+            <i class="fas fa-lightbulb me-1"></i>Solutions ({{ pending_solutions|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#comments-tab">
+            <i class="fas fa-comments me-1"></i>Comments ({{ recent_comments|length }})
+        </button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content">
+    <!-- Problems Tab -->
+    <div class="tab-pane fade show active" id="problems-tab">
+        <div class="admin-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Problem</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for problem in pending_problems %}
+                    <tr>
+                        <td>
+                            <h6 class="mb-1">{{ problem.title }}</h6>
+                            <small class="text-muted">{{ problem.description|truncatechars:100 }}</small>
+                        </td>
+                        <td>{{ problem.author.username }}</td>
+                        <td>
+                            {% if problem.category %}
+                                <span class="badge bg-info">{{ problem.category.name }}</span>
+                            {% else %}
+                                <span class="text-muted">No category</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ problem.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'admin_panel:problem_detail' problem.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form method="post" action="{% url 'admin_panel:approve_content' 'problem' problem.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-success">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'admin_panel:delete_content' 'problem' problem.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Delete this problem?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-check-circle fa-3x mb-3 d-block"></i>
+                            No pending problems to review
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Solutions Tab -->
+    <div class="tab-pane fade" id="solutions-tab">
+        <div class="admin-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Solution</th>
+                        <th>Problem</th>
+                        <th>Expert</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solution in pending_solutions %}
+                    <tr>
+                        <td>
+                            <small class="text-muted">{{ solution.content|truncatechars:80 }}</small>
+                        </td>
+                        <td>
+                            <h6 class="mb-0">{{ solution.problem.title|truncatechars:40 }}</h6>
+                        </td>
+                        <td>{{ solution.author.username }}</td>
+                        <td>{{ solution.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'admin_panel:problem_detail' solution.problem.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form method="post" action="{% url 'admin_panel:approve_content' 'solution' solution.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-success">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'admin_panel:delete_content' 'solution' solution.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Delete this solution?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-check-circle fa-3x mb-3 d-block"></i>
+                            No pending solutions to review
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Comments Tab -->
+    <div class="tab-pane fade" id="comments-tab">
+        <div class="admin-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Comment</th>
+                        <th>Author</th>
+                        <th>Type</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in recent_comments %}
+                    <tr>
+                        <td>
+                            <small class="text-muted">{{ comment.content|truncatechars:100 }}</small>
+                        </td>
+                        <td>{{ comment.author.username }}</td>
+                        <td>
+                            <span class="badge bg-secondary">{{ comment.comment_type|title }}</span>
+                        </td>
+                        <td>{{ comment.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <form method="post" action="{% url 'admin_panel:delete_content' 'comment' comment.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Delete this comment?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                            No recent comments
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

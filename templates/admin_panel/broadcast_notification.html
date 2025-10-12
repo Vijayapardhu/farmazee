@@ -1,0 +1,153 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Broadcast Notifications - Admin Panel{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h3><i class="fas fa-bullhorn me-2"></i>Broadcast Notifications</h3>
+    <p class="text-muted mb-0">Send notifications to all users or specific groups</p>
+</div>
+
+<!-- Notification Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_users }}</div>
+            <div class="stats-label">Total Active Users</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_farmers }}</div>
+            <div class="stats-label">Farmers</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_experts }}</div>
+            <div class="stats-label">Experts</div>
+        </div>
+    </div>
+</div>
+
+<!-- Broadcast Form -->
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="chart-container">
+            <h5><i class="fas fa-paper-plane me-2"></i>Create Broadcast</h5>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="form-label">Notification Type</label>
+                    <select class="form-select" name="notification_type" required>
+                        <option value="announcement">📢 Announcement</option>
+                        <option value="alert">⚠️ Alert</option>
+                        <option value="update">ℹ️ Update</option>
+                        <option value="reminder">⏰ Reminder</option>
+                        <option value="promotion">🎉 Promotion</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Target Audience</label>
+                    <select class="form-select" name="target_users" id="targetUsers" required>
+                        <option value="all">All Users ({{ total_users }})</option>
+                        <option value="farmers">Farmers Only ({{ total_farmers }})</option>
+                        <option value="experts">Experts Only ({{ total_experts }})</option>
+                    </select>
+                    <div class="form-text">
+                        Selected audience: <span id="audienceCount" class="fw-bold">{{ total_users }}</span> users
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Notification Title *</label>
+                    <input type="text" class="form-control" name="title" required 
+                           placeholder="Enter notification title (e.g., Weather Alert for Warangal)">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Message *</label>
+                    <textarea class="form-control" name="message" rows="6" required 
+                              placeholder="Enter your notification message here. Keep it clear and actionable."></textarea>
+                    <div class="form-text">
+                        <strong>Tips:</strong> Keep messages short, clear, and actionable. Include specific information and next steps.
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Delivery Method</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="send_in_app" id="sendInApp" checked>
+                        <label class="form-check-label" for="sendInApp">
+                            📱 In-App Notification
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="send_email" id="sendEmail">
+                        <label class="form-check-label" for="sendEmail">
+                            📧 Email Notification
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="send_sms" id="sendSMS">
+                        <label class="form-check-label" for="sendSMS">
+                            📲 SMS Notification (Premium)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Schedule (Optional)</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="date" class="form-control" name="schedule_date">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="time" class="form-control" name="schedule_time">
+                        </div>
+                    </div>
+                    <div class="form-text">Leave blank to send immediately</div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Important</h6>
+                    <ul class="mb-0">
+                        <li>This will send notifications to <strong id="finalCount">{{ total_users }}</strong> users</li>
+                        <li>Make sure your message is clear and accurate</li>
+                        <li>Cannot be undone once sent</li>
+                    </ul>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane me-1"></i>Send Broadcast
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Update audience count based on selection
+document.getElementById('targetUsers').addEventListener('change', function() {
+    const counts = {
+        'all': '{{ total_users }}',
+        'farmers': '{{ total_farmers }}',
+        'experts': '{{ total_experts }}'
+    };
+    const count = counts[this.value] || '{{ total_users }}';
+    document.getElementById('audienceCount').textContent = count;
+    document.getElementById('finalCount').textContent = count;
+});
+</script>
+{% endblock %}

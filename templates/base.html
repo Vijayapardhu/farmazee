@@ -45,6 +45,67 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dynamic-styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/floating-ai.css' %}">
+    <link rel="stylesheet" href="{% static 'css/language-selector.css' %}">
+    
+    <style>
+    /* Hide Google Translate banner COMPLETELY */
+    .goog-te-banner-frame {
+        display: none !important;
+        visibility: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body {
+        top: 0 !important;
+        position: relative !important;
+    }
+
+    #google_translate_element {
+        position: absolute !important;
+        left: -9999px !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* Hide any Google Translate elements that might appear */
+    .goog-te-combo {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    .goog-te-gadget {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Hide the translate button if it appears */
+    .goog-te-menu-value {
+        display: none !important;
+    }
+
+    /* Force body to stay at top */
+    body.goog-te-banner-frame {
+        top: 0 !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Hide any translate widgets */
+    .skiptranslate {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    </style>
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -170,6 +231,55 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Language Translator -->
+    <div class="language-selector" id="languageSelector">
+        <button class="language-button" onclick="toggleLanguageMenu()">
+            <i class="fas fa-language"></i>
+            <span id="currentLang">English</span>
+        </button>
+        <div class="language-menu" id="languageMenu" style="display: none;">
+            <div class="language-header">
+                <h6>Choose Your Language</h6>
+                <p class="text-muted small mb-3">మీ భాషను ఎంచుకోండి</p>
+            </div>
+            <div class="language-list">
+                <button onclick="translatePage('en')" class="lang-option">
+                    <span class="lang-name">English</span>
+                </button>
+                <button onclick="translatePage('te')" class="lang-option">
+                    <span class="lang-name">తెలుగు (Telugu)</span>
+                </button>
+                <button onclick="translatePage('hi')" class="lang-option">
+                    <span class="lang-name">हिंदी (Hindi)</span>
+                </button>
+                <button onclick="translatePage('ta')" class="lang-option">
+                    <span class="lang-name">தமிழ் (Tamil)</span>
+                </button>
+                <button onclick="translatePage('kn')" class="lang-option">
+                    <span class="lang-name">ಕನ್ನಡ (Kannada)</span>
+                </button>
+                <button onclick="translatePage('ml')" class="lang-option">
+                    <span class="lang-name">മലയാളം (Malayalam)</span>
+                </button>
+                <button onclick="translatePage('mr')" class="lang-option">
+                    <span class="lang-name">मराठी (Marathi)</span>
+                </button>
+                <button onclick="translatePage('bn')" class="lang-option">
+                    <span class="lang-name">বাংলা (Bengali)</span>
+                </button>
+                <button onclick="translatePage('gu')" class="lang-option">
+                    <span class="lang-name">ગુજરાતી (Gujarati)</span>
+                </button>
+                <button onclick="translatePage('pa')" class="lang-option">
+                    <span class="lang-name">ਪੰਜਾਬੀ (Punjabi)</span>
+                </button>
+            </div>
+            <div class="powered-by">
+                <small class="text-muted">Powered by Google Translate</small>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating AI Assistant Button -->
     {% if enable_ai_chatbot %}
     <a href="{% url 'ai_chatbot:chat' %}" class="floating-ai-button" id="floatingAI" title="AI Farming Assistant">
@@ -290,6 +400,19 @@
         </div>
     </footer>
 
+        <!-- Google Translate Widget -->
+        <div id="google_translate_element"></div>
+        <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'te,hi,ta,kn,ml,mr,bn,gu,pa,en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS Animation -->
@@ -335,6 +458,93 @@
                         floatingAI.classList.remove('show-tooltip');
                     }, 5000);
                 }, 2000);
+            }
+
+            // Load saved language preference
+            const savedLang = localStorage.getItem('selectedLanguage');
+            const currentHash = window.location.hash;
+            
+            console.log('Saved language preference:', savedLang);
+            console.log('Current hash:', currentHash);
+            
+            // If we have a saved language and no googtrans hash, apply it
+            if (savedLang && savedLang !== 'en' && !currentHash.includes('googtrans')) {
+                window.location.hash = `#googtrans(en|${savedLang})`;
+                setTimeout(() => {
+                    location.reload();
+                }, 100);
+            }
+        });
+
+        // Language translation functions
+        function toggleLanguageMenu() {
+            const menu = document.getElementById('languageMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function translatePage(langCode) {
+            const languageNames = {
+                'en': 'English',
+                'te': 'తెలుగు',
+                'hi': 'हिंदी',
+                'ta': 'தமிழ்',
+                'kn': 'ಕನ್ನಡ',
+                'ml': 'മലയാളം',
+                'mr': 'मराठी',
+                'bn': 'বাংলা',
+                'gu': 'ગુજરાતી',
+                'pa': 'ਪੰਜਾਬੀ'
+            };
+
+            // Save language preference
+            localStorage.setItem('selectedLanguage', langCode);
+            
+            // Update button text
+            document.getElementById('currentLang').textContent = languageNames[langCode];
+            
+            // Hide menu
+            document.getElementById('languageMenu').style.display = 'none';
+
+            // Use googtrans URL fragment for translation
+            if (langCode === 'en') {
+                // For English, remove translation fragment
+                window.location.hash = '';
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            } else {
+                // For other languages, use googtrans
+                window.location.hash = `#googtrans(en|${langCode})`;
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
+
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.className = 'alert alert-success alert-dismissible fade show';
+            successMsg.style.position = 'fixed';
+            successMsg.style.top = '20px';
+            successMsg.style.right = '20px';
+            successMsg.style.zIndex = '9999';
+            successMsg.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Page Translating!</strong> Please wait for the page to reload.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => {
+                successMsg.remove();
+            }, 2000);
+        }
+
+        // Close language menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const selector = document.getElementById('languageSelector');
+            const menu = document.getElementById('languageMenu');
+            if (selector && !selector.contains(event.target)) {
+                menu.style.display = 'none';
             }
         });
     </script>
