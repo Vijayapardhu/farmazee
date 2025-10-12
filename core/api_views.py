@@ -187,3 +187,66 @@ class StatsAPIView(APIView):
             pass
         
         return Response(stats)
+
+
+class WeatherAPIView(APIView):
+    """Weather API endpoint"""
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request):
+        try:
+            from weather.advanced_weather_service import advanced_weather_service
+            
+            # Get current weather data
+            current_weather = advanced_weather_service.get_current_weather('Hyderabad')
+            
+            return Response({
+                'status': 'success',
+                'data': {
+                    'current_weather': current_weather,
+                    'timestamp': timezone.now().isoformat()
+                }
+            })
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MarketplacePricesAPIView(APIView):
+    """Marketplace prices API endpoint"""
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request):
+        try:
+            from marketplace.price_services import get_market_prices
+            
+            # Get market prices
+            prices = get_market_prices()
+            
+            return Response({
+                'status': 'success',
+                'data': {
+                    'prices': prices,
+                    'timestamp': timezone.now().isoformat()
+                }
+            })
+        except Exception as e:
+            # Return mock data if service fails
+            mock_prices = [
+                {'name': 'Rice', 'price': '₹2,500', 'unit': 'per quintal', 'change': '+2.5%'},
+                {'name': 'Wheat', 'price': '₹2,100', 'unit': 'per quintal', 'change': '+1.8%'},
+                {'name': 'Tomato', 'price': '₹45', 'unit': 'per kg', 'change': '-3.2%'},
+                {'name': 'Onion', 'price': '₹35', 'unit': 'per kg', 'change': '+5.1%'},
+                {'name': 'Potato', 'price': '₹25', 'unit': 'per kg', 'change': '+1.2%'},
+            ]
+            
+            return Response({
+                'status': 'success',
+                'data': {
+                    'prices': mock_prices,
+                    'timestamp': timezone.now().isoformat(),
+                    'note': 'Mock data - service unavailable'
+                }
+            })

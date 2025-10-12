@@ -18,8 +18,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() in ['1', 'true', 'yes']
 
-ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if h.strip()] + [
-    '*.ngrok-free.app'
+ALLOWED_HOSTS = [
+    '*.ngrok-free.app',"2baf1f752f9f.ngrok-free.app"
 ]
 
 # Application definition

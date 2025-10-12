@@ -12,4 +12,6 @@ router.register(r'contact', api_views.ContactViewSet)
 urlpatterns = router.urls + [
     path('search/', api_views.SearchAPIView.as_view(), name='api-search'),
     path('stats/', api_views.StatsAPIView.as_view(), name='api-stats'),
+    path('weather/current/', api_views.WeatherAPIView.as_view(), name='api-weather-current'),
+    path('marketplace/prices/', api_views.MarketplacePricesAPIView.as_view(), name='api-marketplace-prices'),
 ]
