@@ -186,12 +186,3 @@ def forecast_api(request, location):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
-                'description': forecast.description,
-                'precipitation_probability': float(forecast.precipitation_probability) if forecast.precipitation_probability else None,
-            })
-        
-        return JsonResponse({'forecasts': forecast_data})
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-
