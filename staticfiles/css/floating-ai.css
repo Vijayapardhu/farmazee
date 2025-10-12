@@ -1,0 +1,146 @@
+/* Floating AI Assistant Button */
+.floating-ai-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    cursor: pointer;
+    animation: float-bounce 3s ease-in-out infinite, glow 2s ease-in-out infinite;
+}
+
+.floating-ai-button:hover {
+    transform: scale(1.15) translateY(-5px);
+    box-shadow: 0 12px 35px rgba(40, 167, 69, 0.6);
+    color: white;
+    text-decoration: none;
+}
+
+.floating-ai-button:active {
+    transform: scale(1.05);
+}
+
+/* Pulse animation ring */
+.ai-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #28a745;
+    opacity: 0;
+    animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes float-bounce {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 35px rgba(40, 167, 69, 0.6), 0 0 20px rgba(40, 167, 69, 0.3);
+    }
+}
+
+/* Tooltip */
+.floating-ai-button::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: 75px;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    background: white;
+    color: #28a745;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.floating-ai-button.show-tooltip::before,
+.floating-ai-button:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
+.floating-ai-button::after {
+    content: '';
+    position: absolute;
+    right: 65px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 10px solid white;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.floating-ai-button.show-tooltip::after,
+.floating-ai-button:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Icon rotation on hover */
+.floating-ai-button i {
+    transition: transform 0.3s ease;
+}
+
+.floating-ai-button:hover i {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .floating-ai-button {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .floating-ai-button::before {
+        right: 65px;
+        font-size: 12px;
+        padding: 10px 16px;
+    }
+}
+

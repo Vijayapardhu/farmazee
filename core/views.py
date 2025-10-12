@@ -104,26 +104,36 @@ def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            # Create user profile
-            UserProfile.objects.create(user=user)
-            # Log the user in using the default backend
-            from django.contrib.auth import authenticate, login
-            user = authenticate(username=user.username, password=form.cleaned_data['password1'])
-            if user is not None:
-                login(request, user)
-                messages.success(request, f'Welcome to Farmazee, {user.first_name}!')
-                return redirect('core:dashboard')
-            else:
-                messages.error(request, 'Account created but login failed. Please log in manually.')
-                return redirect('account_login')
+            try:
+                user = form.save()
+                # Create user profile
+                UserProfile.objects.get_or_create(user=user)
+                # Log the user in using the default backend
+                from django.contrib.auth import authenticate, login
+                user = authenticate(username=user.username, password=form.cleaned_data['password1'])
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, f'Welcome to Farmazee, {user.first_name}!')
+                    return redirect('core:dashboard')
+                else:
+                    messages.error(request, 'Account created but login failed. Please log in manually.')
+                    return redirect('login')
+            except Exception as e:
+                messages.error(request, f'Error creating account: {str(e)}')
+                return redirect('signup')
     else:
         form = CustomUserCreationForm()
+    
+    # Add Bootstrap classes to form fields
+    for field_name, field in form.fields.items():
+        field.widget.attrs['class'] = 'form-control'
+        if field.required:
+            field.widget.attrs['required'] = 'required'
     
     context = {
         'form': form,
     }
-    return render(request, 'core/signup.html', context)
+    return render(request, 'registration/signup.html', context)
 
 def about(request):
     """About page"""

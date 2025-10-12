@@ -44,6 +44,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dynamic-styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/floating-ai.css' %}">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -108,13 +109,6 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if enable_ai_chatbot %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'ai_chatbot:chat' %}">
-                            <i class="fas fa-robot me-1"></i>AI Assistant
-                        </a>
-                    </li>
-                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'farmer_problems:list' %}">
                             <i class="fas fa-question-circle me-1"></i>Ask Experts
@@ -175,6 +169,14 @@
     <main style="flex: 1; min-height: calc(100vh - 200px);">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Floating AI Assistant Button -->
+    {% if enable_ai_chatbot %}
+    <a href="{% url 'ai_chatbot:chat' %}" class="floating-ai-button" id="floatingAI" title="AI Farming Assistant">
+        <i class="fas fa-robot"></i>
+        <span class="ai-pulse"></span>
+    </a>
+    {% endif %}
 
     <!-- Footer -->
     <footer class="bg-dark text-light py-5 mt-5" style="
@@ -321,6 +323,19 @@
                     link.style.borderRadius = '5px';
                 }
             });
+
+            // Floating AI button greeting animation
+            const floatingAI = document.getElementById('floatingAI');
+            if (floatingAI) {
+                setTimeout(() => {
+                    floatingAI.setAttribute('data-tooltip', 'Hi! Need farming advice? 🌾');
+                    floatingAI.classList.add('show-tooltip');
+                    
+                    setTimeout(() => {
+                        floatingAI.classList.remove('show-tooltip');
+                    }, 5000);
+                }, 2000);
+            }
         });
     </script>
     

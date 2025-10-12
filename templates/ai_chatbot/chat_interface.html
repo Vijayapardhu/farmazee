@@ -417,6 +417,53 @@
     }
 }
 
+/* AI Response Formatting */
+.ai-response-content {
+    line-height: 1.6;
+}
+
+.ai-response-content strong {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.bullet-point {
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+.dash-bullet {
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+.section-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 12px 0 8px 0;
+    font-size: 1.1em;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.section-header strong {
+    color: white !important;
+}
+
+/* Highlight bullet points and symbols */
+.ai-response-content .bullet-point,
+.ai-response-content .dash-bullet {
+    background: rgba(40, 167, 69, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .chat-card {
@@ -430,6 +477,11 @@
     
     .quick-questions-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .section-header {
+        font-size: 1em;
+        padding: 6px 10px;
     }
 }
 </style>
@@ -532,7 +584,7 @@ function addMessage(content, type) {
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="message-bubble">
-                    <p>${content.replace(/\n/g, '<br>')}</p>
+                    <div class="ai-response-content">${formatAIResponse(content)}</div>
                 </div>
             `}
         </div>
@@ -585,6 +637,26 @@ function clearChat() {
             </div>
         `;
     }
+}
+
+// Format AI response with markdown-like styling
+function formatAIResponse(content) {
+    // Convert line breaks to HTML
+    let formatted = content.replace(/\n/g, '<br>');
+    
+    // Convert **bold** text to <strong>
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert bullet points • to styled bullets
+    formatted = formatted.replace(/•/g, '<span class="bullet-point">•</span>');
+    
+    // Convert - list items to styled bullets
+    formatted = formatted.replace(/^- (.*?)$/gm, '<span class="dash-bullet">-</span> $1');
+    
+    // Convert **Section headers** to styled headers
+    formatted = formatted.replace(/<br><strong>(.*?):<\/strong><br>/g, '<br><div class="section-header"><strong>$1:</strong></div>');
+    
+    return formatted;
 }
 
 // Utility function to get CSRF token
