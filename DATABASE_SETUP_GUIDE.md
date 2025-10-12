@@ -11,12 +11,6 @@ The DNS/network error has been fixed by implementing a **flexible dual-database 
 - File: `db.sqlite3`
 - Perfect for testing and development
 - **Currently Active** ✅
-
-### Production/Supabase (When Ready)
-- Uses **PostgreSQL on Supabase**
-- Requires internet connection
-- For deployment and production use
-
 ## 🎯 Current Status
 
 ✅ **SQLite Database**: Active and working  
