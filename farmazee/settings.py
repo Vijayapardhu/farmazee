@@ -19,7 +19,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-key')
 DEBUG = os.getenv('DEBUG', 'True').lower() in ['1', 'true', 'yes']
 
 ALLOWED_HOSTS = [
-    '*.ngrok-free.app',"2baf1f752f9f.ngrok-free.app"
+    'localhost', 
+    '127.0.0.1', 
+    '*.ngrok-free.app',
+    "2baf1f752f9f.ngrok-free.app",
+    '*'
 ]
 
 # Application definition
@@ -60,6 +64,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -199,6 +204,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://hhixytzsroxmmmlknuck.supabase.co",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://localhost:8000",
+    "https://127.0.0.1:8000",
 ]
 
 # REST Framework settings
@@ -222,6 +229,22 @@ AUTHENTICATION_BACKENDS = [
 # Site ID
 SITE_ID = 1
 
+# Allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' for production
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_LOGIN_REDIRECT_URL = '/dashboard/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/dashboard/'
+
+# Login/Logout URLs
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
 # Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -234,4 +257,49 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDFCmoQCjp6qbUp_rDErGCgFQoBsJ
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://hhixytzsroxmmmlknuck.supabase.co')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXh5dHpzcm94bW1tbGtudWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MjQ1MDksImV4cCI6MjA3NTUwMDUwOX0.riSFKI2AsR6TtDytIBDFbKUJYqAzmSz3_3TXxAw8TwY')
 SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', 'farmazee media')
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/farmazee.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'farmazee': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
 

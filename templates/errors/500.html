@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Server Error - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="text-center">
+        <div class="error-animation mb-4">
+            <i class="fas fa-tools text-warning" style="font-size: 8rem; animation: rotate 3s linear infinite;"></i>
+        </div>
+        
+        <h1 class="display-1 fw-bold text-danger">500</h1>
+        <h2 class="h3 mb-4">Server Error</h2>
+        <p class="lead mb-4 text-muted">
+            Our servers are experiencing some technical difficulties.<br>
+            Our team is working hard to fix this issue.
+        </p>
+        
+        <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>What you can do:</strong>
+            <ul class="mb-0 mt-2">
+                <li>Try refreshing the page</li>
+                <li>Check your internet connection</li>
+                <li>Try again in a few minutes</li>
+            </ul>
+        </div>
+        
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <button onclick="location.reload()" class="btn btn-primary btn-lg">
+                <i class="fas fa-redo me-2"></i>Refresh Page
+            </button>
+            <a href="{% url 'core:home' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-home me-2"></i>Go Home
+            </a>
+            <a href="{% url 'core:contact' %}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-envelope me-2"></i>Contact Support
+            </a>
+        </div>
+        
+        <!-- Status Information -->
+        <div class="mt-5">
+            <div class="row g-3 justify-content-center">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-server text-info mb-2" style="font-size: 2rem;"></i>
+                            <h6>Server Status</h6>
+                            <span class="badge bg-warning">Maintenance</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-clock text-secondary mb-2" style="font-size: 2rem;"></i>
+                            <h6>Estimated Fix</h6>
+                            <small class="text-muted">Within 30 minutes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-headset text-success mb-2" style="font-size: 2rem;"></i>
+                            <h6>Support</h6>
+                            <small class="text-muted">24/7 Available</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="mt-4">
+            <p class="text-muted">
+                If the problem persists, please contact our support team:<br>
+                <strong>Email:</strong> support@farmazee.com<br>
+                <strong>Phone:</strong> +91-800-180-1551
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-animation i {
+    filter: drop-shadow(0 10px 20px rgba(255, 193, 7, 0.3));
+}
+</style>
+{% endblock %}
+

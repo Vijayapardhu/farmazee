@@ -4,3 +4,28 @@ INFO 2025-08-30 23:55:39,066 autoreload 61588 10196 Watching for file changes wi
 INFO 2025-08-30 23:55:39,066 autoreload 61588 10196 Watching for file changes with StatReloader
 INFO 2025-08-31 00:00:21,119 autoreload 61216 41292 C:\Users\PARDHU\Desktop\farmazee\farmazee\settings.py changed, reloading.
 INFO 2025-08-31 00:00:21,119 autoreload 61216 41292 C:\Users\PARDHU\Desktop\farmazee\farmazee\settings.py changed, reloading.
+INFO 2025-10-13 06:01:40,292 autoreload 94448 117616 Watching for file changes with StatReloader
+INFO 2025-10-13 07:17:29,495 autoreload 94448 117616 C:\Users\PARDHU\Desktop\farmazee\farmazee\settings.py changed, reloading.
+INFO 2025-10-13 07:17:32,811 autoreload 61052 58232 Watching for file changes with StatReloader
+INFO 2025-10-14 00:23:23,295 autoreload 26008 46820 Watching for file changes with StatReloader
+INFO 2025-10-14 00:24:49,256 autoreload 3808 36916 Watching for file changes with StatReloader
+INFO 2025-10-14 00:25:00,508 basehttp 3808 38376 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+INFO 2025-10-14 00:25:00,750 basehttp 3808 38376 - Broken pipe from ('127.0.0.1', 52408)
+INFO 2025-10-14 00:26:18,710 autoreload 3808 36916 C:\Users\PARDHU\Desktop\farmazee\core\api_views.py changed, reloading.
+INFO 2025-10-14 00:26:21,822 autoreload 48984 36140 Watching for file changes with StatReloader
+INFO 2025-10-14 00:26:52,018 autoreload 48984 36140 C:\Users\PARDHU\Desktop\farmazee\core\api_urls.py changed, reloading.
+INFO 2025-10-14 00:26:54,849 autoreload 49368 23680 Watching for file changes with StatReloader
+INFO 2025-10-14 00:27:01,127 basehttp 49368 46088 "GET /api/soil/tests/ HTTP/1.1" 200 681
+INFO 2025-10-14 00:27:01,358 basehttp 49368 46088 - Broken pipe from ('127.0.0.1', 60143)
+INFO 2025-10-14 00:27:12,664 basehttp 49368 54544 "GET /api/soil/recommendations/ HTTP/1.1" 200 651
+INFO 2025-10-14 00:27:12,892 basehttp 49368 54544 - Broken pipe from ('127.0.0.1', 59515)
+INFO 2025-10-14 00:28:13,270 autoreload 49368 23680 C:\Users\PARDHU\Desktop\farmazee\core\api_views.py changed, reloading.
+INFO 2025-10-14 00:28:16,242 autoreload 27260 32920 Watching for file changes with StatReloader
+INFO 2025-10-14 00:28:28,581 autoreload 27260 32920 C:\Users\PARDHU\Desktop\farmazee\core\api_urls.py changed, reloading.
+INFO 2025-10-14 00:28:31,303 autoreload 34820 11824 Watching for file changes with StatReloader
+INFO 2025-10-14 00:28:39,157 basehttp 34820 32216 "GET /api/schemes/ HTTP/1.1" 200 1164
+INFO 2025-10-14 00:28:39,377 basehttp 34820 32216 - Broken pipe from ('127.0.0.1', 62599)
+INFO 2025-10-14 00:29:45,324 autoreload 34820 11824 C:\Users\PARDHU\Desktop\farmazee\core\api_views.py changed, reloading.
+INFO 2025-10-14 00:29:48,431 autoreload 24772 37652 Watching for file changes with StatReloader
+INFO 2025-10-14 00:30:12,239 autoreload 24772 37652 C:\Users\PARDHU\Desktop\farmazee\core\api_urls.py changed, reloading.
+INFO 2025-10-14 00:30:15,045 autoreload 50628 56096 Watching for file changes with StatReloader

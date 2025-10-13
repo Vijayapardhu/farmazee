@@ -14,4 +14,10 @@ urlpatterns = router.urls + [
     path('stats/', api_views.StatsAPIView.as_view(), name='api-stats'),
     path('weather/current/', api_views.WeatherAPIView.as_view(), name='api-weather-current'),
     path('marketplace/prices/', api_views.MarketplacePricesAPIView.as_view(), name='api-marketplace-prices'),
+    path('soil/tests/', api_views.SoilTestsAPIView.as_view(), name='api-soil-tests'),
+    path('soil/recommendations/', api_views.SoilRecommendationsAPIView.as_view(), name='api-soil-recommendations'),
+    path('schemes/', api_views.SchemesAPIView.as_view(), name='api-schemes'),
+    path('crops/', api_views.CropsAPIView.as_view(), name='api-crops'),
+    path('marketplace/products/', api_views.MarketplaceProductsAPIView.as_view(), name='api-marketplace-products'),
+    path('farmer-problems/', api_views.FarmerProblemsAPIView.as_view(), name='api-farmer-problems'),
 ]

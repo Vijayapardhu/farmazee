@@ -43,34 +43,45 @@ class SoilHealthManager {
     }
 
     async loadSoilTests() {
-        this.soilHealthData.soilTests = [
-            {
-                id: 1,
-                testDate: '2025-01-15T10:00:00Z',
-                location: 'Field A - North Section',
-                soilDepth: '0-30 cm',
-                phLevel: 6.8,
-                organicMatter: 2.1,
-                nitrogen: 45,
-                phosphorus: 28,
-                potassium: 180,
-                status: 'Completed',
-                recommendations: 'Good soil health, maintain current practices'
-            },
-            {
-                id: 2,
-                testDate: '2025-01-10T14:30:00Z',
-                location: 'Field B - South Section',
-                soilDepth: '0-30 cm',
-                phLevel: 5.2,
-                organicMatter: 1.3,
-                nitrogen: 32,
-                phosphorus: 15,
-                potassium: 120,
-                status: 'Completed',
-                recommendations: 'Low pH and phosphorus, apply lime and phosphate fertilizers'
+        try {
+            const response = await fetch('/api/soil/tests/');
+            if (!response.ok) {
+                throw new Error('Soil tests API not available');
             }
-        ];
+            const data = await response.json();
+            this.soilHealthData.soilTests = data.results || [];
+        } catch (error) {
+            console.error('Error loading soil tests:', error);
+            // Fallback to mock data
+            this.soilHealthData.soilTests = [
+                {
+                    id: 1,
+                    testDate: '2025-01-15T10:00:00Z',
+                    location: 'Field A - North Section',
+                    soilDepth: '0-30 cm',
+                    phLevel: 6.8,
+                    organicMatter: 2.1,
+                    nitrogen: 45,
+                    phosphorus: 28,
+                    potassium: 180,
+                    status: 'Completed',
+                    recommendations: 'Good soil health, maintain current practices'
+                },
+                {
+                    id: 2,
+                    testDate: '2025-01-10T14:30:00Z',
+                    location: 'Field B - South Section',
+                    soilDepth: '0-30 cm',
+                    phLevel: 5.2,
+                    organicMatter: 1.3,
+                    nitrogen: 32,
+                    phosphorus: 15,
+                    potassium: 120,
+                    status: 'Completed',
+                    recommendations: 'Low pH and phosphorus, apply lime and phosphate fertilizers'
+                }
+            ];
+        }
     }
 
     async loadSoilTypes() {

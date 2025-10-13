@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page Not Found - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="text-center">
+        <div class="error-animation mb-4">
+            <i class="fas fa-seedling text-success" style="font-size: 8rem; animation: bounce 2s infinite;"></i>
+        </div>
+        
+        <h1 class="display-1 fw-bold text-primary">404</h1>
+        <h2 class="h3 mb-4">Oops! Page Not Found</h2>
+        <p class="lead mb-4 text-muted">
+            The page you're looking for seems to have wandered off like a lost seedling.<br>
+            Let's get you back to fertile ground!
+        </p>
+        
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'core:home' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-home me-2"></i>Go Home
+            </a>
+            <a href="{% url 'core:dashboard' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Go Back
+            </button>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="mt-5">
+            <h5 class="mb-3">Popular Pages</h5>
+            <div class="row g-3 justify-content-center">
+                <div class="col-auto">
+                    <a href="{% url 'weather:home' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-cloud-sun me-1"></i>Weather
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <a href="{% url 'marketplace:home' %}" class="btn btn-outline-success">
+                        <i class="fas fa-store me-1"></i>Marketplace
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <a href="{% url 'ai_chatbot:chat' %}" class="btn btn-outline-info">
+                        <i class="fas fa-robot me-1"></i>AI Assistant
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <a href="{% url 'farmer_problems:list' %}" class="btn btn-outline-warning">
+                        <i class="fas fa-question-circle me-1"></i>Ask Experts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+
+.error-animation i {
+    filter: drop-shadow(0 10px 20px rgba(40, 167, 69, 0.3));
+}
+</style>
+{% endblock %}
+

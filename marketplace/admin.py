@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Vendor, ProductCategory, Product, ProductImage, InputCategory, Input, InputImage,
-    Resource, Inventory, Order, OrderItem, Review
+    Resource, Inventory, Order, OrderItem, Review, MarketPrice
 )
 
 @admin.register(Vendor)
@@ -240,3 +240,39 @@ class ReviewAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+@admin.register(MarketPrice)
+class MarketPriceAdmin(admin.ModelAdmin):
+    list_display = ['crop', 'mandi_name', 'price_per_quintal', 'price_date', 'change_percentage', 'volume', 'is_current']
+    list_filter = ['crop', 'mandi_name', 'price_date', 'is_current']
+    search_fields = ['crop__name', 'mandi_name']
+    list_editable = ['is_current']
+    readonly_fields = ['change_percentage', 'created_at', 'updated_at']
+    date_hierarchy = 'price_date'
+    
+    fieldsets = (
+        ('Price Information', {
+            'fields': ('crop', 'mandi_name', 'price_per_quintal', 'price_date')
+        }),
+        ('Market Data', {
+            'fields': ('change_percentage', 'volume', 'is_current')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-calculate change percentage if not provided
+        if not change and not obj.change_percentage:
+            previous_price = MarketPrice.objects.filter(
+                crop=obj.crop, 
+                mandi_name=obj.mandi_name
+            ).exclude(id=obj.id).order_by('-price_date').first()
+            
+            if previous_price:
+                obj.change_percentage = ((obj.price_per_quintal - previous_price.price_per_quintal) / 
+                                       previous_price.price_per_quintal) * 100
+        
+        super().save_model(request, obj, form, change)

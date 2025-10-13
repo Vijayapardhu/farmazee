@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
+from crops.models import Crop
 
 
 class Vendor(models.Model):
@@ -365,3 +366,46 @@ class Review(models.Model):
     def __str__(self):
         item_name = self.product.name if self.product else self.input_item.name
         return f"{item_name} - {self.rating} stars by {self.user.username}"
+
+
+class MarketPrice(models.Model):
+    """Market price model for tracking crop prices"""
+    crop = models.ForeignKey(Crop, on_delete=models.CASCADE, related_name='market_prices')
+    mandi_name = models.CharField(max_length=200, help_text="Market/mandi name")
+    price_per_quintal = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price per quintal in INR")
+    price_date = models.DateField(help_text="Date of price record")
+    change_percentage = models.FloatField(default=0.0, help_text="Percentage change from previous day")
+    volume = models.IntegerField(default=0, help_text="Volume traded in quintals")
+    is_current = models.BooleanField(default=True, help_text="Is this the current price")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+    
+    class Meta:
+        verbose_name = _('Market Price')
+        verbose_name_plural = _('Market Prices')
+        ordering = ['-price_date', '-created_at']
+        unique_together = ['crop', 'mandi_name', 'price_date']
+    
+    def __str__(self):
+        return f"{self.crop.name} - {self.mandi_name} - ₹{self.price_per_quintal} ({self.price_date})"
+    
+    @property
+    def price_change_display(self):
+        """Get formatted price change display"""
+        if self.change_percentage > 0:
+            return f"+{self.change_percentage:.1f}%"
+        elif self.change_percentage < 0:
+            return f"{self.change_percentage:.1f}%"
+        else:
+            return "0.0%"
+    
+    @property
+    def change_type(self):
+        """Get change type (increase, decrease, stable)"""
+        if self.change_percentage > 0:
+            return 'increase'
+        elif self.change_percentage < 0:
+            return 'decrease'
+        else:
+            return 'stable'

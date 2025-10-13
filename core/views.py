@@ -119,16 +119,11 @@ def signup(request):
                 user = form.save()
                 # Create user profile
                 UserProfile.objects.get_or_create(user=user)
-                # Log the user in using the default backend
-                from django.contrib.auth import authenticate, login
-                user = authenticate(username=user.username, password=form.cleaned_data['password1'])
-                if user is not None:
-                    login(request, user)
-                    messages.success(request, f'Welcome to Farmazee, {user.first_name}!')
-                    return redirect('core:dashboard')
-                else:
-                    messages.error(request, 'Account created but login failed. Please log in manually.')
-                    return redirect('login')
+                # Log the user in directly after successful creation
+                from django.contrib.auth import login
+                login(request, user)
+                messages.success(request, f'Welcome to Farmazee, {user.first_name}!')
+                return redirect('dashboard')
             except Exception as e:
                 messages.error(request, f'Error creating account: {str(e)}')
                 return redirect('signup')
@@ -152,17 +147,6 @@ def about(request):
 
 def privacy_policy(request):
     """Privacy policy page"""
-    return render(request, 'core/privacy_policy.html')
-
-def terms_of_service(request):
-    """Terms of service page"""
-    return render(request, 'core/terms_of_service.html')
-
-def faq(request):
-    """FAQ page"""
-    faqs = FAQ.objects.filter(is_active=True).order_by('category', 'order')
-    return render(request, 'core/faq.html', {'faqs': faqs})
-
     return render(request, 'core/privacy_policy.html')
 
 def terms_of_service(request):

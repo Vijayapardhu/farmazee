@@ -66,35 +66,63 @@ async function loadDashboardData() {
  * Load weather data
  */
 async function loadWeatherData() {
-    // Simulate API call (replace with actual API endpoint)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return {
-        current: {
-            temperature: 24,
-            humidity: 65,
-            windSpeed: 12,
-            condition: 'Partly Cloudy',
-            icon: '🌤️'
-        },
-        forecast: [
-            { day: 'Today', temp: 24, condition: '🌤️' },
-            { day: 'Tomorrow', temp: 22, condition: '🌧️' },
-            { day: 'Wed', temp: 26, condition: '☀️' },
-            { day: 'Thu', temp: 25, condition: '🌤️' },
-            { day: 'Fri', temp: 23, condition: '🌧️' }
-        ],
-        alerts: [
-            { type: 'rain', message: 'Rain expected tomorrow', severity: 'moderate' }
-        ]
-    };
+    try {
+        const response = await fetch('/api/weather/current/?city=hyderabad');
+        if (!response.ok) {
+            throw new Error('Weather API not available');
+        }
+        const data = await response.json();
+        
+        // Transform API response to expected format
+        return {
+            current: {
+                temperature: data.temperature || 24,
+                humidity: data.humidity || 65,
+                windSpeed: data.wind_speed || 12,
+                condition: data.description || 'Partly Cloudy',
+                icon: data.icon || '🌤️'
+            },
+            forecast: data.forecast || [
+                { day: 'Today', temp: 24, condition: '🌤️' },
+                { day: 'Tomorrow', temp: 22, condition: '🌧️' },
+                { day: 'Wed', temp: 26, condition: '☀️' },
+                { day: 'Thu', temp: 25, condition: '🌤️' },
+                { day: 'Fri', temp: 23, condition: '🌧️' }
+            ],
+            alerts: data.alerts || [
+                { type: 'rain', message: 'Rain expected tomorrow', severity: 'moderate' }
+            ]
+        };
+    } catch (error) {
+        console.error('Error loading weather data:', error);
+        // Fallback to default data
+        return {
+            current: {
+                temperature: 24,
+                humidity: 65,
+                windSpeed: 12,
+                condition: 'Partly Cloudy',
+                icon: '🌤️'
+            },
+            forecast: [
+                { day: 'Today', temp: 24, condition: '🌤️' },
+                { day: 'Tomorrow', temp: 22, condition: '🌧️' },
+                { day: 'Wed', temp: 26, condition: '☀️' },
+                { day: 'Thu', temp: 25, condition: '🌤️' },
+                { day: 'Fri', temp: 23, condition: '🌧️' }
+            ],
+            alerts: [
+                { type: 'rain', message: 'Rain expected tomorrow', severity: 'moderate' }
+            ]
+        };
+    }
 }
 
 /**
  * Load crops data
  */
 async function loadCropsData() {
-    // Simulate API call (replace with actual API endpoint)
+    // Mock data for demonstration
     await new Promise(resolve => setTimeout(resolve, 800));
     
     return [

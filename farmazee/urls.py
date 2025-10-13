@@ -27,6 +27,12 @@ urlpatterns = [
     path('api/', include('core.api_urls')),
 ]
 
+# Custom error handlers
+handler404 = 'core.error_handling.custom_404_handler'
+handler500 = 'core.error_handling.custom_500_handler'
+handler403 = 'core.error_handling.custom_403_handler'
+handler400 = 'core.error_handling.custom_400_handler'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

@@ -94,13 +94,15 @@ class AdvancedWeatherService:
             }
         }
     
-    def get_current_weather(self, city: str = "hyderabad", lang: str = "en") -> Dict:
+    def get_current_weather(self, city: str = "hyderabad", lang: str = "en", use_cache: bool = True) -> Dict:
         """Get comprehensive current weather data using Open-Meteo API"""
         cache_key = f'weather_current_{city}_{lang}'
-        cached_data = cache.get(cache_key)
         
-        if cached_data:
-            return cached_data
+        # Check cache first (if caching is enabled)
+        if use_cache:
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                return cached_data
             
         try:
             coords = self.city_coordinates.get(city.lower(), self.city_coordinates['hyderabad'])
@@ -141,8 +143,9 @@ class AdvancedWeatherService:
                 'sunset': self._get_sunset_time()
             }
             
-            # Cache for 30 minutes
-            cache.set(cache_key, weather_data, 1800)
+            # Cache for 30 minutes (if caching is enabled)
+            if use_cache:
+                cache.set(cache_key, weather_data, 1800)
             
             return weather_data
             

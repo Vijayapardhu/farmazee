@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.utils.translation import gettext as _
 from django.db.models import Q
+from django.utils import timezone
 from .models import WeatherData, WeatherForecast, WeatherAlert
 from .advanced_weather_service import advanced_weather_service
 from crops.models import Crop
@@ -183,6 +185,81 @@ def forecast_api(request, location):
             })
         
         return JsonResponse({'forecasts': forecast_data})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_http_methods(["POST"])
+def update_weather_data(request):
+    """API endpoint to update weather data for a specific city"""
+    try:
+        city = request.POST.get('city', 'hyderabad').lower()
+        
+        # Get live weather data from Open-Meteo API
+        current_weather = advanced_weather_service.get_current_weather(city)
+        
+        if not current_weather:
+            return JsonResponse({'error': 'Failed to fetch weather data'}, status=500)
+        
+        # Update or create WeatherData record
+        weather_data, created = WeatherData.objects.update_or_create(
+            location=city.title(),
+            defaults={
+                'latitude': current_weather.get('latitude'),
+                'longitude': current_weather.get('longitude'),
+                'temperature': current_weather.get('temperature'),
+                'humidity': current_weather.get('humidity'),
+                'wind_speed': current_weather.get('wind_speed'),
+                'wind_direction': current_weather.get('wind_direction'),
+                'pressure': current_weather.get('pressure'),
+                'description': current_weather.get('description'),
+                'icon': current_weather.get('icon'),
+                'visibility': current_weather.get('visibility', 10.0),
+                'uv_index': current_weather.get('uv_index'),
+                'is_current': True,
+                'updated_at': timezone.now(),
+            }
+        )
+        
+        # Get farming recommendations
+        recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
+        
+        return JsonResponse({
+            'success': True,
+            'city': city.title(),
+            'weather': current_weather,
+            'recommendations': recommendations,
+            'updated_at': weather_data.updated_at.isoformat(),
+            'created': created
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def get_live_weather_api(request):
+    """API endpoint to get live weather data without caching"""
+    try:
+        city = request.GET.get('city', 'hyderabad').lower()
+        
+        # Get live weather data directly from API (bypass cache)
+        current_weather = advanced_weather_service.get_current_weather(city, use_cache=False)
+        
+        if not current_weather:
+            return JsonResponse({'error': 'Failed to fetch live weather data'}, status=500)
+        
+        # Get farming recommendations
+        recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
+        
+        return JsonResponse({
+            'success': True,
+            'city': city.title(),
+            'weather': current_weather,
+            'recommendations': recommendations,
+            'timestamp': timezone.now().isoformat(),
+            'source': 'live_api'
+        })
+        
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 

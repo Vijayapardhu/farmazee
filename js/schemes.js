@@ -41,13 +41,23 @@ class SchemesManager {
     }
 
     async loadSchemes() {
-        this.schemesData.schemes = [
-            {
-                id: 1,
-                title: 'PM-KISAN Samman Nidhi',
-                description: 'Direct income support of ₹6,000 per year to eligible farmer families',
-                category: 'Income Support',
-                benefits: '₹6,000 per year in three equal installments',
+        try {
+            const response = await fetch('/api/schemes/');
+            if (!response.ok) {
+                throw new Error('Schemes API not available');
+            }
+            const data = await response.json();
+            this.schemesData.schemes = data.results || [];
+        } catch (error) {
+            console.error('Error loading schemes:', error);
+            // Fallback to mock data
+            this.schemesData.schemes = [
+                {
+                    id: 1,
+                    title: 'PM-KISAN Samman Nidhi',
+                    description: 'Direct income support of ₹6,000 per year to eligible farmer families',
+                    category: 'Income Support',
+                    benefits: '₹6,000 per year in three equal installments',
                 deadline: '2025-03-31T23:59:59Z',
                 status: 'Active',
                 isFeatured: true
