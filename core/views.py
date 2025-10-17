@@ -6,12 +6,10 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 from .forms import UserProfileForm, ContactForm, CustomUserCreationForm
 from .models import UserProfile, Contact, FAQ
-from crops.models import Crop
 from weather.models import WeatherData
 from weather.advanced_weather_service import advanced_weather_service
 from marketplace.models import Product
 from schemes.models import GovernmentScheme
-from community.models import ForumTopic, Question, Expert, CommunityEvent
 
 def home(request):
     """Home page - shows landing page for non-logged in users, dashboard for logged in users"""
@@ -25,11 +23,9 @@ def home(request):
 def landing_page(request):
     """Landing page for non-logged in users"""
     # Get some sample data for the landing page
-    featured_crops = Crop.objects.filter(is_featured=True)[:6]
     recent_schemes = GovernmentScheme.objects.filter(is_active=True)[:3]
     
     context = {
-        'featured_crops': featured_crops,
         'recent_schemes': recent_schemes,
     }
     return render(request, 'core/simple_landing.html', context)
@@ -41,10 +37,7 @@ def dashboard(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     
     # Get recent activities and data
-    recent_crops = Crop.objects.all()[:5]
-    recent_topics = ForumTopic.objects.filter(is_active=True)[:3]
-    recent_questions = Question.objects.filter(status='open')[:3]
-    upcoming_events = CommunityEvent.objects.filter(is_active=True)[:3]
+    recent_products = Product.objects.filter(is_active=True)[:5]
     
     # Get weather data using advanced service
     weather_data = None
@@ -63,10 +56,7 @@ def dashboard(request):
     
     context = {
         'profile': profile,
-        'recent_crops': recent_crops,
-        'recent_topics': recent_topics,
-        'recent_questions': recent_questions,
-        'upcoming_events': upcoming_events,
+        'recent_products': recent_products,
         'weather_data': weather_data,
         'current_weather': weather_data,
         'recommendations': weather_recommendations,

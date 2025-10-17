@@ -10,7 +10,6 @@ from decimal import Decimal
 from django.core.cache import cache
 from django.conf import settings
 from .models import Product, MarketPrice, Order, Vendor
-from crops.models import Crop
 
 logger = logging.getLogger(__name__)
 
@@ -121,11 +120,9 @@ class MarketPriceService:
     def update_price(self, crop_name, mandi_name, price, volume=None):
         """Update market price in database"""
         try:
-            crop = Crop.objects.get(name__iexact=crop_name)
-            
             # Get previous price for change calculation
             previous_price = MarketPrice.objects.filter(
-                crop=crop, mandi_name=mandi_name
+                crop_name__iexact=crop_name, mandi_name=mandi_name
             ).order_by('-price_date').first()
             
             change_percentage = 0
@@ -135,7 +132,7 @@ class MarketPriceService:
             
             # Create new price record
             MarketPrice.objects.create(
-                crop=crop,
+                crop_name=crop_name,
                 mandi_name=mandi_name,
                 price_per_quintal=price,
                 price_date=datetime.now().date(),
@@ -152,9 +149,6 @@ class MarketPriceService:
             
             return True
             
-        except Crop.DoesNotExist:
-            logger.error(f"Crop {crop_name} not found")
-            return False
         except Exception as e:
             logger.error(f"Error updating price: {e}")
             return False
@@ -162,12 +156,11 @@ class MarketPriceService:
     def get_price_trends(self, crop_name, days=30):
         """Get price trends for a crop over time"""
         try:
-            crop = Crop.objects.get(name__iexact=crop_name)
             end_date = datetime.now().date()
             start_date = end_date - timedelta(days=days)
             
             prices = MarketPrice.objects.filter(
-                crop=crop,
+                crop_name__iexact=crop_name,
                 price_date__range=[start_date, end_date]
             ).order_by('price_date')
             
@@ -180,8 +173,6 @@ class MarketPriceService:
                 for price in prices
             ]
             
-        except Crop.DoesNotExist:
-            return []
         except Exception as e:
             logger.error(f"Error getting price trends: {e}")
             return []
@@ -244,16 +235,12 @@ class ProductService:
     
     def get_product_recommendations(self, user, limit=5):
         """Get personalized product recommendations"""
-        # Simple recommendation based on user's crop plans
+        # Simple recommendation based on common farming needs
         try:
-            from crops.models import CropPlan
-            user_crops = CropPlan.objects.filter(user=user).values_list('crop__name', flat=True)
-            
-            if user_crops:
-                return Product.objects.filter(
-                    category__name__in=['Seeds', 'Fertilizers', 'Pesticides'],
-                    is_active=True
-                ).select_related('category', 'vendor')[:limit]
+            return Product.objects.filter(
+                category__name__in=['Seeds', 'Fertilizers', 'Pesticides'],
+                is_active=True
+            ).select_related('category', 'vendor')[:limit]
         except:
             pass
         

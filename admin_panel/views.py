@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from core.models import UserProfile
 from ai_chatbot.models import ChatSession, ChatMessage, FarmerQuery, AIKnowledgeBase
 from farmer_problems.models import FarmerProblem as Problem, Solution, ExpertProfile
-from community.models import ForumTopic as Topic, Question, Answer
+# Community functionality removed
 from schemes.models import GovernmentScheme
 # from weather.models import WeatherData
 from marketplace.models import Product
@@ -47,10 +47,10 @@ def admin_dashboard(request):
     solved_problems = Problem.objects.filter(status='solved').count()
     expert_count = ExpertProfile.objects.count()
     
-    # Community statistics
-    total_topics = Topic.objects.count()
-    total_questions = Question.objects.count()
-    total_answers = Answer.objects.count()
+    # Community statistics removed
+    total_topics = 0
+    total_questions = 0
+    total_answers = 0
     
     # Recent activity
     recent_users = User.objects.order_by('-date_joined')[:5]
@@ -884,9 +884,9 @@ def platform_statistics(request):
             'knowledge_items': AIKnowledgeBase.objects.count(),
         },
         'community': {
-            'topics': Topic.objects.count(),
-            'questions': Question.objects.count(),
-            'answers': Answer.objects.count(),
+            'topics': 0,
+            'questions': 0,
+            'answers': 0,
             'products': Product.objects.count(),
         },
         'engagement': {
@@ -1024,35 +1024,7 @@ def toggle_scheme_status(request, scheme_id):
     
     return redirect('admin_panel:schemes_management')
 
-@login_required
-@user_passes_test(is_admin_user)
-def crops_management(request):
-    """Crops and varieties management"""
-    from crops.models import Crop
-    
-    search = request.GET.get('search', '')
-    
-    crops = Crop.objects.all()
-    
-    if search:
-        crops = crops.filter(
-            Q(name__icontains=search) |
-            Q(scientific_name__icontains=search)
-        )
-    
-    crops = crops.order_by('name')
-    
-    paginator = Paginator(crops, 20)
-    page_number = request.GET.get('page')
-    crops = paginator.get_page(page_number)
-    
-    context = {
-        'crops': crops,
-        'search': search,
-        'total_crops': Crop.objects.count(),
-    }
-    
-    return render(request, 'admin_panel/crops_management.html', context)
+# Crops management removed
 
 @login_required
 @user_passes_test(is_admin_user)

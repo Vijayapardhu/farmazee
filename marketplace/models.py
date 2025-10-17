@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
-from crops.models import Crop
 
 
 class Vendor(models.Model):
@@ -370,7 +369,7 @@ class Review(models.Model):
 
 class MarketPrice(models.Model):
     """Market price model for tracking crop prices"""
-    crop = models.ForeignKey(Crop, on_delete=models.CASCADE, related_name='market_prices')
+    crop_name = models.CharField(max_length=200, help_text="Crop name")
     mandi_name = models.CharField(max_length=200, help_text="Market/mandi name")
     price_per_quintal = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price per quintal in INR")
     price_date = models.DateField(help_text="Date of price record")
@@ -385,10 +384,10 @@ class MarketPrice(models.Model):
         verbose_name = _('Market Price')
         verbose_name_plural = _('Market Prices')
         ordering = ['-price_date', '-created_at']
-        unique_together = ['crop', 'mandi_name', 'price_date']
+        unique_together = ['crop_name', 'mandi_name', 'price_date']
     
     def __str__(self):
-        return f"{self.crop.name} - {self.mandi_name} - ₹{self.price_per_quintal} ({self.price_date})"
+        return f"{self.crop_name} - {self.mandi_name} - ₹{self.price_per_quintal} ({self.price_date})"
     
     @property
     def price_change_display(self):

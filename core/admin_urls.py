@@ -11,9 +11,9 @@ urlpatterns = [
     path('users/', admin_views.user_management, name='user_management'),
     
     # Content management
-    path('crops/', admin_views.crop_management, name='crop_management'),
+    # Crops management removed
     path('marketplace/', admin_views.marketplace_management, name='marketplace_management'),
-    path('community/', admin_views.community_management, name='community_management'),
+    # Community management removed
     
     # System management
     path('settings/', admin_views.system_settings, name='system_settings'),

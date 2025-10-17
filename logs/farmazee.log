@@ -29,3 +29,256 @@ INFO 2025-10-14 00:29:45,324 autoreload 34820 11824 C:\Users\PARDHU\Desktop\farm
 INFO 2025-10-14 00:29:48,431 autoreload 24772 37652 Watching for file changes with StatReloader
 INFO 2025-10-14 00:30:12,239 autoreload 24772 37652 C:\Users\PARDHU\Desktop\farmazee\core\api_urls.py changed, reloading.
 INFO 2025-10-14 00:30:15,045 autoreload 50628 56096 Watching for file changes with StatReloader
+INFO 2025-10-14 00:30:24,289 basehttp 50628 42220 "GET /api/crops/ HTTP/1.1" 200 852
+INFO 2025-10-14 00:30:24,534 basehttp 50628 42220 - Broken pipe from ('127.0.0.1', 52870)
+INFO 2025-10-14 00:30:37,187 basehttp 50628 36752 "GET /api/marketplace/products/ HTTP/1.1" 200 670
+INFO 2025-10-14 00:30:37,458 basehttp 50628 36752 - Broken pipe from ('127.0.0.1', 54726)
+INFO 2025-10-14 00:30:49,605 basehttp 50628 50912 "GET /api/farmer-problems/ HTTP/1.1" 200 754
+INFO 2025-10-14 00:30:49,842 basehttp 50628 50912 - Broken pipe from ('127.0.0.1', 51919)
+INFO 2025-10-14 00:32:29,726 autoreload 50628 56096 C:\Users\PARDHU\Desktop\farmazee\core\api_urls.py changed, reloading.
+INFO 2025-10-14 00:32:32,651 autoreload 26072 22256 Watching for file changes with StatReloader
+INFO 2025-10-14 05:50:44,430 basehttp 26072 32908 "GET / HTTP/1.1" 200 63261
+INFO 2025-10-14 05:50:44,535 basehttp 26072 32908 "GET /static/css/enhanced-ui.css HTTP/1.1" 200 12482
+INFO 2025-10-14 05:50:44,535 basehttp 26072 43148 "GET /static/js/enhanced-ux.js HTTP/1.1" 200 17153
+INFO 2025-10-14 05:50:44,540 basehttp 26072 33292 "GET /static/css/floating-ai.css HTTP/1.1" 304 0
+INFO 2025-10-14 05:50:44,542 basehttp 26072 17260 "GET /static/css/language-selector.css HTTP/1.1" 200 7378
+WARNING 2025-10-14 05:50:45,465 log 26072 16640 Not Found: /ws/notifications/
+WARNING 2025-10-14 05:50:45,468 basehttp 26072 16640 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 05:50:45,821 basehttp 26072 33292 "GET / HTTP/1.1" 200 63261
+WARNING 2025-10-14 05:50:46,297 log 26072 38392 Not Found: /ws/notifications/
+WARNING 2025-10-14 05:50:46,298 basehttp 26072 38392 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 05:50:46,557 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:50:46,557 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__17dc2de0_6cdc_4c0c_bc8a_94051df5f99a__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:50:46,569 log 26072 43148 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:50:46,570 basehttp 26072 43148 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__c4b89ccc_084a_4a2d_b492_84f26cd9891d__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:50:46,588 log 26072 43148 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:50:46,590 basehttp 26072 43148 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__4b6befee_6c03_452e_9167_a7accc042cb3__2 HTTP/1.1" 404 7073
+INFO 2025-10-14 05:50:46,612 basehttp 26072 17260 - Broken pipe from ('127.0.0.1', 54419)
+WARNING 2025-10-14 05:50:46,860 log 26072 43148 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:50:46,861 basehttp 26072 43148 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__fd8d830a_5475_47de_9fe9_251b9e5846ac__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:50:46,870 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:50:46,871 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__b61d5192_a519_4a88_9841_8d6c0e6da184__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:50:46,891 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:50:46,891 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__1963b623_9101_4a3a_b470_68f1811a5fb5__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 05:50:47,311 basehttp 26072 33292 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 05:50:49,199 log 26072 33292 Not Found: /firebase-messaging-sw.js
+WARNING 2025-10-14 05:50:49,200 basehttp 26072 33292 "GET /firebase-messaging-sw.js HTTP/1.1" 404 6925
+INFO 2025-10-14 05:51:05,419 basehttp 26072 33292 "GET / HTTP/1.1" 200 63261
+WARNING 2025-10-14 05:51:06,244 log 26072 40976 Not Found: /ws/notifications/
+INFO 2025-10-14 05:51:06,244 basehttp 26072 33292 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 05:51:06,245 basehttp 26072 40976 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 05:51:06,593 basehttp 26072 32908 "GET / HTTP/1.1" 200 63261
+INFO 2025-10-14 05:51:06,649 basehttp 26072 33292 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+WARNING 2025-10-14 05:51:06,814 log 26072 33292 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:06,815 basehttp 26072 33292 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__3f0c4c10_9036_4edf_93b4_ef63336f4dc9__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:06,825 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:06,826 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__193bebfa_76ea_4fc0_bfb2_875fa79db22a__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:06,841 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:06,842 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__96c9a634_eb96_4d8b_9995_c8f9f56a2bdc__2 HTTP/1.1" 404 7073
+INFO 2025-10-14 05:51:07,272 basehttp 26072 32908 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 05:51:07,276 log 26072 22684 Not Found: /ws/notifications/
+WARNING 2025-10-14 05:51:07,277 basehttp 26072 22684 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 05:51:07,313 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:07,314 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__ca9acf63_8b5a_4b8c_bdd5_61d9bb0c21e1__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:07,334 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:07,344 log 26072 33292 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:07,345 basehttp 26072 33292 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__3a3b021c_218b_4486_962b_38ca9478f408__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:07,346 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__759b0a12_41c1_4410_8e95_9337e3d45932__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:07,614 log 26072 33292 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:07,615 basehttp 26072 33292 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__3833e846_3c25_4ec8_9fb2_6e054574c403__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:07,634 log 26072 33292 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:07,636 basehttp 26072 33292 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__c7a457da_e1d2_47c9_975c_3c0d5f4831fd__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 05:51:07,646 log 26072 32908 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 05:51:07,647 basehttp 26072 32908 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__a75fb057_9e4d_4654_9183_24743dfe5751__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 05:51:10,574 basehttp 26072 32908 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+INFO 2025-10-14 05:51:10,859 basehttp 26072 32908 - Broken pipe from ('127.0.0.1', 60734)
+WARNING 2025-10-14 05:51:13,518 log 26072 33292 Not Found: /firebase-messaging-sw.js
+WARNING 2025-10-14 05:51:13,518 basehttp 26072 33292 "GET /firebase-messaging-sw.js HTTP/1.1" 404 6925
+INFO 2025-10-14 06:18:24,874 basehttp 26072 31032 "GET / HTTP/1.1" 200 63261
+INFO 2025-10-14 06:18:25,159 basehttp 26072 31032 "GET / HTTP/1.1" 200 63261
+INFO 2025-10-14 06:18:25,968 basehttp 26072 31032 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:18:25,976 log 26072 27492 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:18:25,976 basehttp 26072 27492 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 06:18:26,161 basehttp 26072 31032 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:18:26,167 log 26072 47516 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:18:26,167 basehttp 26072 47516 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 06:18:26,209 basehttp 26072 31032 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+INFO 2025-10-14 06:18:26,249 basehttp 26072 44100 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+INFO 2025-10-14 06:18:26,489 basehttp 26072 31032 "GET / HTTP/1.1" 200 63261
+INFO 2025-10-14 06:18:26,747 basehttp 26072 31032 "GET / HTTP/1.1" 200 63261
+INFO 2025-10-14 06:18:26,935 basehttp 26072 44100 - Broken pipe from ('127.0.0.1', 53361)
+WARNING 2025-10-14 06:18:26,998 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:26,999 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__8b5d8573_7dda_4bf0_a438_83384b8737a3__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,020 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,022 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__8370c9f1_d520_41c3_bc50_455dad7e4dd5__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,039 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,041 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__9c1a5bc4_448c_4343_93d5_84143a4ecb0a__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,048 log 26072 11480 Not Found: /ws/notifications/
+INFO 2025-10-14 06:18:27,056 basehttp 26072 40768 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:18:27,057 basehttp 26072 11480 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 06:18:27,058 basehttp 26072 11480 - Broken pipe from ('127.0.0.1', 53371)
+WARNING 2025-10-14 06:18:27,318 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,320 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__7b6c29d0_8fd6_4d77_a56d_9d934ac16ca9__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,333 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,334 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__b2025418_ad50_491a_bcdc_33be862ae828__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,349 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,350 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__a995081c_1637_42c0_acf1_cc04cfa69bba__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,414 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,416 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__4e84fb13_9af2_4dfa_b911_594482177dc4__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,429 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,430 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__ec436847_a402_4bbc_8a88_5ae233f0b832__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,446 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,446 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__284e1c09_a0a7_4bb8_b816_f167bfe3b7c4__5 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,672 log 26072 40768 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,684 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,684 basehttp 26072 40768 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__5703c818_93a9_40fa_8cbf_03a6ae60823d__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,686 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__a67bfcaa_94e2_45f9_8fd8_04e0111ebe16__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:27,700 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:27,701 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__f286ff15_80dc_4012_9605_254d95a09d8e__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:18:29,080 basehttp 26072 31032 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:18:29,087 log 26072 24460 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:18:29,088 basehttp 26072 24460 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:18:29,166 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:29,168 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__0975ad96_e8a6_4edb_a7b4_79b5a47eed05__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:29,184 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:29,185 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__5f515553_04d6_4f1d_b31e_5cf7d1470cc3__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:29,211 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:29,213 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__72b94a3e_9045_46d8_abf7_a32f57a14bd8__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:29,360 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:29,361 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__85c8c1c1_9aaa_4a6b_963e_3226488e784a__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:29,383 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:29,384 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__b6c287b4_21ce_47cd_8641_5388f7b7f7d6__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:18:29,404 log 26072 31032 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:18:29,405 basehttp 26072 31032 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__c938d522_6f31_40a0_9d45_8329307a089e__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:18:30,668 basehttp 26072 31032 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+INFO 2025-10-14 06:18:30,978 basehttp 26072 31032 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+WARNING 2025-10-14 06:18:34,795 log 26072 31032 Not Found: /firebase-messaging-sw.js
+WARNING 2025-10-14 06:18:34,796 basehttp 26072 31032 "GET /firebase-messaging-sw.js HTTP/1.1" 404 6925
+WARNING 2025-10-14 06:18:35,676 log 26072 55188 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:18:35,677 basehttp 26072 55188 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:18:36,295 log 26072 28504 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:18:36,295 basehttp 26072 28504 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:19:08,081 log 26072 31032 Not Found: /firebase-messaging-sw.js
+WARNING 2025-10-14 06:19:08,081 basehttp 26072 31032 "GET /firebase-messaging-sw.js HTTP/1.1" 404 6925
+WARNING 2025-10-14 06:39:24,409 log 26072 76744 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:24,412 basehttp 26072 76744 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:24,435 log 26072 38276 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:24,436 basehttp 26072 38276 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:25,361 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,361 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__46db10d8_168d_4023_8866_1469173b4dea__0 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:39:25,392 basehttp 26072 59212 - Broken pipe from ('127.0.0.1', 56405)
+WARNING 2025-10-14 06:39:25,393 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,393 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__a5bcca81_39e6_4387_b19b_1aeaf99d3ae1__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:25,424 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,425 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__de3b6325_a21e_4119_b490_5cf8f73c2d9c__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:25,520 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,527 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__ea4e0e5d_9808_40fe_8bbc_5929139f57e8__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:25,542 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,542 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__7509d701_1fa6_46a9_89c7_7a08243efbb6__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:25,587 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,588 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__1e884e44_00a9_4fcb_a5e6_6478bf263b9d__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:25,928 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,928 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__4f36511a_4819_479e_b657_10af1957bc7c__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:25,964 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:25,966 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__b11841b7_4030_4ccf_887e_4eff2696623a__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:26,032 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:26,033 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__de59b97f_1a35_4368_a933_251a23e4a649__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:39:26,276 basehttp 26072 74896 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:39:26,307 log 26072 74896 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:26,308 basehttp 26072 74896 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__0b23f7d8_b8b0_4212_b8fb_d1809f6f558b__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:26,323 log 26072 74896 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:26,325 basehttp 26072 74896 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__55f7c720_3501_48d0_8aca_fd5ba497a870__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:26,354 log 26072 74896 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:26,354 basehttp 26072 74896 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__a5f8dc3b_a48c_4cc9_b1fb_fea6fc8863e9__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:39:26,827 basehttp 26072 74896 - Broken pipe from ('127.0.0.1', 56393)
+WARNING 2025-10-14 06:39:31,141 log 26072 69372 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:31,141 basehttp 26072 69372 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:31,193 log 26072 73092 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:31,194 basehttp 26072 73092 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:32,754 log 26072 18052 Not Found: /ws/notifications/
+INFO 2025-10-14 06:39:32,754 basehttp 26072 26212 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:39:32,755 basehttp 26072 18052 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:33,395 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:33,402 log 26072 32492 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:33,403 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__fd8a8b2d_4f50_46de_8f53_2b8e71f13d8d__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:33,404 basehttp 26072 32492 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__6fd83338_467a_4841_928d_2873335f0434__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:33,408 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:33,408 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__c0fdbb4c_34bb_4638_aae6_8f5354887828__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:33,648 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:33,655 log 26072 32492 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:33,655 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__b2d74770_f255_40fd_82fc_69e94c3f4d90__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:33,659 log 26072 26212 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:33,659 basehttp 26072 32492 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__84f54f7b_02c2_4811_92e8_a865a40769fb__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:33,660 basehttp 26072 26212 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__9c8d362a_86c9_4293_b776_7f79d0d8e64b__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:39:33,933 basehttp 26072 26212 - Broken pipe from ('127.0.0.1', 56407)
+WARNING 2025-10-14 06:39:34,476 log 26072 24628 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:34,477 basehttp 26072 24628 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:34,935 log 26072 72460 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:34,935 basehttp 26072 72460 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 06:39:35,041 basehttp 26072 32492 - Broken pipe from ('127.0.0.1', 56432)
+WARNING 2025-10-14 06:39:35,463 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,464 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__0d27f236_2502_44c4_8384_ec0cb651aab7__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,475 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,476 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__982459bb_b955_4810_9ac5_7b13016a353e__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,492 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,493 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__4bcd59f0_3622_4d91_bd74_ac85e08d3a78__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,811 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,813 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__7c81af06_0ceb_4a11_9c1c_6704871b6e1e__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,820 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,821 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__3f5fba30_081f_4ac3_ac28_0339f0948417__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,843 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,844 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__54ac875e_7108_4525_bf5e_ea83ec957439__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,851 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,852 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__125c02df_778f_469e_9a00_81149b3b636d__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,875 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,883 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:35,884 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__97f82875_d7ec_4365_90eb_81fdabe5a2fc__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:35,884 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__6e8b026d_78e4_44e2_b330_95e281022bde__5 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:36,309 log 26072 40584 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:36,310 basehttp 26072 40584 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:36,340 log 26072 37216 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:36,341 basehttp 26072 37216 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:36,377 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:36,378 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__129ab683_e4fa_449e_81ea_5a802588e791__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:36,396 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:36,397 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__c1ffdf85_01a2_42b4_95f6_afe243ff67b9__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:36,421 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:36,422 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__feab9019_6651_4ab7_a000_327b0483d6c8__5 HTTP/1.1" 404 7073
+INFO 2025-10-14 06:39:38,101 basehttp 26072 74564 "GET / HTTP/1.1" 200 63261
+WARNING 2025-10-14 06:39:38,303 log 26072 45028 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:38,304 basehttp 26072 45028 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 06:39:39,419 basehttp 26072 74564 "GET /api/weather/current/ HTTP/1.1" 200 544
+WARNING 2025-10-14 06:39:39,425 log 26072 33620 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:39,426 basehttp 26072 33620 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:39,480 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:39,480 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__1309c98b_6f5a_42b7_acbe_f4d11809adb5__0 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:39,486 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:39,487 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__efcce090_7d81_45bb_8746_5486b5f6283c__1 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:39,499 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:39,499 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__043d3d62_2b00_4acc_b436_a27c87bd68da__2 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:39,588 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:39,589 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__bf46421d_d464_4918_8168_6725807b22dd__3 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:39,599 log 26072 35732 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:39,607 log 26072 74564 Not Found: /hybridaction/zybTrackerStatisticsAction
+WARNING 2025-10-14 06:39:39,607 basehttp 26072 35732 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__853d150f_8ad5_45c1_9e9f_1bedcfa4b495__4 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:39,608 basehttp 26072 74564 "GET /hybridaction/zybTrackerStatisticsAction?data=%7B%7D&__callback__=__cb__zybTrackerStatisticsAction__0644b1da_056b_45fe_9fa0_cf2a4b4e5b1d__5 HTTP/1.1" 404 7073
+WARNING 2025-10-14 06:39:40,298 log 26072 37432 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:40,299 basehttp 26072 37432 "GET /ws/notifications/ HTTP/1.1" 404 6904
+INFO 2025-10-14 06:39:40,983 basehttp 26072 74564 "GET /api/marketplace/prices/ HTTP/1.1" 200 1336
+WARNING 2025-10-14 06:39:42,300 log 26072 69092 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:42,300 basehttp 26072 69092 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:42,320 log 26072 42124 Not Found: /ws/notifications/
+WARNING 2025-10-14 06:39:42,321 basehttp 26072 42124 "GET /ws/notifications/ HTTP/1.1" 404 6904
+WARNING 2025-10-14 06:39:44,020 log 26072 74564 Not Found: /firebase-messaging-sw.js
+WARNING 2025-10-14 06:39:44,021 basehttp 26072 74564 "GET /firebase-messaging-sw.js HTTP/1.1" 404 6925
+INFO 2025-10-14 07:44:37,039 basehttp 26072 32836 - Broken pipe from ('127.0.0.1', 50359)
+INFO 2025-10-14 07:44:37,173 basehttp 26072 75472 - Broken pipe from ('127.0.0.1', 50360)
+INFO 2025-10-14 07:44:37,542 basehttp 26072 35296 - Broken pipe from ('127.0.0.1', 59766)
+WARNING 2025-10-14 07:44:39,238 log 26072 47252 Not Found: /firebase-messaging-sw.js
+WARNING 2025-10-14 07:44:39,239 basehttp 26072 47252 "GET /firebase-messaging-sw.js HTTP/1.1" 404 6925
+INFO 2025-10-14 07:44:42,429 basehttp 26072 25584 - Broken pipe from ('127.0.0.1', 59774)
+INFO 2025-10-14 07:44:43,077 basehttp 26072 62144 - Broken pipe from ('127.0.0.1', 59770)
+INFO 2025-10-17 22:06:54,269 autoreload 22420 20864 Watching for file changes with StatReloader
+INFO 2025-10-17 22:07:45,222 autoreload 22420 20864 C:\Users\PARDHU\Desktop\farmazee\core\admin_views.py changed, reloading.
+INFO 2025-10-17 22:07:48,892 autoreload 12584 1152 Watching for file changes with StatReloader
+INFO 2025-10-17 22:52:06,012 autoreload 12584 1152 C:\Users\PARDHU\Desktop\farmazee\farmazee\settings.py changed, reloading.

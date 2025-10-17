@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.utils import timezone
 from .models import WeatherData, WeatherForecast, WeatherAlert
 from .advanced_weather_service import advanced_weather_service
-from crops.models import Crop
 
 
 def weather_home(request):

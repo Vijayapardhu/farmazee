@@ -243,16 +243,16 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(MarketPrice)
 class MarketPriceAdmin(admin.ModelAdmin):
-    list_display = ['crop', 'mandi_name', 'price_per_quintal', 'price_date', 'change_percentage', 'volume', 'is_current']
-    list_filter = ['crop', 'mandi_name', 'price_date', 'is_current']
-    search_fields = ['crop__name', 'mandi_name']
+    list_display = ['crop_name', 'mandi_name', 'price_per_quintal', 'price_date', 'change_percentage', 'volume', 'is_current']
+    list_filter = ['crop_name', 'mandi_name', 'price_date', 'is_current']
+    search_fields = ['crop_name', 'mandi_name']
     list_editable = ['is_current']
     readonly_fields = ['change_percentage', 'created_at', 'updated_at']
     date_hierarchy = 'price_date'
     
     fieldsets = (
         ('Price Information', {
-            'fields': ('crop', 'mandi_name', 'price_per_quintal', 'price_date')
+            'fields': ('crop_name', 'mandi_name', 'price_per_quintal', 'price_date')
         }),
         ('Market Data', {
             'fields': ('change_percentage', 'volume', 'is_current')
@@ -267,7 +267,7 @@ class MarketPriceAdmin(admin.ModelAdmin):
         # Auto-calculate change percentage if not provided
         if not change and not obj.change_percentage:
             previous_price = MarketPrice.objects.filter(
-                crop=obj.crop, 
+                crop_name=obj.crop_name, 
                 mandi_name=obj.mandi_name
             ).exclude(id=obj.id).order_by('-price_date').first()
             

@@ -55,10 +55,10 @@ urlpatterns = [
     path('schemes/<int:scheme_id>/edit/', views.edit_scheme, name='edit_scheme'),
     path('schemes/<int:scheme_id>/delete/', views.delete_scheme, name='delete_scheme'),
     path('schemes/<int:scheme_id>/toggle-status/', views.toggle_scheme_status, name='toggle_scheme_status'),
-    path('crops/', views.crops_management, name='crops_management'),
+    # Crops management removed
     path('marketplace/', views.marketplace_management, name='marketplace_management'),
     path('soil-tests/', views.soil_tests_management, name='soil_tests_management'),
-    path('community/', views.community_management, name='community_management'),
+    # Community management removed
 ]
 
 
@@ -116,8 +116,8 @@ urlpatterns = [
     path('schemes/<int:scheme_id>/edit/', views.edit_scheme, name='edit_scheme'),
     path('schemes/<int:scheme_id>/delete/', views.delete_scheme, name='delete_scheme'),
     path('schemes/<int:scheme_id>/toggle-status/', views.toggle_scheme_status, name='toggle_scheme_status'),
-    path('crops/', views.crops_management, name='crops_management'),
+    # Crops management removed
     path('marketplace/', views.marketplace_management, name='marketplace_management'),
     path('soil-tests/', views.soil_tests_management, name='soil_tests_management'),
-    path('community/', views.community_management, name='community_management'),
+    # Community management removed
 ]

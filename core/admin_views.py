@@ -10,24 +10,7 @@ from django.db import transaction
 
 from django.contrib.auth.models import User
 
-# Import models with error handling
-try:
-    from crops.models import Crop, CropPlan, CropActivity, CropMonitoring, PestDisease
-except ImportError:
-    Crop = None
-    CropPlan = None
-    CropActivity = None
-    CropMonitoring = None
-    PestDisease = None
-
-try:
-    from community.models import ForumTopic, Question, Expert, CommunityEvent, ForumCategory
-except ImportError:
-    ForumTopic = None
-    Question = None
-    Expert = None
-    CommunityEvent = None
-    ForumCategory = None
+# Crops and community functionality removed
 
 try:
     from marketplace.models import Product, Order, ProductCategory as Category
@@ -70,7 +53,7 @@ def admin_dashboard(request):
     
     # Get overall statistics
     total_users = User.objects.count()
-    total_crops = Crop.objects.count() if Crop else 0
+    total_crops = 0
     total_products = Product.objects.count() if Product else 0
     total_orders = Order.objects.count() if Order else 0
     total_topics = ForumTopic.objects.count() if ForumTopic else 0
@@ -78,7 +61,7 @@ def admin_dashboard(request):
     
     # Get recent activities
     recent_users = User.objects.order_by('-date_joined')[:5]
-    recent_crops = Crop.objects.order_by('-created_at')[:5] if Crop else []
+    recent_crops = []
     recent_products = Product.objects.order_by('-created_at')[:5] if Product else []
     recent_orders = Order.objects.order_by('-created_at')[:5] if Order else []
     
@@ -100,13 +83,13 @@ def admin_dashboard(request):
     
     context = {
         'total_users': total_users,
-        'total_crops': total_crops,
+        'total_crops': 0,
         'total_products': total_products,
         'total_orders': total_orders,
         'total_topics': total_topics,
         'total_questions': total_questions,
         'recent_users': recent_users,
-        'recent_crops': recent_crops,
+        'recent_crops': [],
         'recent_products': recent_products,
         'recent_orders': recent_orders,
         'system_health': system_health,
@@ -165,53 +148,7 @@ def user_management(request):
     
     return render(request, 'admin/user_management.html', context)
 
-@login_required
-@user_passes_test(is_admin)
-def crop_management(request):
-    """Manage crops and farming data"""
-    
-    search = request.GET.get('search', '')
-    category = request.GET.get('category', '')
-    season = request.GET.get('season', '')
-    
-    crops = Crop.objects.all()
-    
-    if search:
-        crops = crops.filter(
-            Q(name__icontains=search) |
-            Q(scientific_name__icontains=search) |
-            Q(description__icontains=search)
-        )
-    
-    if category:
-        crops = crops.filter(category=category)
-    
-    if season:
-        crops = crops.filter(season=season)
-    
-    # Get crop statistics
-    crop_stats = {
-        'total_crops': crops.count(),
-        'by_category': crops.values('category').annotate(count=Count('id')),
-        'by_season': crops.values('season').annotate(count=Count('id')),
-        'featured_crops': crops.filter(is_featured=True).count()
-    }
-    
-    paginator = Paginator(crops, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'page_obj': page_obj,
-        'search': search,
-        'category': category,
-        'season': season,
-        'crop_stats': crop_stats,
-        'categories': Crop.CROP_CATEGORIES,
-        'seasons': Crop.SEASONS,
-    }
-    
-    return render(request, 'admin/crop_management.html', context)
+# Crop management removed
 
 @login_required
 @user_passes_test(is_admin)
@@ -266,63 +203,7 @@ def marketplace_management(request):
     
     return render(request, 'admin/marketplace_management.html', context)
 
-@login_required
-@user_passes_test(is_admin)
-def community_management(request):
-    """Manage community features and content"""
-    
-    search = request.GET.get('search', '')
-    content_type = request.GET.get('type', '')
-    status = request.GET.get('status', '')
-    
-    topics = ForumTopic.objects.all()
-    questions = Question.objects.all()
-    events = CommunityEvent.objects.all()
-    
-    if search:
-        topics = topics.filter(title__icontains=search)
-        questions = questions.filter(title__icontains=search)
-        events = events.filter(title__icontains=search)
-    
-    if content_type:
-        if content_type == 'topics':
-            topics = topics.filter(is_active=True)
-        elif content_type == 'questions':
-            questions = questions.filter(status='open')
-        elif content_type == 'events':
-            events = events.filter(is_active=True)
-    
-    if status:
-        if status == 'active':
-            topics = topics.filter(is_active=True)
-            questions = questions.filter(status='open')
-            events = events.filter(is_active=True)
-        elif status == 'inactive':
-            topics = topics.filter(is_active=False)
-            questions = questions.filter(status='closed')
-            events = events.filter(is_active=False)
-    
-    # Get community statistics
-    community_stats = {
-        'total_topics': topics.count(),
-        'total_questions': questions.count(),
-        'total_events': events.count(),
-        'active_topics': topics.filter(is_active=True).count(),
-        'open_questions': questions.filter(status='open').count(),
-        'upcoming_events': events.filter(event_date__gte=timezone.now()).count(),
-    }
-    
-    context = {
-        'topics': topics[:10],
-        'questions': questions[:10],
-        'events': events[:10],
-        'search': search,
-        'content_type': content_type,
-        'status': status,
-        'community_stats': community_stats,
-    }
-    
-    return render(request, 'admin/community_management.html', context)
+# Community management removed
 
 @login_required
 @user_passes_test(is_admin)
@@ -481,16 +362,14 @@ def system_settings(request):
                 # Update feature toggles
                 if 'enable_marketplace' in data:
                     settings.enable_marketplace = data.get('enable_marketplace') == 'on'
-                if 'enable_community' in data:
-                    settings.enable_community = data.get('enable_community') == 'on'
+                # Community functionality removed
                 if 'enable_ai_chatbot' in data:
                     settings.enable_ai_chatbot = data.get('enable_ai_chatbot') == 'on'
                 if 'enable_weather' in data:
                     settings.enable_weather = data.get('enable_weather') == 'on'
                 if 'enable_soil_health' in data:
                     settings.enable_soil_health = data.get('enable_soil_health') == 'on'
-                if 'enable_crop_planning' in data:
-                    settings.enable_crop_planning = data.get('enable_crop_planning') == 'on'
+                # Crop planning functionality removed
                 if 'enable_schemes' in data:
                     settings.enable_schemes = data.get('enable_schemes') == 'on'
                 
@@ -573,10 +452,8 @@ def analytics_dashboard(request):
         select={'date': 'date(date_joined)'}
     ).values('date').annotate(count=Count('id')).order_by('date')
     
-    # Crop analytics
-    crop_analytics = Crop.objects.values('category').annotate(
-        count=Count('id')
-    ).order_by('-count')
+    # Crop analytics removed
+    crop_analytics = []
     
     # Marketplace analytics
     marketplace_analytics = {
@@ -588,21 +465,14 @@ def analytics_dashboard(request):
         'revenue': sum(order.total_amount for order in Order.objects.filter(order_status='delivered'))
     }
     
-    # Community analytics
-    community_analytics = {
-        'total_topics': ForumTopic.objects.count(),
-        'active_topics': ForumTopic.objects.filter(is_active=True).count(),
-        'total_questions': Question.objects.count(),
-        'open_questions': Question.objects.filter(status='open').count(),
-        'total_events': CommunityEvent.objects.count(),
-        'upcoming_events': CommunityEvent.objects.filter(event_date__gte=timezone.now()).count(),
-    }
+    # Community analytics removed
+    community_analytics = {}
     
     context = {
         'user_growth': list(user_growth),
-        'crop_analytics': list(crop_analytics),
+        'crop_analytics': [],
         'marketplace_analytics': marketplace_analytics,
-        'community_analytics': community_analytics,
+        'community_analytics': {},
         'start_date': start_date,
         'end_date': end_date,
     }
@@ -631,14 +501,7 @@ def bulk_actions(request):
                         elif action == 'delete':
                             items.delete()
                     
-                    elif item_type == 'crops':
-                        items = Crop.objects.filter(id__in=item_ids)
-                        if action == 'feature':
-                            items.update(is_featured=True)
-                        elif action == 'unfeature':
-                            items.update(is_featured=False)
-                        elif action == 'delete':
-                            items.delete()
+                    # Crops functionality removed
                     
                     elif item_type == 'products':
                         items = Product.objects.filter(id__in=item_ids)
@@ -658,7 +521,7 @@ def bulk_actions(request):
     
     context = {
         'user_count': User.objects.count(),
-        'crop_count': Crop.objects.count(),
+        'crop_count': 0,
         'product_count': Product.objects.count(),
     }
     
@@ -680,15 +543,7 @@ def api_endpoints(request):
                 {'method': 'DELETE', 'path': '/api/users/{id}/', 'description': 'Delete user'},
             ]
         },
-        {
-            'name': 'Crop Management',
-            'endpoints': [
-                {'method': 'GET', 'path': '/api/crops/', 'description': 'List all crops'},
-                {'method': 'POST', 'path': '/api/crops/', 'description': 'Create new crop'},
-                {'method': 'PUT', 'path': '/api/crops/{id}/', 'description': 'Update crop'},
-                {'method': 'DELETE', 'path': '/api/crops/{id}/', 'description': 'Delete crop'},
-            ]
-        },
+        # Crop Management removed
         {
             'name': 'Marketplace',
             'endpoints': [

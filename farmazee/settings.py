@@ -51,9 +51,7 @@ INSTALLED_APPS = [
     # Local apps
     'core',
     'weather',
-    'crops',
     'marketplace',
-    'community',
     'schemes',
     'soil_health',
     'ai_ml',

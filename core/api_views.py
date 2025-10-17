@@ -92,17 +92,8 @@ class SearchAPIView(APIView):
         
         results = {}
         
-        # Search in crops
-        try:
-            from crops.models import Crop
-            crops = Crop.objects.filter(
-                Q(name__icontains=query) | 
-                Q(description__icontains=query) |
-                Q(category__icontains=query)
-            )[:10]
-            results['crops'] = [{'id': crop.id, 'name': crop.name} for crop in crops]
-        except ImportError:
-            results['crops'] = []
+        # Crops functionality removed
+        results['crops'] = []
         
         # Search in products
         try:
@@ -156,11 +147,8 @@ class StatsAPIView(APIView):
             'active_weather_locations': 0,
         }
         
-        try:
-            from crops.models import Crop
-            stats['total_crops'] = Crop.objects.count()
-        except ImportError:
-            pass
+        # Crops functionality removed
+        stats['total_crops'] = 0
             
         try:
             from marketplace.models import Product
@@ -489,81 +477,7 @@ class SchemesAPIView(APIView):
             })
 
 
-class CropsAPIView(APIView):
-    """Crops API endpoint"""
-    permission_classes = [permissions.AllowAny]
-    
-    def get(self, request):
-        try:
-            from crops.models import Crop
-            
-            # Get all crops
-            crops = Crop.objects.filter(is_active=True).order_by('name')
-            
-            results = []
-            for crop in crops:
-                results.append({
-                    'id': crop.id,
-                    'name': crop.name,
-                    'variety': crop.variety,
-                    'season': crop.season,
-                    'duration': crop.growth_duration,
-                    'description': crop.description,
-                    'minTemperature': crop.min_temperature,
-                    'maxTemperature': crop.max_temperature,
-                    'rainfallRequirement': crop.rainfall_requirement,
-                    'wateringNeeds': crop.watering_needs,
-                    'careInstructions': crop.care_instructions,
-                    'harvestingTips': crop.harvesting_tips,
-                    'image': crop.image.url if crop.image else None
-                })
-            
-            return Response({
-                'status': 'success',
-                'results': results,
-                'count': len(results),
-                'timestamp': timezone.now().isoformat()
-            })
-        except Exception as e:
-            # Return mock data if service fails
-            mock_crops = [
-                {
-                    'id': 1,
-                    'name': 'Rice',
-                    'variety': 'Basmati',
-                    'season': 'Kharif',
-                    'duration': '120-150 days',
-                    'description': 'High-quality aromatic rice variety',
-                    'minTemperature': 20,
-                    'maxTemperature': 35,
-                    'rainfallRequirement': '1000-1500mm',
-                    'wateringNeeds': 'Frequent flooding',
-                    'careInstructions': 'Maintain water level, control weeds',
-                    'harvestingTips': 'Harvest when 80% grains are mature'
-                },
-                {
-                    'id': 2,
-                    'name': 'Wheat',
-                    'variety': 'Durum',
-                    'season': 'Rabi',
-                    'duration': '100-120 days',
-                    'description': 'Hard wheat variety for pasta making',
-                    'minTemperature': 10,
-                    'maxTemperature': 25,
-                    'rainfallRequirement': '400-600mm',
-                    'wateringNeeds': 'Moderate irrigation',
-                    'careInstructions': 'Timely sowing, proper fertilization',
-                    'harvestingTips': 'Harvest when grains are hard and dry'
-                }
-            ]
-            
-            return Response({
-                'status': 'success',
-                'results': mock_crops,
-                'count': len(mock_crops),
-                'timestamp': timezone.now().isoformat(),
-                'note': 'Mock data - service unavailable'
-            })
+# Crops functionality removed
 
 
 class MarketplaceProductsAPIView(APIView):

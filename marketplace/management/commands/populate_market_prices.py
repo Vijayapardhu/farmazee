@@ -8,7 +8,7 @@ from datetime import date, timedelta
 from decimal import Decimal
 import random
 
-from crops.models import Crop
+# Crops functionality removed
 from marketplace.models import MarketPrice
 
 
@@ -35,11 +35,19 @@ class Command(BaseCommand):
         days = options['days']
         mandis_per_crop = options['mandis']
         
-        # Get all crops
-        crops = Crop.objects.all()
-        if not crops.exists():
-            self.stdout.write(self.style.WARNING('No crops found. Please populate crops first.'))
-            return
+        # Sample crops (crops functionality removed)
+        crops = [
+            {'name': 'Rice'},
+            {'name': 'Wheat'},
+            {'name': 'Cotton'},
+            {'name': 'Tomato'},
+            {'name': 'Maize'},
+            {'name': 'Sugarcane'},
+            {'name': 'Chilli'},
+            {'name': 'Turmeric'},
+            {'name': 'Groundnut'},
+            {'name': 'Soybean'}
+        ]
         
         # Sample mandis for Telangana/Andhra Pradesh
         mandis = [
@@ -59,7 +67,7 @@ class Command(BaseCommand):
         error_count = 0
         
         for crop in crops:
-            self.stdout.write(f'Creating price data for {crop.name}...')
+            self.stdout.write(f'Creating price data for {crop["name"]}...')
             
             # Select random mandis for this crop
             crop_mandis = random.sample(mandis, min(mandis_per_crop, len(mandis)))
@@ -85,7 +93,7 @@ class Command(BaseCommand):
                         'coriander': 50
                     }
                     
-                    crop_key = crop.name.lower()
+                    crop_key = crop["name"].lower()
                     base_price = base_prices.get(crop_key, 2000)  # Default price
                     
                     # Create price history for the last N days
@@ -137,7 +145,7 @@ class Command(BaseCommand):
                         
                 except Exception as e:
                     self.stdout.write(
-                        self.style.ERROR(f'Error creating price for {crop.name} - {mandi}: {str(e)}')
+                        self.style.ERROR(f'Error creating price for {crop["name"]} - {mandi}: {str(e)}')
                     )
                     error_count += 1
         
@@ -152,6 +160,6 @@ class Command(BaseCommand):
         self.stdout.write('\nSample current prices:')
         current_prices = MarketPrice.objects.filter(is_current=True)[:5]
         for price in current_prices:
-            self.stdout.write(f'  {price.crop.name} - {price.mandi_name}: Rs.{price.price_per_quintal} ({price.price_change_display})')
+            self.stdout.write(f'  {price.crop_name} - {price.mandi_name}: Rs.{price.price_per_quintal} ({price.price_change_display})')
         
         self.stdout.write('='*50)

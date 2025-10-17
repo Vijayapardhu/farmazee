@@ -17,7 +17,7 @@ urlpatterns = router.urls + [
     path('soil/tests/', api_views.SoilTestsAPIView.as_view(), name='api-soil-tests'),
     path('soil/recommendations/', api_views.SoilRecommendationsAPIView.as_view(), name='api-soil-recommendations'),
     path('schemes/', api_views.SchemesAPIView.as_view(), name='api-schemes'),
-    path('crops/', api_views.CropsAPIView.as_view(), name='api-crops'),
+    # Crops functionality removed
     path('marketplace/products/', api_views.MarketplaceProductsAPIView.as_view(), name='api-marketplace-products'),
     path('farmer-problems/', api_views.FarmerProblemsAPIView.as_view(), name='api-farmer-problems'),
 ]
