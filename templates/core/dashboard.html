@@ -124,7 +124,10 @@
                 <div class="card-header bg-transparent border-0">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Recent Crops</h5>
-                        <a href="{% url 'crops:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                        {% url 'crops:list' as crops_url %}
+                        {% if crops_url %}
+                        <a href="{{ crops_url }}" class="btn btn-sm btn-outline-primary">View All</a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
@@ -132,7 +135,9 @@
                     <div class="row g-3">
                         {% for crop in recent_crops %}
                         <div class="col-md-6">
-                            <a href="{% url 'crops:detail' crop.pk %}" class="text-decoration-none">
+                            {% url 'crops:detail' crop.pk as crop_detail_url %}
+                            {% if crop_detail_url %}
+                            <a href="{{ crop_detail_url }}" class="text-decoration-none">
                                 <div class="d-flex align-items-center p-3 border rounded hover-shadow">
                                     {% if crop.image %}
                                     <img src="{{ crop.image.url }}" alt="{{ crop.name }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
@@ -151,6 +156,7 @@
                                     </div>
                                 </div>
                             </a>
+                            {% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -158,7 +164,10 @@
                     <div class="text-center py-4">
                         <i class="fas fa-seedling fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No crops added yet. Start by adding your first crop!</p>
-                                                 <a href="{% url 'crops:list' %}" class="btn btn-primary">Add Crop</a>
+                        {% url 'crops:list' as crops_url %}
+                        {% if crops_url %}
+                        <a href="{{ crops_url }}" class="btn btn-primary">Add Crop</a>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -233,17 +242,7 @@
                 </div>
                 <div class="card-body">
                                          <div class="d-grid gap-2">
-                         <a href="{% url 'crops:list' %}" class="btn btn-outline-primary">
-                             <i class="fas fa-plus me-2"></i>Add New Crop
-                         </a>
-                         <a href="{% url 'marketplace:home' %}" class="btn btn-outline-success">
-                             <i class="fas fa-store me-2"></i>Browse Marketplace
-                         </a>
-                         <a href="{% url 'weather:home' %}" class="btn btn-outline-info">
-                             <i class="fas fa-cloud-sun me-2"></i>Check Weather
-                         </a>
-                         <a href="{% url 'schemes:list' %}" class="btn btn-outline-warning">
-                             <i class="fas fa-coins me-2"></i>Government Schemes
+                         {% url 'crops:list' as crops_url %}
                          </a>
                          <a href="{% url 'community:ask_question' %}" class="btn btn-outline-secondary">
                              <i class="fas fa-graduation-cap me-2"></i>Ask Expert
@@ -350,7 +349,9 @@
                             </div>
                         </div>
                     </a>
-                    <a href="{% url 'crops:list' %}" class="text-decoration-none">
+                    {% url 'crops:list' as crops_url %}
+                    {% if crops_url %}
+                    <a href="{{ crops_url }}" class="text-decoration-none">
                         <div class="d-flex align-items-start mb-3 hover-shadow p-2 rounded">
                             <div class="flex-shrink-0">
                                 <div class="bg-warning bg-opacity-10 rounded-circle p-2">
@@ -367,16 +368,17 @@
                             </div>
                         </div>
                     </a>
-                    <a href="{% url 'marketplace:home' %}" class="text-decoration-none">
+                    {% endif %}
+                    <a href="{% url 'ai_chatbot:home' %}" class="text-decoration-none">
                         <div class="d-flex align-items-start hover-shadow p-2 rounded">
                             <div class="flex-shrink-0">
                                 <div class="bg-info bg-opacity-10 rounded-circle p-2">
-                                    <i class="fas fa-info-circle text-info"></i>
+                                    <i class="fas fa-robot text-info"></i>
                                 </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-1 text-dark">Market Update</h6>
-                                <p class="text-muted mb-1">Rice prices have increased by 5% this week.</p>
+                                <h6 class="mb-1 text-dark">Assistant</h6>
+                                <p class="text-muted mb-1">Ask questions and get instant help.</p>
                                 <small class="text-muted">2 days ago</small>
                             </div>
                             <div class="ms-2">

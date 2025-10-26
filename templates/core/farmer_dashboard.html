@@ -46,7 +46,7 @@
 
             <!-- Market Prices -->
             <div class="col-md-3 col-6">
-                <a href="{% url 'marketplace:home' %}" class="quick-action-card market">
+                <a href="{% url 'ai_chatbot:home' %}" class="quick-action-card market">
                     <div class="icon">
                         <i class="fas fa-rupee-sign"></i>
                     </div>
@@ -66,14 +66,14 @@
                 </a>
             </div>
 
-            <!-- Ask Experts -->
+            <!-- Ask Experts removed: redirecting to AI assistant for now -->
             <div class="col-md-3 col-6">
-                <a href="{% url 'farmer_problems:list' %}" class="quick-action-card expert">
+                <a href="{% url 'ai_chatbot:chat' %}" class="quick-action-card expert">
                     <div class="icon">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-robot"></i>
                     </div>
-                    <h5>Ask Experts</h5>
-                    <p>Get Help</p>
+                    <h5>Ask Assistant</h5>
+                    <p>Instant help</p>
                 </a>
             </div>
         </div>
@@ -241,21 +241,21 @@
             </div>
             <div class="card-body">
                 <div class="list-group">
-                    <a href="{% url 'farmer_problems:list' %}" class="list-group-item list-group-item-action">
+                    <a href="{% url 'ai_chatbot:chat' %}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">How to control stem borer in rice?</h6>
                             <small>2 hours ago</small>
                         </div>
                         <p class="mb-1">5 expert answers available</p>
                     </a>
-                    <a href="{% url 'farmer_problems:list' %}" class="list-group-item list-group-item-action">
+                    <a href="{% url 'ai_chatbot:chat' %}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">Best time to harvest cotton?</h6>
                             <small>5 hours ago</small>
                         </div>
                         <p class="mb-1">8 expert answers available</p>
                     </a>
-                    <a href="{% url 'farmer_problems:list' %}" class="list-group-item list-group-item-action">
+                    <a href="{% url 'ai_chatbot:chat' %}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">Soil pH too low, what to do?</h6>
                             <small>1 day ago</small>
@@ -264,7 +264,7 @@
                     </a>
                 </div>
                 <div class="text-center mt-3">
-                    <a href="{% url 'farmer_problems:list' %}" class="btn btn-info">View All Questions</a>
+                    <a href="{% url 'ai_chatbot:chat' %}" class="btn btn-info">Ask Assistant</a>
                 </div>
             </div>
         </div>

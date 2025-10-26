@@ -1,0 +1,73 @@
+[
+  {
+    "name": "Rice",
+    "soil_types": ["clay", "loamy"],
+    "seasons": ["monsoon", "winter"],
+    "expected_yield_quintal_per_acre": 20,
+    "expected_market_price_per_quintal": 2600,
+    "tips": "Maintain 5-7 cm water depth; timely transplanting and weed control.",
+    "sowing_window": "Monsoon: June-July; Rabi: Nov-Dec",
+    "care": [
+      "Keep field flooded 5-7 cm during vegetative stage",
+      "Weed control at 20-25 and 40-45 days",
+      "Split nitrogen application (basal, tillering, panicle initiation)"
+    ]
+  },
+  {
+    "name": "Wheat",
+    "soil_types": ["loamy", "sandy_loam"],
+    "seasons": ["winter"],
+    "expected_yield_quintal_per_acre": 18,
+    "expected_market_price_per_quintal": 2400,
+    "tips": "Sow in cool weather, ensure adequate irrigation at CRI and heading stages.",
+    "sowing_window": "Nov-Dec",
+    "care": [
+      "Irrigate at CRI (20-25 days), tillering and heading",
+      "Timely weed control (30-35 days)",
+      "Use disease-resistant varieties where possible"
+    ]
+  },
+  {
+    "name": "Maize",
+    "soil_types": ["sandy", "loamy"],
+    "seasons": ["summer", "monsoon"],
+    "expected_yield_quintal_per_acre": 16,
+    "expected_market_price_per_quintal": 2300,
+    "tips": "Use well-drained soil; apply nitrogen in split doses; control weeds early.",
+    "sowing_window": "Feb-Mar (summer), Jun-Jul (kharif)",
+    "care": [
+      "Ensure good drainage; avoid waterlogging",
+      "Pre-emergence herbicide and early weeding",
+      "Top-dress nitrogen at knee-high and tasseling"
+    ]
+  },
+  {
+    "name": "Cotton",
+    "soil_types": ["black", "loamy"],
+    "seasons": ["summer", "monsoon"],
+    "expected_yield_quintal_per_acre": 8,
+    "expected_market_price_per_quintal": 7200,
+    "tips": "Prefer black soils; timely pest monitoring; avoid waterlogging.",
+    "sowing_window": "Apr-Jun",
+    "care": [
+      "Monitor for sucking pests; use traps and IPM",
+      "Avoid excess nitrogen to reduce vegetative growth",
+      "Irrigate lightly but frequently; avoid standing water"
+    ]
+  },
+  {
+    "name": "Chili",
+    "soil_types": ["loamy", "sandy_loam"],
+    "seasons": ["summer", "monsoon"],
+    "expected_yield_quintal_per_acre": 10,
+    "expected_market_price_per_quintal": 9000,
+    "tips": "Requires warm climate; ensure good drainage; manage thrips and mites.",
+    "sowing_window": "Jun-Jul or Jan-Feb",
+    "care": [
+      "Nursery raising then transplanting at 4-6 true leaves",
+      "Prevent thrips/mites with timely sprays and sanitation",
+      "Maintain soil moisture; avoid waterlogging"
+    ]
+  }
+]
+

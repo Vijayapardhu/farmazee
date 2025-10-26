@@ -51,12 +51,10 @@ INSTALLED_APPS = [
     # Local apps
     'core',
     'weather',
-    'marketplace',
+    'yield_prediction',
     'schemes',
-    'soil_health',
     'ai_ml',
     'ai_chatbot',
-    'farmer_problems',
     'admin_panel',
 ]
 
@@ -227,13 +225,19 @@ AUTHENTICATION_BACKENDS = [
 # Site ID
 SITE_ID = 1
 
-# Allauth settings
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+# Allauth settings (updated for new API)
+ACCOUNT_LOGIN_METHODS = {"email", "username"}
+ACCOUNT_SIGNUP_FIELDS = [
+    "email*",
+    "username*",
+    "password1*",
+    "password2*",
+]
+ACCOUNT_RATE_LIMITS = {
+    # 5 failed login attempts per 5 minutes
+    "login_failed": "5/5m",
+}
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' for production
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/dashboard/'
@@ -250,11 +254,18 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # AI Chatbot Settings
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDFCmoQCjp6qbUp_rDErGCgFQoBsJblMVQ')
+# Weather API keys (OpenWeatherMap)
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '')
+OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', '')
 
 # Supabase Configuration
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://hhixytzsroxmmmlknuck.supabase.co')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXh5dHpzcm94bW1tbGtudWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MjQ1MDksImV4cCI6MjA3NTUwMDUwOX0.riSFKI2AsR6TtDytIBDFbKUJYqAzmSz3_3TXxAw8TwY')
 SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', 'farmazee media')
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@farmazee.com'
 
 # Logging Configuration
 LOGGING = {

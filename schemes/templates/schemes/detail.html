@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ scheme.title }} - Scheme Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-3">
+        <i class="fas fa-handshake text-info me-2"></i>{{ scheme.title }}
+      </h1>
+      {% if scheme.deadline %}
+      <p class="text-muted mb-4">
+        <i class="fas fa-clock me-1"></i>
+        Deadline: <strong class="text-danger">{{ scheme.deadline|date:"M j, Y" }}</strong>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card mb-3">
+        <div class="card-header bg-info text-white">
+          <strong>Overview</strong>
+        </div>
+        <div class="card-body">
+          <p>{{ scheme.description }}</p>
+          <p class="mb-0">
+            <span class="badge bg-light text-dark">Category: {{ scheme.get_category_display }}</span>
+            {% if scheme.scheme_amount %}
+              <span class="badge bg-success ms-2">Amount: {{ scheme.scheme_amount }}</span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header bg-secondary text-white">
+          <strong>Eligibility Criteria</strong>
+        </div>
+        <div class="card-body">
+          <pre class="mb-0" style="white-space: pre-wrap;">{{ scheme.eligibility_criteria }}</pre>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header bg-success text-white">
+          <strong>Benefits</strong>
+        </div>
+        <div class="card-body">
+          <pre class="mb-0" style="white-space: pre-wrap;">{{ scheme.benefits }}</pre>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+          <strong>Application Process</strong>
+        </div>
+        <div class="card-body">
+          <pre class="mb-0" style="white-space: pre-wrap;">{{ scheme.application_process }}</pre>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header bg-warning text-dark">
+          <strong>Required Documents</strong>
+        </div>
+        <div class="card-body">
+          <pre class="mb-0" style="white-space: pre-wrap;">{{ scheme.required_documents }}</pre>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <strong>Contact Information</strong>
+        </div>
+        <div class="card-body">
+          <pre class="mb-2" style="white-space: pre-wrap;">{{ scheme.contact_information }}</pre>
+          <div class="d-flex flex-wrap gap-3">
+            {% if scheme.website_url %}
+            <a href="{{ scheme.website_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-external-link-alt me-1"></i>Official Website
+            </a>
+            {% endif %}
+            {% if scheme.helpline_number %}
+            <span class="badge bg-secondary">Helpline: {{ scheme.helpline_number }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <strong>Key Details</strong>
+        </div>
+        <div class="card-body">
+          <div class="mb-2">
+            <small class="text-muted">Status</small><br>
+            <span class="badge bg-{% if scheme.is_active %}success{% else %}secondary{% endif %}">
+              {% if scheme.is_active %}Active{% else %}Inactive{% endif %}
+            </span>
+          </div>
+          <div class="mb-2">
+            <small class="text-muted">Applicable States</small>
+            <div>{{ scheme.states }}</div>
+          </div>
+          {% if scheme.start_date %}
+          <div class="mb-2">
+            <small class="text-muted">Start Date</small>
+            <div>{{ scheme.start_date|date:"M j, Y" }}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <a href="{% url 'schemes:apply' scheme.id %}" class="btn btn-success btn-lg">
+          <i class="fas fa-paper-plane me-2"></i>Apply for this Scheme
+        </a>
+        <a href="{% url 'schemes:list' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-2"></i>Back to Schemes
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -14,4 +14,5 @@ urlpatterns = [
     # Live weather API endpoints
     path('api/update/', views.update_weather_data, name='update_weather'),
     path('api/live/', views.get_live_weather_api, name='live_weather'),
+    path('api/search-cities/', views.search_cities_api, name='search_cities'),
 ]

@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.urls import reverse
+from django.utils.text import slugify
 
 
 class ProblemCategory(models.Model):
@@ -66,6 +67,24 @@ class FarmerProblem(models.Model):
     def __str__(self):
         return self.title
     
+    def save(self, *args, **kwargs):
+        # Generate slug if empty
+        if not self.slug:
+            base_slug = slugify(self.title)
+            if not base_slug:
+                base_slug = 'problem'
+            
+            # Ensure uniqueness
+            slug = base_slug
+            counter = 1
+            while FarmerProblem.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            
+            self.slug = slug
+        
+        super().save(*args, **kwargs)
+    
     def get_absolute_url(self):
         return reverse('farmer_problems:detail', kwargs={'slug': self.slug})
     
@@ -94,6 +113,9 @@ class ProblemImage(models.Model):
     caption = models.CharField(max_length=200, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     order = models.IntegerField(default=0)
+    auto_checked = models.BooleanField(default=False)
+    auto_check_status = models.CharField(max_length=20, default='pending')  # pending|processing|done|failed
+    auto_check_result = models.JSONField(default=dict, blank=True)
     
     class Meta:
         ordering = ['order', 'uploaded_at']

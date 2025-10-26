@@ -11,12 +11,19 @@ import json
 from django.contrib.auth.models import User
 from core.models import UserProfile
 from ai_chatbot.models import ChatSession, ChatMessage, FarmerQuery, AIKnowledgeBase
-from farmer_problems.models import FarmerProblem as Problem, Solution, ExpertProfile
+# farmer_problems may be removed; import guarded so admin views do not break
+try:
+    from farmer_problems.models import FarmerProblem as Problem, Solution, ExpertProfile, Comment
+except Exception:
+    Problem = None
+    Solution = None
+    ExpertProfile = None
+    Comment = None
 # Community functionality removed
 from schemes.models import GovernmentScheme
 # from weather.models import WeatherData
-from marketplace.models import Product
-from soil_health.models import SoilTest
+# from marketplace.models import Product  # Removed - marketplace now uses irrigation reminders
+# from soil_health.models import SoilTest  # Soil Health removed
 
 def is_admin_user(user):
     """Check if user is admin or staff"""
@@ -42,10 +49,10 @@ def admin_dashboard(request):
     total_messages = ChatMessage.objects.count()
     ai_queries_week = FarmerQuery.objects.filter(created_at__gte=week_ago).count()
     
-    # Farmer Problems statistics
-    total_problems = Problem.objects.count()
-    solved_problems = Problem.objects.filter(status='solved').count()
-    expert_count = ExpertProfile.objects.count()
+    # Farmer Problems statistics (disabled if app removed)
+    total_problems = Problem.objects.count() if Problem else 0
+    solved_problems = Problem.objects.filter(status='solved').count() if Problem else 0
+    expert_count = ExpertProfile.objects.count() if ExpertProfile else 0
     
     # Community statistics removed
     total_topics = 0
@@ -54,7 +61,7 @@ def admin_dashboard(request):
     
     # Recent activity
     recent_users = User.objects.order_by('-date_joined')[:5]
-    recent_problems = Problem.objects.order_by('-created_at')[:5]
+    recent_problems = Problem.objects.order_by('-created_at')[:5] if Problem else []
     recent_queries = FarmerQuery.objects.order_by('-created_at')[:5]
     
     # Popular queries
@@ -153,12 +160,12 @@ def user_detail(request, user_id):
     # Get user activity
     user_chats = ChatSession.objects.filter(user=user).count()
     user_queries = FarmerQuery.objects.filter(user=user).count()
-    user_problems = Problem.objects.filter(user=user).count()
-    user_solutions = Solution.objects.filter(user=user).count()
+    user_problems = Problem.objects.filter(user=user).count() if Problem else 0
+    user_solutions = Solution.objects.filter(user=user).count() if Solution else 0
     
     # Recent activity
     recent_queries = FarmerQuery.objects.filter(user=user).order_by('-created_at')[:10]
-    recent_problems = Problem.objects.filter(user=user).order_by('-created_at')[:5]
+    recent_problems = Problem.objects.filter(user=user).order_by('-created_at')[:5] if Problem else []
     
     context = {
         'user': user,
@@ -283,7 +290,7 @@ def farmer_problems_management(request):
     status = request.GET.get('status', 'all')
     category = request.GET.get('category', 'all')
     
-    problems = Problem.objects.select_related('user', 'category').all()
+    problems = Problem.objects.select_related('user', 'category').all() if Problem else []
     
     if search:
         problems = problems.filter(
@@ -311,8 +318,8 @@ def farmer_problems_management(request):
         'search': search,
         'status': status,
         'category': category,
-        'total_problems': Problem.objects.count(),
-        'solved_problems': Problem.objects.filter(status='solved').count(),
+        'total_problems': Problem.objects.count() if Problem else 0,
+        'solved_problems': Problem.objects.filter(status='solved').count() if Problem else 0,
     }
     
     return render(request, 'admin_panel/farmer_problems.html', context)
@@ -410,14 +417,14 @@ def analytics_dashboard(request):
     # Problem analytics
     problem_categories = Problem.objects.values('category__name').annotate(
         count=Count('category')
-    ).order_by('-count')[:10]
+    ).order_by('-count')[:10] if Problem else []
     
     # Activity over time
     daily_activity = []
     for i in range(30):
         date = today - timedelta(days=i)
         queries = FarmerQuery.objects.filter(created_at__date=date).count()
-        problems = Problem.objects.filter(created_at__date=date).count()
+        problems = Problem.objects.filter(created_at__date=date).count() if Problem else 0
         daily_activity.append({
             'date': date.strftime('%Y-%m-%d'),
             'queries': queries,
@@ -430,8 +437,8 @@ def analytics_dashboard(request):
         'problem_categories': problem_categories,
         'daily_activity': daily_activity,
         'total_queries': FarmerQuery.objects.count(),
-        'total_problems': Problem.objects.count(),
-        'total_solutions': Solution.objects.count(),
+        'total_problems': Problem.objects.count() if Problem else 0,
+        'total_solutions': Solution.objects.count() if Solution else 0,
     }
     
     return render(request, 'admin_panel/analytics.html', context)
@@ -547,14 +554,13 @@ def content_moderation(request):
     status = request.GET.get('status', 'pending')
     
     # Problems pending approval
-    pending_problems = Problem.objects.filter(is_featured=False).order_by('-created_at')[:20]
+    pending_problems = Problem.objects.filter(is_featured=False).order_by('-created_at')[:20] if Problem else []
     
     # Solutions pending approval
-    pending_solutions = Solution.objects.filter(is_accepted=False).order_by('-created_at')[:20]
+    pending_solutions = Solution.objects.filter(is_accepted=False).order_by('-created_at')[:20] if Solution else []
     
     # Comments to review
-    from farmer_problems.models import Comment
-    recent_comments = Comment.objects.order_by('-created_at')[:20]
+    recent_comments = Comment.objects.order_by('-created_at')[:20] if Comment else []
     
     context = {
         'pending_problems': pending_problems,
@@ -799,7 +805,7 @@ def database_management(request):
         'total_problems': Problem.objects.count(),
         'total_solutions': Solution.objects.count(),
         'total_queries': FarmerQuery.objects.count(),
-        'total_products': Product.objects.count(),
+        'total_products': 0,  # Marketplace now uses irrigation reminders
         'database_size': '245 MB',
         'last_backup': '2 hours ago',
         'next_backup': 'In 22 hours'
@@ -887,7 +893,7 @@ def platform_statistics(request):
             'topics': 0,
             'questions': 0,
             'answers': 0,
-            'products': Product.objects.count(),
+            'products': 0,  # Marketplace now uses irrigation reminders
         },
         'engagement': {
             'avg_problems_per_user': round(Problem.objects.count() / max(User.objects.count(), 1), 2),
@@ -1036,26 +1042,29 @@ def marketplace_management(request):
     search = request.GET.get('search', '')
     
     if tab == 'products':
-        products = Product.objects.select_related('vendor').all()
+        # Marketplace now uses irrigation reminders instead of products
+        from marketplace.models import IrrigationReminder
+        reminders = IrrigationReminder.objects.all()
         
         if search:
-            products = products.filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search)
+            reminders = reminders.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search) |
+                Q(crop_type__icontains=search)
             )
         
-        products = products.order_by('-created_at')
+        reminders = reminders.order_by('-created_at')
         
-        paginator = Paginator(products, 20)
+        paginator = Paginator(reminders, 20)
         page_number = request.GET.get('page')
-        products = paginator.get_page(page_number)
+        reminders = paginator.get_page(page_number)
         
         context = {
-            'products': products,
+            'reminders': reminders,
             'tab': tab,
             'search': search,
-            'total_products': Product.objects.count(),
-            'active_products': Product.objects.filter(is_active=True).count(),
+            'total_reminders': IrrigationReminder.objects.count(),
+            'active_reminders': IrrigationReminder.objects.filter(status='active').count(),
         }
     else:  # vendors
         vendors = Vendor.objects.all()
@@ -1085,31 +1094,9 @@ def marketplace_management(request):
 @login_required
 @user_passes_test(is_admin_user)
 def soil_tests_management(request):
-    """Soil health tests management"""
-    
-    search = request.GET.get('search', '')
-    
-    soil_tests = SoilTest.objects.select_related('user').all()
-    
-    if search:
-        soil_tests = soil_tests.filter(
-            Q(user__username__icontains=search) |
-            Q(location__icontains=search)
-        )
-    
-    soil_tests = soil_tests.order_by('-test_date')
-    
-    paginator = Paginator(soil_tests, 20)
-    page_number = request.GET.get('page')
-    soil_tests = paginator.get_page(page_number)
-    
-    context = {
-        'soil_tests': soil_tests,
-        'search': search,
-        'total_tests': SoilTest.objects.count(),
-    }
-    
-    return render(request, 'admin_panel/soil_tests_management.html', context)
+    """Soil health disabled"""
+    messages.info(request, 'Soil Health module is disabled.')
+    return redirect('admin_panel:admin_dashboard')
 
 @login_required
 @user_passes_test(is_admin_user)

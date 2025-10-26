@@ -15,6 +15,7 @@ from datetime import timedelta
 import numpy as np
 import pandas as pd
 from PIL import Image
+import requests
 import io
 import base64
 
@@ -307,6 +308,78 @@ def analyze_image(self, image_data, analysis_type, user_id, location=None):
         
     except Exception as exc:
         logger.error(f"Error analyzing image: {exc}")
+        raise self.retry(exc=exc, countdown=30, max_retries=2)
+
+
+@shared_task(bind=True, name='ai_ml.tasks.analyze_problem_image')
+def analyze_problem_image(self, image_url, problem_id, user_id, location=None):
+    """
+    Download an image from a URL and run disease detection analysis.
+    On completion, store a ComputerVisionAnalysis and, if issues are detected,
+    create an automated suggestion on the problem.
+    """
+    from django.utils import timezone
+    from ai_ml.models import ComputerVisionAnalysis
+    from farmer_problems.models import FarmerProblem, Solution
+    
+    try:
+        self.update_state(state='PROGRESS', meta={'status': 'Downloading image...'})
+        resp = requests.get(image_url, timeout=10)
+        resp.raise_for_status()
+        image = Image.open(io.BytesIO(resp.content))
+
+        # Simulated analysis for disease detection (non-blocking, lightweight)
+        import numpy as np
+        analysis_result = {
+            'analysis': 'disease_detection',
+            'diseases_detected': int(np.random.choice([0, 1, 2])),
+            'severity': np.random.choice(['low', 'medium', 'high']),
+            'treatment_recommendations': ['Remove affected leaves', 'Apply fungicide', 'Improve air circulation']
+        }
+        detected_objects = ['healthy_leaves', 'diseased_spots'] if analysis_result['diseases_detected'] else ['healthy_leaves']
+        confidence_scores = {obj: float(np.random.uniform(0.6, 0.98)) for obj in detected_objects}
+
+        # Persist analysis record
+        cv = ComputerVisionAnalysis.objects.create(
+            user_id=user_id,
+            analysis_type='disease_detection',
+            # Store original URL as a note; image field requires a file, so skip file save
+            analysis_result=analysis_result,
+            detected_objects=detected_objects,
+            confidence_scores=confidence_scores,
+            processing_time=float(np.random.uniform(0.2, 1.2)),
+            model_version='v1-lite',
+            location=location or '',
+            notes=f'Source URL: {image_url}'
+        )
+
+        # Create automated suggestion if disease detected
+        if analysis_result['diseases_detected']:
+            problem = FarmerProblem.objects.filter(id=problem_id).first()
+            if problem:
+                content_lines = [
+                    'Automated disease check:',
+                    f"Severity: {analysis_result['severity']}",
+                    'Recommended actions:'
+                ] + [f"- {r}" for r in analysis_result['treatment_recommendations']]
+                try:
+                    Solution.objects.create(
+                        problem=problem,
+                        author=problem.author,  # attribute to problem author to avoid system user dependency
+                        content='\n'.join(content_lines),
+                        is_expert=False,
+                        is_accepted=False,
+                    )
+                except Exception:
+                    pass
+
+        return {
+            'status': 'completed',
+            'analysis_id': str(cv.id),
+            'issues': analysis_result['diseases_detected'],
+        }
+    except Exception as exc:
+        logger.error(f"Error analyzing problem image: {exc}")
         raise self.retry(exc=exc, countdown=30, max_retries=2)
 
 

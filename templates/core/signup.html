@@ -8,27 +8,34 @@
 <style>
     .signup-container {
         min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem 0;
+        background: radial-gradient(1200px 600px at 10% 10%, rgba(40, 167, 69, .15), transparent),
+                    radial-gradient(1000px 500px at 90% 20%, rgba(32, 201, 151, .15), transparent),
+                    linear-gradient(135deg, #eef2ff 0%, #f8f9ff 100%);
+        padding: 3rem 0;
     }
     .signup-card {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        background: rgba(255,255,255,0.85);
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.45);
+        box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.06);
+        backdrop-filter: saturate(150%) blur(8px);
         overflow: hidden;
+        transition: transform .2s ease, box-shadow .2s ease;
     }
+    .signup-card:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(16,24,40,0.12); }
     .signup-header {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
-        padding: 2rem;
+        padding: 2.25rem 2rem;
         text-align: center;
     }
-    .signup-body {
-        padding: 2rem;
-    }
+    .signup-body { padding: 2rem; }
     .form-group {
         margin-bottom: 1.5rem;
     }
+    .form-label { font-weight: 600; color: #2a2f45; }
+    .form-control { border-radius: 10px; border-color: #e5e7eb; padding: .75rem .9rem; }
+    .form-control:focus { border-color: #20c997; box-shadow: 0 0 0 .2rem rgba(32,201,151,.15); }
     .btn-signup {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         border: none;
@@ -42,72 +49,24 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
     }
-    .login-link {
-        text-align: center;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #eee;
-    }
-    .features-list {
-        background: #f8f9fa;
-        padding: 2rem;
-        border-radius: 10px;
-        margin-top: 2rem;
-    }
-    .feature-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    .feature-icon {
-        width: 40px;
-        height: 40px;
-        background: #28a745;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        margin-right: 1rem;
-        flex-shrink: 0;
-    }
-</style>
-{% endblock %}
-
+    .password-toggle {
+        position: absolute;
+        right: 10px; top: 38px;
+        border: 0; background: transparent; color: #6b7280;
 {% block content %}
-<div class="signup-container">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="signup-card">
-                    <div class="signup-header">
-                        <h1 class="mb-3">
-                            <i class="fas fa-seedling me-3"></i>
-                            Join Farmazee
-                        </h1>
-                        <p class="mb-0">Start your smart farming journey today</p>
-                    </div>
-                    
-                    <div class="signup-body">
-                        <form method="post" novalidate>
-                            {% csrf_token %}
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                            <i class="fas fa-user me-2"></i>First Name
-                                        </label>
-                                        {{ form.first_name|as_crispy_field }}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                            <i class="fas fa-user me-2"></i>Last Name
-                                        </label>
-                                        {{ form.last_name|as_crispy_field }}
-                                    </div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+          <h4 class="mb-0">Create your account</h4>
+        </div>
+        <div class="card-body p-4">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
                                 </div>
                             </div>
                             
@@ -157,12 +116,14 @@
                                     Create Account
                                 </button>
                             </div>
+                            
+                            
                         </form>
                         
                         <div class="login-link">
                             <p class="mb-0">
                                 Already have an account? 
-                                <a href="{% url 'account_login' %}" class="text-decoration-none fw-bold">
+                                <a href="{% url 'core:login' %}" class="text-decoration-none fw-bold">
                                     <i class="fas fa-sign-in-alt me-1"></i>Sign In
                                 </a>
                             </p>
@@ -221,54 +182,93 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Form validation enhancement
-    const form = document.querySelector('form');
-    const submitBtn = document.querySelector('.btn-signup');
-    
-    form.addEventListener('submit', function(e) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+  const form = document.querySelector('form');
+  if (form) {
+    form.setAttribute('onsubmit', 'return validateForm(this);');
+  }
+
+  // Optional: password strength hooks (only if helper functions exist)
+  const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+  if (
+    password1 &&
+    typeof window.checkPasswordStrength === 'function' &&
+    typeof window.updatePasswordStrengthIndicator === 'function'
+  ) {
+    password1.addEventListener('input', function() {
+      const strength = window.checkPasswordStrength(this.value);
+      window.updatePasswordStrengthIndicator(strength);
     });
-    
-    // Password strength indicator
-    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
-    if (password1) {
-        password1.addEventListener('input', function() {
-            const strength = checkPasswordStrength(this.value);
-            updatePasswordStrengthIndicator(strength);
-        });
-    }
+  }
 });
 
-function checkPasswordStrength(password) {
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-    return score;
-}
-
-function updatePasswordStrengthIndicator(strength) {
-    const strengthBar = document.querySelector('.password-strength');
-    if (strengthBar) {
-        const colors = ['#dc3545', '#ffc107', '#17a2b8', '#28a745', '#28a745'];
-        const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-        strengthBar.style.width = (strength * 20) + '%';
-        strengthBar.style.backgroundColor = colors[strength - 1];
-        strengthBar.setAttribute('aria-label', labels[strength - 1]);
-    }
+function validateForm(form) {
+  console.log('%c FORM VALIDATION STARTED', 'background: #4CAF50; color: white; padding: 5px; border-radius: 5px;');
+  
+  // Get form fields
+  const firstName = form.querySelector('#{{ form.first_name.id_for_label }}').value.trim();
+  const lastName = form.querySelector('#{{ form.last_name.id_for_label }}').value.trim();
+  const email = form.querySelector('#{{ form.email.id_for_label }}').value.trim();
+  const username = form.querySelector('#{{ form.username.id_for_label }}').value.trim();
+  const password1 = form.querySelector('#{{ form.password1.id_for_label }}').value;
+  const password2 = form.querySelector('#{{ form.password2.id_for_label }}').value;
+  
+  console.log('Form field values:');
+  console.log('- First Name:', firstName);
+  console.log('- Last Name:', lastName);
+  console.log('- Email:', email);
+  console.log('- Username:', username);
+  console.log('- Password1:', password1 ? '********' : 'empty');
+  console.log('- Password2:', password2 ? '********' : 'empty');
+  
+  // Basic validation
+  if (!firstName || !lastName || !email || !username || !password1 || !password2) {
+    console.error('VALIDATION FAILED: Missing required fields');
+    alert('Please fill in all required fields');
+    return false;
+  }
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    console.error('VALIDATION FAILED: Invalid email format');
+    alert('Please enter a valid email address');
+    return false;
+  }
+  
+  // Password match validation
+  if (password1 !== password2) {
+    console.error('VALIDATION FAILED: Passwords do not match');
+    alert('Passwords do not match');
+    return false;
+  }
+  
+  // Password strength validation
+  if (password1.length < 8) {
+    console.error('VALIDATION FAILED: Password too short');
+    alert('Password must be at least 8 characters long');
+    return false;
+  }
+  
+  // Log CSRF token presence
+  const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]');
+  console.log('CSRF Token present:', csrfToken ? 'Yes' : 'No');
+  if (csrfToken) {
+    console.log('CSRF Token value:', csrfToken.value.substring(0, 5) + '...');
+  }
+  
+  // If all validations pass
+  console.log('%c VALIDATION PASSED - SUBMITTING FORM', 'background: #2196F3; color: white; padding: 5px; border-radius: 5px;');
+  const submitBtn = document.querySelector('.btn-signup');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+  
+  // Log form submission
+  console.log('Form action:', form.action);
+  console.log('Form method:', form.method);
+  
+  return true;
 }
 </script>
 {% endblock %}

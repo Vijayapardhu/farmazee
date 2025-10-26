@@ -24,11 +24,9 @@ try:
 except ImportError:
     GovernmentScheme = None
 
-try:
-    from soil_health.models import SoilTest, SoilHealthRecord
-except ImportError:
-    SoilTest = None
-    SoilHealthRecord = None
+# Soil health removed
+SoilTest = None
+SoilHealthRecord = None
 
 try:
     from weather.models import WeatherData

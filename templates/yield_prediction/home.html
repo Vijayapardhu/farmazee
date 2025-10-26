@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Yield Prediction (Simple Calculator){% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h2 class="mb-4">Yield Prediction (Simple Calculator)</h2>
+
+    <form method="post" class="row g-3 mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="calc_form" value="1">
+      <div class="col-md-6">
+        <label class="form-label">Crop name</label>
+        <input type="text" name="crop_name" class="form-control" placeholder="e.g., Maize" value="{{ crop_name }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Area (acres)</label>
+        <input type="number" name="area_acres" class="form-control" step="0.01" min="0" value="{{ area_acres|default:0 }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Soil fertility rating</label>
+        <input type="number" name="fertility_factor" class="form-control" step="0.1" min="0" value="{{ fertility_factor|default:1 }}" required>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-success"><i class="fas fa-calculator me-2"></i>Calculate</button>
+      </div>
+    </form>
+
+    {% if result %}
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Result for {{ result.crop_name|default:'-' }}</h5>
+        <ul class="mb-2">
+          <li><strong>Area:</strong> {{ result.area_acres }} acres</li>
+          <li><strong>Fertility factor:</strong> {{ result.fertility_factor }}</li>
+          <li><strong>Raw yield:</strong> {{ result.raw_yield }}</li>
+          <li><strong>Rounded yield (floor):</strong> {{ result.rounded_yield }}</li>
+        </ul>
+        <p class="text-muted mb-0 small">Formula: yield = area × fertility_factor, rounded using math.floor.</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <hr class="my-5">
+    <h3 class="mb-3">Season Predictor</h3>
+    <form method="post" class="row g-3 mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="season_form" value="1">
+      <div class="col-md-3">
+        <label class="form-label">Month number (1–12)</label>
+        <input type="number" name="month" class="form-control" min="1" max="12" value="{{ month_input }}" required>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-outline-success"><i class="fas fa-calendar-alt me-2"></i>Predict Season</button>
+      </div>
+    </form>
+
+    {% if season_result %}
+    <div class="alert alert-info">
+      <strong>Month:</strong> {{ season_result.month }}
+      <br>
+      <strong>Season:</strong> {{ season_result.season }}
+    </div>
+    {% endif %}
+
+    <hr class="my-5">
+    <h3 class="mb-3">Water Requirement Calculator</h3>
+    <form method="post" class="row g-3 mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="water_form" value="1">
+      <div class="col-md-6">
+        <label class="form-label">Crop type</label>
+        <input type="text" name="water_crop" class="form-control" placeholder="e.g., Rice, Wheat, Maize" value="{{ water_crop|default:'' }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Land area (acres)</label>
+        <input type="number" name="water_area" class="form-control" step="0.01" min="0" value="{{ water_area|default:0 }}" required>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-outline-primary"><i class="fas fa-tint me-2"></i>Calculate Water</button>
+      </div>
+    </form>
+
+    {% if water_result %}
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Water Requirement</h5>
+        <ul class="mb-2">
+          <li><strong>Crop:</strong> {{ water_result.crop_display }}</li>
+          <li><strong>Area:</strong> {{ water_result.area_acres }} acres</li>
+          <li><strong>Rate per acre:</strong> {{ water_result.rate_liters_per_acre }} L/day</li>
+          <li><strong>Total water needed per day:</strong> {{ water_result.total_liters_per_day }} L/day</li>
+        </ul>
+        <p class="text-muted mb-0 small">Calculated as land_area × rate_per_acre for the selected crop.</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

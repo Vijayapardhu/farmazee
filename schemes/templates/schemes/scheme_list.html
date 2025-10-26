@@ -303,8 +303,11 @@
                         <small class="text-muted">
                             <i class="fas fa-map-marker-alt"></i> {{ scheme.get_state_display }}
                         </small>
-                        <a href="{% url 'schemes:scheme_detail' scheme.id %}" class="btn btn-outline-primary btn-sm">
+                        <a href="{% url 'schemes:detail' scheme.id %}" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-info-circle"></i> Details
+                        </a>
+                        <a href="{% url 'schemes:apply' scheme.id %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> Apply
                         </a>
                     </div>
                 </div>

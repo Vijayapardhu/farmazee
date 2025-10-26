@@ -123,10 +123,9 @@ def problem_create(request):
             location = request.POST.get('location', '')
             crop_type = request.POST.get('crop_type', '')
             
-            # Create problem
+            # Create problem (slug will be auto-generated in model save method)
             problem = FarmerProblem.objects.create(
                 title=title,
-                slug=slugify(title) + '-' + str(timezone.now().timestamp()).replace('.', ''),
                 description=description,
                 author=request.user,
                 category_id=category_id if category_id else None,

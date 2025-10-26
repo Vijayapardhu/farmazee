@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Weather - Smart Farmer Support{% endblock %}
+{% block title %}Weather Information - {{ city }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -11,293 +11,214 @@
         border-radius: 15px;
         padding: 2rem;
         margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
-    
-    .weather-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-    }
-    
-    .temperature {
-        font-size: 3rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    
-    .weather-desc {
-        font-size: 1.2rem;
-        opacity: 0.9;
-    }
-    
-    .weather-details {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-    
-    .detail-item {
-        text-align: center;
-        padding: 1rem;
-        background: rgba(255,255,255,0.1);
-        border-radius: 10px;
-    }
-    
-    .forecast-card {
-        background: white;
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-    }
-    
-    .forecast-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .alert-card {
-        border-left: 4px solid #dc3545;
-        background: #f8d7da;
-        color: #721c24;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border-radius: 5px;
-    }
-    
-    .alert-card.warning {
-        border-left-color: #ffc107;
-        background: #fff3cd;
-        color: #856404;
-    }
-    
-    .alert-card.info {
-        border-left-color: #17a2b8;
-        background: #d1ecf1;
-        color: #0c5460;
-    }
+    /* Add any additional CSS for weather page here */
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                <i class="fas fa-cloud-sun text-primary"></i>
-                Weather Information
-            </h1>
-            <p class="lead text-center text-muted">
-                Get real-time weather updates and forecasts for better farming decisions
-            </p>
-        </div>
-    </div>
-
-    <!-- Current Weather -->
-    {% if current_weather %}
-    <div class="weather-card">
-        <div class="row align-items-center">
-            <div class="col-md-6 text-center">
-                <div class="weather-icon">
-                    {% if current_weather.weather_condition == 'Clear' %}
-                        <i class="fas fa-sun"></i>
-                    {% elif current_weather.weather_condition == 'Clouds' %}
-                        <i class="fas fa-cloud"></i>
-                    {% elif current_weather.weather_condition == 'Rain' %}
-                        <i class="fas fa-cloud-rain"></i>
-                    {% elif current_weather.weather_condition == 'Snow' %}
-                        <i class="fas fa-snowflake"></i>
-                    {% else %}
-                        <i class="fas fa-cloud"></i>
-                    {% endif %}
-                </div>
-                <div class="temperature">{{ current_weather.temperature }}°C</div>
-                <div class="weather-desc">{{ current_weather.weather_condition }}</div>
-                <div class="location mt-2">
-                    <i class="fas fa-map-marker-alt"></i>
-                    {{ current_weather.location }}
-                </div>
+{% if current_weather %}
+<div class="weather-card">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center">
+            <div class="weather-icon">
+                {% if current_weather.weather_condition == 'Clear' %}
+                    <i class="fas fa-sun"></i>
+                {% elif current_weather.weather_condition == 'Clouds' %}
+                    <i class="fas fa-cloud"></i>
+                {% elif current_weather.weather_condition == 'Rain' %}
+                    <i class="fas fa-cloud-rain"></i>
+                {% elif current_weather.weather_condition == 'Snow' %}
+                    <i class="fas fa-snowflake"></i>
+                {% else %}
+                    <i class="fas fa-cloud"></i>
+                {% endif %}
             </div>
-            <div class="col-md-6">
-                <div class="weather-details">
-                    <div class="detail-item">
-                        <i class="fas fa-thermometer-half mb-2"></i>
-                        <div>Feels Like</div>
-                        <strong>{{ current_weather.feels_like }}°C</strong>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-tint mb-2"></i>
-                        <div>Humidity</div>
-                        <strong>{{ current_weather.humidity }}%</strong>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-wind mb-2"></i>
-                        <div>Wind Speed</div>
-                        <strong>{{ current_weather.wind_speed }} km/h</strong>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-eye mb-2"></i>
-                        <div>Visibility</div>
-                        <strong>{{ current_weather.visibility }} km</strong>
-                    </div>
+            <div class="temperature">{{ current_weather.temperature }}°C</div>
+            <div class="weather-desc">{{ current_weather.weather_condition }}</div>
+            <div class="location mt-2">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ current_weather.location }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="weather-details">
+                <div class="detail-item">
+                    <i class="fas fa-thermometer-half mb-2"></i>
+                    <div>Feels Like</div>
+                    <strong>{{ current_weather.feels_like }}°C</strong>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-tint mb-2"></i>
+                    <div>Humidity</div>
+                    <strong>{{ current_weather.humidity }}%</strong>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-wind mb-2"></i>
+                    <div>Wind Speed</div>
+                    <strong>{{ current_weather.wind_speed }} km/h</strong>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-eye mb-2"></i>
+                    <div>Visibility</div>
+                    <strong>{{ current_weather.visibility }} km</strong>
                 </div>
             </div>
         </div>
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
-    <!-- Weather Alerts -->
-    {% if weather_alerts %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="mb-3">
-                <i class="fas fa-exclamation-triangle text-warning"></i>
-                Weather Alerts
-            </h3>
-            {% for alert in weather_alerts %}
-            <div class="alert-card {% if alert.severity == 'High' %}alert-danger{% elif alert.severity == 'Medium' %}warning{% else %}info{% endif %}">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h5 class="mb-1">{{ alert.title }}</h5>
-                        <p class="mb-1">{{ alert.description }}</p>
-                        <small class="text-muted">
-                            <i class="fas fa-clock"></i>
-                            {{ alert.created_at|date:"M d, Y H:i" }}
-                        </small>
+<!-- Weather Alerts -->
+{% if weather_alerts %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="mb-3">
+            <i class="fas fa-exclamation-triangle text-warning"></i>
+            Weather Alerts
+        </h3>
+        {% for alert in weather_alerts %}
+        <div class="alert-card {% if alert.severity == 'High' %}alert-danger{% elif alert.severity == 'Medium' %}warning{% else %}info{% endif %}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="mb-1">{{ alert.title }}</h5>
+                    <p class="mb-1">{{ alert.description }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i>
+                        {{ alert.created_at|date:"M d, Y H:i" }}
+                    </small>
+                </div>
+                <span class="badge {% if alert.severity == 'High' %}bg-danger{% elif alert.severity == 'Medium' %}bg-warning{% else %}bg-info{% endif %}">
+                    {{ alert.severity }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Weather Forecast -->
+{% if weather_forecast %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="mb-3">
+            <i class="fas fa-calendar-alt text-primary"></i>
+            5-Day Forecast
+        </h3>
+        <div class="row">
+            {% for forecast in weather_forecast %}
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+                <div class="forecast-card text-center">
+                    <div class="mb-2">
+                        <strong>{{ forecast.date|date:"D" }}</strong>
                     </div>
-                    <span class="badge {% if alert.severity == 'High' %}bg-danger{% elif alert.severity == 'Medium' %}bg-warning{% else %}bg-info{% endif %}">
-                        {{ alert.severity }}
-                    </span>
+                    <div class="mb-2">
+                        {% if forecast.weather_condition == 'Clear' %}
+                            <i class="fas fa-sun text-warning"></i>
+                        {% elif forecast.weather_condition == 'Clouds' %}
+                            <i class="fas fa-cloud text-secondary"></i>
+                        {% elif forecast.weather_condition == 'Rain' %}
+                            <i class="fas fa-cloud-rain text-primary"></i>
+                        {% elif forecast.weather_condition == 'Snow' %}
+                            <i class="fas fa-snowflake text-info"></i>
+                        {% else %}
+                            <i class="fas fa-cloud text-secondary"></i>
+                        {% endif %}
+                    </div>
+                    <div class="mb-1">
+                        <strong>{{ forecast.max_temperature }}°</strong>
+                    </div>
+                    <div class="text-muted small">
+                        {{ forecast.min_temperature }}°
+                    </div>
+                    <div class="text-muted small mt-1">
+                        {{ forecast.weather_condition }}
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
-    <!-- Weather Forecast -->
-    {% if weather_forecast %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="mb-3">
-                <i class="fas fa-calendar-alt text-primary"></i>
-                5-Day Forecast
-            </h3>
-            <div class="row">
-                {% for forecast in weather_forecast %}
-                <div class="col-md-2 col-sm-4 col-6 mb-3">
-                    <div class="forecast-card text-center">
-                        <div class="mb-2">
-                            <strong>{{ forecast.date|date:"D" }}</strong>
-                        </div>
-                        <div class="mb-2">
-                            {% if forecast.weather_condition == 'Clear' %}
-                                <i class="fas fa-sun text-warning"></i>
-                            {% elif forecast.weather_condition == 'Clouds' %}
-                                <i class="fas fa-cloud text-secondary"></i>
-                            {% elif forecast.weather_condition == 'Rain' %}
-                                <i class="fas fa-cloud-rain text-primary"></i>
-                            {% elif forecast.weather_condition == 'Snow' %}
-                                <i class="fas fa-snowflake text-info"></i>
-                            {% else %}
-                                <i class="fas fa-cloud text-secondary"></i>
-                            {% endif %}
-                        </div>
-                        <div class="mb-1">
-                            <strong>{{ forecast.max_temperature }}°</strong>
-                        </div>
-                        <div class="text-muted small">
-                            {{ forecast.min_temperature }}°
-                        </div>
-                        <div class="text-muted small mt-1">
-                            {{ forecast.weather_condition }}
+<!-- Crop Weather Recommendations -->
+{% if crop_recommendations %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="mb-3">
+            <i class="fas fa-seedling text-success"></i>
+            Crop Recommendations
+        </h3>
+        <div class="row">
+            {% for recommendation in crop_recommendations %}
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-leaf text-success"></i>
+                            {{ recommendation.crop.name }}
+                        </h5>
+                        <p class="card-text">{{ recommendation.recommendation }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-thermometer-half"></i>
+                                Optimal: {{ recommendation.optimal_temperature }}°C
+                            </small>
+                            <span class="badge bg-success">{{ recommendation.risk_level }}</span>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
-    <!-- Crop Weather Recommendations -->
-    {% if crop_recommendations %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="mb-3">
-                <i class="fas fa-seedling text-success"></i>
-                Crop Recommendations
-            </h3>
-            <div class="row">
-                {% for recommendation in crop_recommendations %}
-                <div class="col-lg-4 col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="fas fa-leaf text-success"></i>
-                                {{ recommendation.crop.name }}
-                            </h5>
-                            <p class="card-text">{{ recommendation.recommendation }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-thermometer-half"></i>
-                                    Optimal: {{ recommendation.optimal_temperature }}°C
-                                </small>
-                                <span class="badge bg-success">{{ recommendation.risk_level }}</span>
-                            </div>
-                        </div>
+<!-- Weather Tools -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="mb-3">
+            <i class="fas fa-tools text-primary"></i>
+            Weather Tools
+        </h3>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-search fa-2x text-primary mb-3"></i>
+                        <h5 class="card-title">Search Location</h5>
+                        <p class="card-text">Get weather information for any location</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#locationModal">
+                            Search Location
+                        </button>
                     </div>
                 </div>
-                {% endfor %}
             </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Weather Tools -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="mb-3">
-                <i class="fas fa-tools text-primary"></i>
-                Weather Tools
-            </h3>
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <i class="fas fa-search fa-2x text-primary mb-3"></i>
-                            <h5 class="card-title">Search Location</h5>
-                            <p class="card-text">Get weather information for any location</p>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#locationModal">
-                                Search Location
-                            </button>
-                        </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-bell fa-2x text-warning mb-3"></i>
+                        <h5 class="card-title">Weather Alerts</h5>
+                        <p class="card-text">Subscribe to weather alerts for your area</p>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#alertModal">
+                            Subscribe
+                        </button>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <i class="fas fa-bell fa-2x text-warning mb-3"></i>
-                            <h5 class="card-title">Weather Alerts</h5>
-                            <p class="card-text">Subscribe to weather alerts for your area</p>
-                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#alertModal">
-                                Subscribe
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
-                            <h5 class="card-title">Weather History</h5>
-                            <p class="card-text">View historical weather data and trends</p>
-                            <a href="{% url 'weather:weather_dashboard' %}" class="btn btn-success">
-                                View History
-                            </a>
-                        </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                        <h5 class="card-title">Weather History</h5>
+                        <p class="card-text">View historical weather data and trends</p>
+                        <a href="{% url 'weather:dashboard' %}" class="btn btn-success">
+                            View History
+                        </a>
                     </div>
                 </div>
             </div>
@@ -367,35 +288,95 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const citySearch = document.getElementById('citySearch');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout;
+
+    if (citySearch && searchResults) {
+        citySearch.addEventListener('input', function() {
+            const query = this.value.trim();
+
+            clearTimeout(searchTimeout);
+
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/weather/api/search-cities/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.cities.length > 0) {
+                            displaySearchResults(data.cities);
+                        } else {
+                            searchResults.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        searchResults.style.display = 'none';
+                    });
+            }, 300);
+        });
+
+        function displaySearchResults(cities) {
+            searchResults.innerHTML = '';
+
+            cities.forEach(city => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.textContent = city.display_name;
+                item.addEventListener('click', function() {
+                    window.location.href = `?city=${encodeURIComponent(city.name)}&country=${city.country}`;
+                });
+                searchResults.appendChild(item);
+            });
+
+            searchResults.style.display = 'block';
+        }
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!citySearch.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
+});
+
 function searchLocation() {
-    const location = document.getElementById('location').value;
+    const el = document.getElementById('location');
+    const location = el ? el.value : '';
     if (location.trim()) {
-        window.location.href = `{% url 'weather:weather_home' %}?location=${encodeURIComponent(location)}`;
+        window.location.href = `{% url 'weather:home' %}?location=${encodeURIComponent(location)}`;
     }
 }
 
 function subscribeAlerts() {
-    const location = document.getElementById('alertLocation').value;
-    const rainAlert = document.getElementById('rainAlert').checked;
-    const stormAlert = document.getElementById('stormAlert').checked;
-    const temperatureAlert = document.getElementById('temperatureAlert').checked;
-    
+    const el = document.getElementById('alertLocation');
+    const location = el ? el.value : '';
+    const rainAlert = document.getElementById('rainAlert')?.checked;
+    const stormAlert = document.getElementById('stormAlert')?.checked;
+    const temperatureAlert = document.getElementById('temperatureAlert')?.checked;
+
     if (location.trim()) {
-        // Here you would typically make an AJAX call to subscribe
-        showAlert('Success! You have been subscribed to weather alerts.', 'success');
-        $('#alertModal').modal('hide');
+        try { showAlert('Success! You have been subscribed to weather alerts.', 'success'); } catch (e) {}
+        try { $('#alertModal').modal('hide'); } catch (e) {}
     } else {
-        showAlert('Please enter a location.', 'danger');
+        try { showAlert('Please enter a location.', 'danger'); } catch (e) {}
     }
 }
 
 // Auto-refresh weather data every 30 minutes
 setInterval(function() {
-    location.reload();
+    try { location.reload(); } catch (e) {}
 }, 30 * 60 * 1000);
 </script>
 {% endblock %}

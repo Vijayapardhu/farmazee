@@ -6,64 +6,55 @@ from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.utils import timezone
 from .models import WeatherData, WeatherForecast, WeatherAlert
-from .advanced_weather_service import advanced_weather_service
+from .real_weather_service import real_weather_service
 
 
 def weather_home(request):
-    """Weather home page with advanced Open-Meteo data"""
-    # Default city
-    city = "hyderabad"
+    """Weather home page with real-time data and city search"""
+    # Get city from request or use default
+    city = request.GET.get('city', 'Hyderabad')
+    country = request.GET.get('country', 'IN')
     
-    # Get current weather using advanced service
-    current_weather = advanced_weather_service.get_current_weather(city)
+    # Get current weather using real weather service
+    current_weather = real_weather_service.get_current_weather(city, country)
     
     # Get 5-day forecast
-    forecast = advanced_weather_service.get_5_day_forecast(city)
+    forecast = real_weather_service.get_5_day_forecast(city, country)
     
     # Get farming recommendations
-    recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
-    
-    # Get weather alerts
-    alerts = advanced_weather_service.get_weather_alerts(city)
+    recommendations = real_weather_service.get_farming_recommendations(current_weather)
     
     context = {
         'current_weather': current_weather,
         'forecast': forecast,
         'recommendations': recommendations,
-        'alerts': alerts,
-        'city': city.title(),
-        'coordinates': advanced_weather_service.city_coordinates.get(city.lower(), {'lat': 17.3850, 'lon': 78.4867})
+        'city': city,
+        'country': country,
+        'search_query': city
     }
-    return render(request, 'weather/advanced_home.html', context)
+    return render(request, 'weather/weather_home.html', context)
 
 
 def weather_detail(request, location):
-    """Weather detail for specific location using advanced service"""
-    # Convert location to lowercase for city lookup
-    city = location.lower()
-    
-    # Get current weather using advanced service
-    current_weather = advanced_weather_service.get_current_weather(city)
+    """Weather detail for specific location using real weather service"""
+    # Get current weather using real weather service
+    current_weather = real_weather_service.get_current_weather(location)
     
     # Get 5-day forecast
-    forecasts = advanced_weather_service.get_5_day_forecast(city)
-    
-    # Get weather alerts
-    alerts = advanced_weather_service.get_weather_alerts(city)
+    forecasts = real_weather_service.get_5_day_forecast(location)
     
     # Get farming recommendations
-    recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
+    recommendations = real_weather_service.get_farming_recommendations(current_weather)
     
     context = {
         'location': location,
-        'city': city,
+        'city': location,
         'current_weather': current_weather,
-        'forecasts': forecasts,
-        'alerts': alerts,
+        'forecast': forecasts,
         'recommendations': recommendations,
-        'coordinates': advanced_weather_service.city_coordinates.get(city, {'lat': 17.3850, 'lon': 78.4867})
+        'search_query': location
     }
-    return render(request, 'weather/advanced_home.html', context)
+    return render(request, 'weather/weather_home.html', context)
 
 
 @login_required
@@ -123,23 +114,24 @@ def weather_alerts(request):
 
 
 def weather_forecast(request):
-    """Weather forecast page using advanced service"""
-    city = request.GET.get('location', 'hyderabad').lower()
+    """Weather forecast page using real weather service"""
+    city = request.GET.get('location', 'Hyderabad')
+    country = request.GET.get('country', 'IN')
     
     # Get forecast data
-    forecasts = advanced_weather_service.get_5_day_forecast(city)
+    forecasts = real_weather_service.get_5_day_forecast(city, country)
     
     # Get current weather for comparison
-    current_weather = advanced_weather_service.get_current_weather(city)
+    current_weather = real_weather_service.get_current_weather(city, country)
     
     context = {
-        'location': city.title(),
+        'location': city,
         'city': city,
-        'forecasts': forecasts,
+        'forecast': forecasts,
         'current_weather': current_weather,
-        'coordinates': advanced_weather_service.city_coordinates.get(city, {'lat': 17.3850, 'lon': 78.4867})
+        'search_query': city
     }
-    return render(request, 'weather/advanced_home.html', context)
+    return render(request, 'weather/weather_home.html', context)
 
 
 def weather_api(request, location):
@@ -239,20 +231,21 @@ def update_weather_data(request):
 def get_live_weather_api(request):
     """API endpoint to get live weather data without caching"""
     try:
-        city = request.GET.get('city', 'hyderabad').lower()
+        city = request.GET.get('city', 'Hyderabad')
+        country = request.GET.get('country', 'IN')
         
-        # Get live weather data directly from API (bypass cache)
-        current_weather = advanced_weather_service.get_current_weather(city, use_cache=False)
+        # Get live weather data directly from API
+        current_weather = real_weather_service.get_current_weather(city, country)
         
         if not current_weather:
             return JsonResponse({'error': 'Failed to fetch live weather data'}, status=500)
         
         # Get farming recommendations
-        recommendations = advanced_weather_service.get_farming_recommendations(current_weather)
+        recommendations = real_weather_service.get_farming_recommendations(current_weather)
         
         return JsonResponse({
             'success': True,
-            'city': city.title(),
+            'city': city,
             'weather': current_weather,
             'recommendations': recommendations,
             'timestamp': timezone.now().isoformat(),
@@ -261,4 +254,24 @@ def get_live_weather_api(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def search_cities_api(request):
+    """API endpoint to search for cities"""
+    try:
+        query = request.GET.get('q', '').strip()
+        
+        if len(query) < 2:
+            return JsonResponse({'cities': []})
+        
+        cities = real_weather_service.search_cities(query)
+        
+        return JsonResponse({
+            'success': True,
+            'cities': cities,
+            'query': query
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 

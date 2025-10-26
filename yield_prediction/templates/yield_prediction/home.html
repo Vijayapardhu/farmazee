@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yield Prediction - Farmazee{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feature-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .prediction-card {
+        border-left: 4px solid;
+        transition: all 0.2s ease;
+    }
+    .prediction-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .prediction-card.high-yield { border-left-color: #28a745; }
+    .prediction-card.medium-yield { border-left-color: #ffc107; }
+    .prediction-card.low-yield { border-left-color: #dc3545; }
+    
+    .quick-predict-form {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+    }
+    
+    .crop-card {
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+    }
+    .crop-card:hover {
+        border-color: #007bff;
+        transform: translateY(-2px);
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="mb-3">
+                <i class="fas fa-chart-line text-primary me-2"></i>
+                Yield Prediction
+            </h1>
+            <p class="lead text-muted">Predict your crop yields and optimize your farming decisions with AI-powered insights.</p>
+        </div>
+    </div>
+
+    <!-- Quick Prediction Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="quick-predict-form">
+                <h3 class="mb-4">
+                    <i class="fas fa-bolt me-2"></i>
+                    Quick Yield Prediction
+                </h3>
+                <form id="quickPredictForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Crop Type</label>
+                                <select class="form-select" id="quickCrop" name="crop_id">
+                                    <option value="">Select Crop</option>
+                                    {% for crop in crop_types %}
+                                    <option value="{{ crop.id }}">{{ crop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Soil Type</label>
+                                <select class="form-select" id="quickSoil" name="soil_id">
+                                    <option value="">Select Soil</option>
+                                    {% for soil in soil_types %}
+                                    <option value="{{ soil.id }}">{{ soil.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Area (Hectares)</label>
+                                <input type="number" class="form-control" id="quickArea" name="area" value="1" step="0.1" min="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-light btn-lg">
+                            <i class="fas fa-calculator me-2"></i>Predict Yield
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Quick Results -->
+                <div id="quickResults" class="mt-4" style="display: none;">
+                    <div class="alert alert-light">
+                        <h5><i class="fas fa-seedling me-2"></i>Quick Prediction Results</h5>
+                        <div id="quickResultsContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-tools me-2"></i>
+                Prediction Features
+            </h3>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="feature-card card h-100" onclick="window.location.href='{% url 'yield_prediction:predict_yield' %}'">
+                <div class="card-body text-center">
+                    <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Detailed Prediction</h5>
+                    <p class="card-text">Get comprehensive yield predictions with detailed analysis and recommendations.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="feature-card card h-100" onclick="window.location.href='{% url 'yield_prediction:crop_recommendations' %}'">
+                <div class="card-body text-center">
+                    <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Crop Recommendations</h5>
+                    <p class="card-text">Get personalized crop recommendations based on your soil and season.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="feature-card card h-100" onclick="window.location.href='{% url 'yield_prediction:prediction_list' %}'">
+                <div class="card-body text-center">
+                    <i class="fas fa-history fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Prediction History</h5>
+                    <p class="card-text">Track your predictions and compare with actual yields.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Predictions -->
+    {% if recent_predictions %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-clock me-2"></i>
+                Recent Predictions
+            </h3>
+            <div class="row">
+                {% for prediction in recent_predictions %}
+                <div class="col-lg-6 mb-3">
+                    <div class="prediction-card card {% if prediction.predicted_yield_avg > 50 %}high-yield{% elif prediction.predicted_yield_avg > 25 %}medium-yield{% else %}low-yield{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title">{{ prediction.crop_type.name }}</h6>
+                                    <p class="card-text text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ prediction.soil_type.name }} • 
+                                        <i class="fas fa-expand-arrows-alt me-1"></i>{{ prediction.area_hectares }} hectares
+                                    </p>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-{% if prediction.confidence_level == 'very_high' %}success{% elif prediction.confidence_level == 'high' %}primary{% elif prediction.confidence_level == 'medium' %}warning{% else %}secondary{% endif %} me-2">
+                                            {{ prediction.get_confidence_level_display }}
+                                        </span>
+                                        <strong class="text-success">{{ prediction.predicted_yield_avg|floatformat:1 }} quintals</strong>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="{% url 'yield_prediction:prediction_detail' prediction.id %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Crop Recommendations -->
+    {% if recommendations %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-star me-2"></i>
+                Recommended Crops
+            </h3>
+            <div class="row">
+                {% for recommendation in recommendations %}
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="crop-card card">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ recommendation.soil_type.name }}</h6>
+                            <p class="card-text text-muted">{{ recommendation.get_season_display }}</p>
+                            <div class="d-flex flex-wrap">
+                                {% for crop in recommendation.recommended_crops.all|slice:":3" %}
+                                <span class="badge bg-primary me-1 mb-1">{{ crop.name }}</span>
+                                {% endfor %}
+                                {% if recommendation.recommended_crops.count > 3 %}
+                                <span class="badge bg-secondary me-1 mb-1">+{{ recommendation.recommended_crops.count|add:"-3" }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Statistics Section -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card">
+                <div class="card-body text-center">
+                    <i class="fas fa-seedling fa-2x mb-2"></i>
+                    <h4>{{ crop_types.count }}</h4>
+                    <p class="mb-0">Crop Types</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card">
+                <div class="card-body text-center">
+                    <i class="fas fa-mountain fa-2x mb-2"></i>
+                    <h4>{{ soil_types.count }}</h4>
+                    <p class="mb-0">Soil Types</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                    <h4>{% if recent_predictions %}{{ recent_predictions.count }}{% else %}0{% endif %}</h4>
+                    <p class="mb-0">Your Predictions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card">
+                <div class="card-body text-center">
+                    <i class="fas fa-percentage fa-2x mb-2"></i>
+                    <h4>85%</h4>
+                    <p class="mb-0">Accuracy Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Quick prediction form
+document.getElementById('quickPredictForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const cropId = formData.get('crop_id');
+    const soilId = formData.get('soil_id');
+    const area = formData.get('area');
+    
+    if (!cropId || !soilId || !area) {
+        alert('Please fill in all fields for quick prediction.');
+        return;
+    }
+    
+    // Show loading
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Calculating...';
+    submitBtn.disabled = true;
+    
+    // Make API call
+    fetch('/yield_prediction/api/quick-predict/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('quickResultsContent').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Predicted Yield:</strong> ${data.predicted_yield} quintals
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Yield per Hectare:</strong> ${data.yield_per_hectare} quintals/ha
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Crop:</strong> ${data.crop_name}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Soil:</strong> ${data.soil_name}
+                    </div>
+                </div>
+            `;
+            document.getElementById('quickResults').style.display = 'block';
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while calculating prediction.');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Auto-fill area based on crop selection
+document.getElementById('quickCrop').addEventListener('change', function() {
+    if (this.value) {
+        // You can add logic here to suggest optimal area based on crop type
+        console.log('Crop selected:', this.value);
+    }
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

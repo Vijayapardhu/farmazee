@@ -95,8 +95,8 @@
                         <h2 class="display-2" id="bestPrice">Loading...</h2>
                         <p class="lead" id="priceCrop">Loading market data...</p>
                         <p class="text-success fw-bold" id="priceChange">Check all prices below</p>
-                        <a href="{% url 'marketplace:home' %}" class="btn btn-warning btn-lg mt-3">
-                            <i class="fas fa-chart-line me-2"></i>All Prices
+                        <a href="{% url 'core:home' %}" class="btn btn-warning btn-lg mt-3">
+                            <i class="fas fa-tint me-2"></i>Irrigation Reminders
                         </a>
                     </div>
                 </div>
@@ -153,16 +153,16 @@
 
             <!-- Market Prices -->
             <div class="col-lg-4 col-md-6">
-                <a href="{% url 'marketplace:home' %}" class="big-tool-card price-card">
+                <a href="{% url 'core:home' %}" class="big-tool-card price-card">
                     <div class="icon-container">
-                        <i class="fas fa-rupee-sign"></i>
+                        <i class="fas fa-tint"></i>
                     </div>
-                    <h3>Market Prices</h3>
-                    <p class="lead">Today's Rates<br>All Crops</p>
+                    <h3>Irrigation Reminders</h3>
+                    <p class="lead">Smart Scheduling<br>Never Miss Watering</p>
                     <div class="example">
-                        🌾 Rice: Live prices<br>
-                        🌱 Cotton: Market rates<br>
-                        🌶️ Chili: Daily updates
+                        💧 Set reminders<br>
+                        📅 Track schedules<br>
+                        🌱 Crop management
                     </div>
                     <div class="action-hint">
                         <i class="fas fa-hand-pointer"></i> CLICK HERE
@@ -172,7 +172,7 @@
 
             <!-- Ask Experts -->
             <div class="col-lg-4 col-md-6">
-                <a href="{% url 'farmer_problems:list' %}" class="big-tool-card expert-card">
+                <a href="{% url 'core:home' %}" class="big-tool-card expert-card">
                     <div class="icon-container">
                         <i class="fas fa-users"></i>
                     </div>
@@ -189,8 +189,10 @@
             </div>
 
             <!-- Crop Calendar -->
+            {% url 'crops:list' as crops_url %}
+            {% if crops_url %}
             <div class="col-lg-4 col-md-6">
-                <a href="{% url 'crops:list' %}" class="big-tool-card crop-card">
+                <a href="{{ crops_url }}" class="big-tool-card crop-card">
                     <div class="icon-container">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
@@ -205,6 +207,7 @@
                     </div>
                 </a>
             </div>
+            {% endif %}
 
             <!-- Government Money -->
             <div class="col-lg-4 col-md-6">

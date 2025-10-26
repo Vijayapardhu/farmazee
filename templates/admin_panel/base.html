@@ -202,13 +202,7 @@
                             Knowledge Base
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'farmer_problems' or request.resolver_match.url_name == 'problem_detail' %}active{% endif %}" 
-                           href="{% url 'admin_panel:farmer_problems' %}">
-                            <i class="fas fa-question-circle"></i>
-                            Farmer Problems
-                        </a>
-                    </li>
+                    {# Farmer Problems removed from admin - link omitted #}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}" 
                            href="{% url 'admin_panel:analytics' %}">

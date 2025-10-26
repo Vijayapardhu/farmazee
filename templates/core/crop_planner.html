@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Smart Crop Planner{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h2 class="mb-4">Smart Crop Planner</h2>
+    <form method="post" class="row g-3 mb-4">
+      {% csrf_token %}
+      <div class="col-md-4">
+        <label class="form-label">Land size</label>
+        <div class="input-group">
+          <input type="number" step="0.01" min="0" name="land_size" class="form-control" value="{{ land_size|default:0 }}" required>
+          <span class="input-group-text">acres</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Soil type</label>
+        <select name="soil_type" class="form-select" required>
+          <option value="" {% if not soil_type %}selected{% endif %}>Select</option>
+          <option value="sandy" {% if soil_type == 'sandy' %}selected{% endif %}>Sandy</option>
+          <option value="sandy_loam" {% if soil_type == 'sandy_loam' %}selected{% endif %}>Sandy Loam</option>
+          <option value="loamy" {% if soil_type == 'loamy' %}selected{% endif %}>Loamy</option>
+          <option value="clay" {% if soil_type == 'clay' %}selected{% endif %}>Clay</option>
+          <option value="black" {% if soil_type == 'black' %}selected{% endif %}>Black</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Season</label>
+        <select name="season" class="form-select" required>
+          <option value="" {% if not season %}selected{% endif %}>Select</option>
+          <option value="summer" {% if season == 'summer' %}selected{% endif %}>Summer</option>
+          <option value="monsoon" {% if season == 'monsoon' %}selected{% endif %}>Monsoon</option>
+          <option value="winter" {% if season == 'winter' %}selected{% endif %}>Winter</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-success"><i class="fas fa-seedling me-2"></i>Suggest Crops</button>
+      </div>
+    </form>
+
+    {% if results %}
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Crop</th>
+            <th>Yield (qtl/acre)</th>
+            <th>Price (₹/qtl)</th>
+            <th>Total Yield (qtl)</th>
+            <th>Gross Revenue (₹)</th>
+            <th>Tips</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in results %}
+          <tr>
+            <td>{{ r.name }}</td>
+            <td>{{ r.expected_yield_quintal_per_acre }}</td>
+            <td>{{ r.expected_market_price_per_quintal }}</td>
+            <td>{{ r.total_expected_yield_quintal }}</td>
+            <td>{{ r.gross_revenue_inr }}</td>
+            <td>{{ r.tips }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% elif land_size %}
+      <div class="alert alert-warning">No matching crops found for your inputs. Try a different soil or season.</div>
+    {% endif %}
+
+    {% if selected_crop %}
+      {% for c in crops %}
+        {% if c.name == selected_crop %}
+        <div class="card mt-4 shadow-sm">
+          <div class="card-body">
+            <h5 class="mb-3">Instructions for {{ c.name }}</h5>
+            <p class="mb-2"><strong>When to sow:</strong> {{ c.sowing_window|default:'Based on local advisory' }}</p>
+            <p class="mb-2"><strong>How to care:</strong></p>
+            <ul class="mb-2">
+              {% for item in c.care %}
+              <li>{{ item }}</li>
+              {% empty %}
+              <li>Maintain recommended irrigation and pest management as per local advisory.</li>
+              {% endfor %}
+            </ul>
+            <p class="mb-0 text-muted"><strong>Optional - Expected yield:</strong> {{ c.expected_yield_quintal_per_acre }} qtl/acre</p>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+

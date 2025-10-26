@@ -137,25 +137,35 @@
                     </li>
                     {% endif %}
                     {% if enable_crop_planning %}
+                    {% url 'crops:list' as crops_url %}
+                    {% if crops_url %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'crops:list' %}">
+                        <a class="nav-link" href="{{ crops_url }}">
                             <i class="fas fa-leaf me-1"></i>Crops
                         </a>
                     </li>
                     {% endif %}
-                    {% if enable_marketplace %}
+                    {% endif %}
+                    {# Marketplace removed - link intentionally omitted #}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'marketplace:home' %}">
-                            <i class="fas fa-store me-1"></i>Marketplace
+                        <a class="nav-link" href="{% url 'yield_prediction:index' %}">
+                            <i class="fas fa-chart-line me-1"></i>Yield Prediction
                         </a>
                     </li>
-                    {% endif %}
-                    {% if enable_community %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'community:home' %}">
+                        <a class="nav-link" href="{% url 'core:crop_planner' %}">
+                            <i class="fas fa-seedling me-1"></i>Planner
+                        </a>
+                    </li>
+                    {% if enable_community %}
+                    {% url 'community:home' as community_url %}
+                    {% if community_url %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ community_url }}">
                             <i class="fas fa-users me-1"></i>Community
                         </a>
                     </li>
+                    {% endif %}
                     {% endif %}
                     {% if enable_schemes %}
                     <li class="nav-item">
@@ -164,16 +174,11 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if enable_soil_health %}
+                    {# Soil Health removed #}
+                    {# Ask Experts removed #}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'soil_health:home' %}">
-                            <i class="fas fa-mountain me-1"></i>Soil Health
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'farmer_problems:list' %}">
-                            <i class="fas fa-question-circle me-1"></i>Ask Experts
+                        <a class="nav-link" href="{% url 'core:contact' %}">
+                            <i class="fas fa-headset me-1"></i>Contact
                         </a>
                     </li>
                 </ul>
@@ -193,14 +198,14 @@
                                     <i class="fas fa-user me-2"></i>Profile
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'account_logout' %}">
+                                <li><a class="dropdown-item" href="{% url 'core:logout' %}">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_login' %}">
+                            <a class="nav-link" href="{% url 'core:login' %}">
                                 <i class="fas fa-sign-in-alt me-1"></i>Login
                             </a>
                         </li>
@@ -308,7 +313,7 @@
                     <h5 style="color: #ffffff !important; font-weight: 600; margin-bottom: 1rem;"><i class="fas fa-seedling me-2"></i>Farmazee</h5>
                     <p style="color: rgba(255, 255, 255, 0.7) !important;">Empowering farmers with digital solutions for better agriculture.</p>
                     <div class="social-links" style="margin-top: 1rem;">
-                        <a href="#" class="text-light me-3" style="
+                        <a href="https://facebook.com/FARMAZEE" class="text-light me-3" style="
                             display: inline-block;
                             width: 40px;
                             height: 40px;
@@ -321,7 +326,7 @@
                             color: #ffffff !important;
                             text-decoration: none;
                         "><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-light me-3" style="
+                        <a href="https://twitter.com/FARMAZEE" class="text-light me-3" style="
                             display: inline-block;
                             width: 40px;
                             height: 40px;
@@ -334,7 +339,7 @@
                             color: #ffffff !important;
                             text-decoration: none;
                         "><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-light me-3" style="
+                        <a href="https://instagram.com/FARMAZEE" class="text-light me-3" style="
                             display: inline-block;
                             width: 40px;
                             height: 40px;
@@ -347,7 +352,7 @@
                             color: #ffffff !important;
                             text-decoration: none;
                         "><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-light" style="
+                        <a href="https://youtube.com/@FARMAZEE" class="text-light" style="
                             display: inline-block;
                             width: 40px;
                             height: 40px;
@@ -374,10 +379,23 @@
                 <div class="col-md-3 mb-4">
                     <h6 style="color: #ffffff !important; font-weight: 600; margin-bottom: 1rem;">Services</h6>
                     <ul class="list-unstyled">
-                        <li style="margin-bottom: 0.5rem;"><a href="{% url 'weather:home' %}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Weather Forecast</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="{% url 'crops:list' %}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Crop Management</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="{% url 'marketplace:home' %}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">E-Marketplace</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="{% url 'schemes:list' %}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Government Schemes</a></li>
+                        {% url 'weather:home' as weather_url %}
+                        {% if weather_url %}
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ weather_url }}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Weather Forecast</a></li>
+                        {% endif %}
+                        {% url 'crops:list' as crops_url %}
+                        {% if crops_url %}
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ crops_url }}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Crop Management</a></li>
+                        {% endif %}
+                        {# Marketplace removed - irrigation reminders hidden #}
+                        {% url 'yield_prediction:index' as yield_url %}
+                        {% if yield_url %}
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ yield_url }}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Yield Prediction</a></li>
+                        {% endif %}
+                        {% url 'schemes:list' as schemes_url %}
+                        {% if schemes_url %}
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ schemes_url }}" style="color: rgba(255, 255, 255, 0.7) !important; text-decoration: none;">Government Schemes</a></li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="col-md-3 mb-4">

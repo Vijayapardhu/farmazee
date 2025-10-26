@@ -68,9 +68,13 @@
                         </div>
                         <div class="col-md-11">
                             <h5 class="card-title">
+                                {% if problem.slug %}
                                 <a href="{% url 'farmer_problems:detail' problem.slug %}" class="text-decoration-none">
                                     {{ problem.title }}
                                 </a>
+                                {% else %}
+                                <span class="text-muted">{{ problem.title }} (No link available)</span>
+                                {% endif %}
                                 {% if problem.status == 'solved' %}
                                 <span class="badge bg-success ms-2">
                                     <i class="fas fa-check"></i> Solved

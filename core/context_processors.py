@@ -1,11 +1,13 @@
 from .models import SystemSettings
+from django.utils import timezone
+from datetime import timedelta
 
 
 def system_settings(request):
     """Add system settings to template context"""
     try:
         settings = SystemSettings.get_settings()
-        return {
+        context = {
             'system_settings': settings,
             'site_name': settings.site_name,
             'site_description': settings.site_description,
@@ -38,9 +40,12 @@ def system_settings(request):
             'youtube_url': settings.youtube_url,
             'linkedin_url': settings.linkedin_url,
         }
+        # Disease indicator removed per request
+        context['disease_alert'] = False
+        return context
     except Exception:
         # Return default values if settings are not available
-        return {
+        context = {
             'system_settings': None,
             'site_name': 'Farmazee',
             'site_description': 'Smart Farming Solutions',
@@ -73,3 +78,5 @@ def system_settings(request):
             'youtube_url': '',
             'linkedin_url': '',
         }
+        context['disease_alert'] = False
+        return context

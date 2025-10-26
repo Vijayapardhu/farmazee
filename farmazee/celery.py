@@ -30,7 +30,6 @@ app.conf.update(
         'ai_ml.tasks.*': {'queue': 'ai_ml'},
         'weather.tasks.*': {'queue': 'weather'},
         'analytics.tasks.*': {'queue': 'analytics'},
-        'marketplace.tasks.*': {'queue': 'marketplace'},
         'notifications.tasks.*': {'queue': 'notifications'},
     },
     
@@ -72,12 +71,7 @@ app.conf.update(
             'options': {'queue': 'ai_ml'}
         },
         
-        # Market price updates every 2 hours
-        'update-market-prices': {
-            'task': 'marketplace.tasks.update_market_prices',
-            'schedule': crontab(minute=0, hour='*/2'),
-            'options': {'queue': 'marketplace'}
-        },
+        # (marketplace removed) market price updates removed
         
         # Analytics processing daily at 2 AM
         'process-analytics': {
@@ -164,6 +158,5 @@ def debug_task(self):
 from ai_ml import tasks as ai_ml_tasks
 from weather import tasks as weather_tasks
 from analytics import tasks as analytics_tasks
-from marketplace import tasks as marketplace_tasks
 from core import tasks as core_tasks
 

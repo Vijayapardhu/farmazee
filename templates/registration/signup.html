@@ -136,9 +136,9 @@
                         <!-- Terms and Conditions -->
                         <div class="mb-4">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <input class="form-check-input" type="checkbox" id="terms">
                                 <label class="form-check-label" for="terms">
-                                    I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                                    I agree to the <a href="{% url 'core:terms_of_service' %}" class="text-primary">Terms of Service</a> and <a href="{% url 'core:privacy_policy' %}" class="text-primary">Privacy Policy</a>
                                 </label>
                             </div>
                         </div>
@@ -272,10 +272,12 @@
 
 {% block extra_js %}
 <script>
-// Password strength indicator
 document.addEventListener('DOMContentLoaded', function() {
+    // Password strength indicator
     const password1 = document.getElementById('{{ form.password1.id_for_label }}');
     const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+    const termsCheckbox = document.getElementById('terms');
+    const signupForm = document.querySelector('form');
     
     if (password1 && password2) {
         password2.addEventListener('input', function() {
@@ -283,6 +285,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 password2.setCustomValidity('Passwords do not match');
             } else {
                 password2.setCustomValidity('');
+            }
+        });
+    }
+    
+    // Form submission validation
+    if (signupForm && termsCheckbox) {
+        signupForm.addEventListener('submit', function(event) {
+            if (!termsCheckbox.checked) {
+                event.preventDefault();
+                alert('Please agree to the Terms of Service and Privacy Policy to continue.');
+                return false;
             }
         });
     }

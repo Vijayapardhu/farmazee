@@ -1,100 +1,88 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
 
-{% block title %}Contact Us - Farmazee{% endblock %}
+{% block title %}Contact - Customer Care{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="text-center mb-5">
-                <h1 class="display-4 fw-bold text-success">Contact Us</h1>
-                <p class="lead text-muted">Get in touch with our support team for any questions or assistance</p>
-            </div>
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="mb-3">Customer Care</h3>
+                        <p class="text-muted mb-4">We’re here to help. Reach the admin team instantly using any option below.</p>
 
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-success text-white">
-                            <h4 class="mb-0">
-                                <i class="fas fa-envelope me-2"></i>Send us a Message
-                            </h4>
-                        </div>
-                        <div class="card-body p-4">
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        {{ form.name|as_crispy_field }}
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        {{ form.email|as_crispy_field }}
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    {{ form.subject|as_crispy_field }}
-                                </div>
-                                <div class="mb-3">
-                                    {{ form.message|as_crispy_field }}
-                                </div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="fas fa-paper-plane me-2"></i>Send Message
-                                    </button>
-                                </div>
-                            </form>
+                        <div class="d-grid gap-3">
+                            <a class="btn btn-success" href="https://wa.me/919999999999" target="_blank" rel="noopener">
+                                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                            </a>
+                            <a class="btn btn-primary" href="https://facebook.com/FARMAZEE" target="_blank" rel="noopener">
+                                <i class="fab fa-facebook me-2"></i>Facebook
+                            </a>
+                            <a class="btn btn-info text-white" href="https://twitter.com/FARMAZEE" target="_blank" rel="noopener">
+                                <i class="fab fa-twitter me-2"></i>Twitter/X
+                            </a>
+                            <a class="btn btn-danger" href="https://instagram.com/FARMAZEE" target="_blank" rel="noopener">
+                                <i class="fab fa-instagram me-2"></i>Instagram
+                            </a>
+                            <a class="btn btn-dark" href="https://www.linkedin.com/company/FARMAZEE" target="_blank" rel="noopener">
+                                <i class="fab fa-linkedin me-2"></i>LinkedIn
+                            </a>
+                            <a class="btn btn-outline-secondary" href="mailto:admin@farmazee.com">
+                                <i class="fas fa-envelope me-2"></i>admin@farmazee.com
+                            </a>
+                            <a class="btn btn-outline-secondary" href="tel:+911234567890">
+                                <i class="fas fa-phone me-2"></i>+91 12345 67890
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">
-                                <i class="fas fa-info-circle me-2"></i>Contact Information
-                            </h4>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="mb-4">
-                                <h6><i class="fas fa-phone text-success me-2"></i>Phone</h6>
-                                <p class="text-muted">+91 1800-123-4567</p>
-                            </div>
-                            <div class="mb-4">
-                                <h6><i class="fas fa-envelope text-success me-2"></i>Email</h6>
-                                <p class="text-muted">support@smartfarmer.com</p>
-                            </div>
-                            <div class="mb-4">
-                                <h6><i class="fas fa-map-marker-alt text-success me-2"></i>Address</h6>
-                                <p class="text-muted">Hyderabad, Telangana<br>India</p>
-                            </div>
-                            <div class="mb-4">
-                                <h6><i class="fas fa-clock text-success me-2"></i>Business Hours</h6>
-                                <p class="text-muted">Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 2:00 PM</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card shadow-sm mt-4">
-                        <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">
-                                <i class="fas fa-headset me-2"></i>Quick Support
-                            </h4>
-                        </div>
-                        <div class="card-body p-4">
-                            <p class="text-muted">Need immediate assistance?</p>
-                            <a href="{% url 'core:faq' %}" class="btn btn-outline-warning w-100 mb-2">
-                                <i class="fas fa-question-circle me-2"></i>Check FAQ
-                            </a>
-                            <a href="#" class="btn btn-outline-success w-100">
-                                <i class="fas fa-comments me-2"></i>Live Chat
-                            </a>
-                        </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3">Office Address</h5>
+                        <p class="mb-1">Farmazee Admin Office</p>
+                        <p class="mb-1">Hyderabad, Telangana</p>
+                        <p class="text-muted">India</p>
+                        <hr>
+                        <h6 class="mb-3">Send us a message</h6>
+                        <form method="post" action="{% url 'core:contact' %}">
+                            {% csrf_token %}
+                            {% if form %}
+                                <div class="mb-3">
+                                    {{ form.name.label_tag }}
+                                    {{ form.name }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.email.label_tag }}
+                                    {{ form.email }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.subject.label_tag }}
+                                    {{ form.subject }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.message.label_tag }}
+                                    {{ form.message }}
+                                </div>
+                                <button class="btn btn-success">Send</button>
+                            {% else %}
+                                <p class="text-muted">Contact form currently unavailable.</p>
+                            {% endif %}
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    
+    <style>
+    .btn i { width: 18px; text-align: center; }
+    .card { border-radius: 12px; }
+    </style>
+</section>
 {% endblock %}
 
 

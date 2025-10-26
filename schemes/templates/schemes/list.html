@@ -18,7 +18,7 @@
     <div class="row mb-4">
         <div class="col-md-8">
             <form method="GET" class="d-flex">
-                <input type="text" name="q" class="form-control me-2" placeholder="Search schemes..." value="{{ request.GET.q }}">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search schemes..." value="{{ request.GET.search }}">
                 <button type="submit" class="btn btn-info" aria-label="Search schemes">
                     <i class="fas fa-search"></i>
                 </button>
@@ -89,9 +89,20 @@
                     </div>
                 </div>
                 <div class="card-footer bg-transparent">
-                    <a href="{% url 'schemes:detail' scheme.id %}" class="btn btn-outline-info btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i>View Details
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'schemes:detail' scheme.id %}" class="btn btn-outline-info btn-sm w-100">
+                            <i class="fas fa-info-circle me-1"></i>View Details
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'schemes:apply' scheme.id %}" class="btn btn-success btn-sm w-100">
+                            <i class="fas fa-paper-plane me-1"></i>Apply
+                        </a>
+                        {% else %}
+                        <a href="{% url 'account_login' %}?next={% url 'schemes:apply' scheme.id %}" class="btn btn-success btn-sm w-100">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login to Apply
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -104,7 +115,7 @@
         <ul class="pagination justify-content-center">
             {% if schemes.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ schemes.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                    <a class="page-link" href="?page={{ schemes.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
@@ -117,14 +128,14 @@
                     </li>
                 {% elif num > schemes.number|add:'-3' and num < schemes.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
 
             {% if schemes.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ schemes.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                    <a class="page-link" href="?page={{ schemes.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
@@ -138,6 +149,56 @@
         <i class="fas fa-handshake fa-5x text-muted mb-3"></i>
         <h4 class="text-muted">No schemes found</h4>
         <p class="text-muted">Try adjusting your search criteria or check back later.</p>
+    </div>
+    {% endif %}
+
+    <!-- Featured Schemes -->
+    {% if featured_schemes %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-star text-warning"></i>
+                Featured Schemes
+            </h3>
+        </div>
+        {% for scheme in featured_schemes %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <strong><i class="fas fa-star me-2"></i>{{ scheme.title }}</strong>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ scheme.description|truncatewords:25 }}</p>
+                    <div class="mb-2">
+                        <small class="text-muted">Category:</small>
+                        <span class="badge bg-light text-dark">{{ scheme.get_category_display }}</span>
+                    </div>
+                    {% if scheme.deadline %}
+                    <div class="mb-2">
+                        <small class="text-muted">Deadline:</small>
+                        <span class="text-danger">{{ scheme.deadline|date:"M j, Y" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'schemes:detail' scheme.id %}" class="btn btn-outline-warning btn-sm w-100">
+                            <i class="fas fa-info-circle me-1"></i>Details
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'schemes:apply' scheme.id %}" class="btn btn-warning btn-sm w-100">
+                            <i class="fas fa-paper-plane me-1"></i>Apply
+                        </a>
+                        {% else %}
+                        <a href="{% url 'account_login' %}?next={% url 'schemes:apply' scheme.id %}" class="btn btn-warning btn-sm w-100">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login to Apply
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
 

@@ -99,7 +99,7 @@
                     </div>
                     <h5>Market Prices</h5>
                     <p>Live mandi rates</p>
-                    <a href="{% url 'marketplace:home' %}" class="stretched-link"></a>
+                    {# Marketplace removed #}
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-6">
@@ -119,7 +119,8 @@
                     </div>
                     <h5>Ask Experts</h5>
                     <p>Real farmers help</p>
-                    <a href="{% url 'farmer_problems:list' %}" class="stretched-link"></a>
+                    {# Ask Experts removed; link intentionally omitted or replaced with AI assistant #}
+                    <a href="{% url 'ai_chatbot:chat' %}" class="stretched-link"></a>
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-6">
@@ -129,7 +130,10 @@
                     </div>
                     <h5>Crop Guide</h5>
                     <p>When to plant</p>
-                    <a href="{% url 'crops:list' %}" class="stretched-link"></a>
+                    {% url 'crops:list' as crops_url %}
+                    {% if crops_url %}
+                    <a href="{{ crops_url }}" class="stretched-link"></a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-6">

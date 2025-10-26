@@ -17,11 +17,10 @@ urlpatterns = [
     path('users/register/', RedirectView.as_view(url='/signup/', permanent=False), name='users_register'),
     path('', include('core.urls')),
     path('weather/', include('weather.urls')),
-    path('marketplace/', include('marketplace.urls')),
+    path('yield-prediction/', include('yield_prediction.urls')),
     path('schemes/', include('schemes.urls')),
-    path('soil/', include('soil_health.urls')),
     path('ai-chatbot/', include('ai_chatbot.urls')),
-    path('problems/', include('farmer_problems.urls')),
+    # 'Ask Experts' feature removed: farmer_problems routes disabled
     path('api/', include('core.api_urls')),
 ]
 
