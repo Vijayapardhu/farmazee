@@ -245,3 +245,14 @@ def faq(request):
     """FAQ page"""
     faqs = FAQ.objects.filter(is_active=True).order_by('category', 'order')
     return render(request, 'core/faq.html', {'faqs': faqs})
+
+
+# Temporary compatibility views to satisfy legacy 'crops' namespace links
+def crops_list(request):
+    """Fallback view for deprecated crops list; redirect to marketplace products."""
+    return redirect('marketplace:products')
+
+
+def crops_detail(request, pk: int):
+    """Fallback view for deprecated crops detail; redirect to marketplace products."""
+    return redirect('marketplace:products')

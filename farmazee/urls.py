@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from core.views import login_view, register_view, logout_view
+from core import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -19,6 +20,14 @@ urlpatterns = [
     path('', include('core.urls')),
     path('weather/', include('weather.urls')),
     path('marketplace/', include('marketplace.urls')),
+    # Legacy 'crops' namespace compatibility to avoid NoReverseMatch in templates
+    path(
+        'crops/',
+        include(([
+            path('', core_views.crops_list, name='list'),
+            path('<int:pk>/', core_views.crops_detail, name='detail'),
+        ], 'crops'), namespace='crops'),
+    ),
     path('schemes/', include('schemes.urls')),
     path('soil/', include('soil_health.urls')),
     path('ai-chatbot/', include('ai_chatbot.urls')),
