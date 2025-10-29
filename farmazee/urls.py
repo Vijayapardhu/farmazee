@@ -17,6 +17,9 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
     path('signup/', register_view, name='signup'),  # Keep for backward compatibility
+    # Project-level routes for common pages used in templates
+    path('terms-of-service/', core_views.terms_of_service, name='terms_of_service'),
+    path('privacy-policy/', core_views.privacy_policy, name='privacy_policy'),
     path('', include('core.urls')),
     path('weather/', include('weather.urls')),
     path('marketplace/', include('marketplace.urls')),
