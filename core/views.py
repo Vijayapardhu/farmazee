@@ -101,124 +101,98 @@ def contact(request):
     return render(request, 'core/contact.html', context)
 
 def login_view(request):
-    """User login with proper error handling and database integration"""
+    """Clean login supporting username or email with clear validation."""
     if request.user.is_authenticated:
         return redirect('dashboard')
-    
+
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        if not email or not password:
-            messages.error(request, 'Please fill in all fields.')
+        identifier = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+
+        if not identifier or not password:
+            messages.error(request, 'Email/Username and password are required.')
             return render(request, 'registration/login_simple.html')
-        
-        try:
-            # Find user by email (since we use email as username)
-            user = User.objects.get(email=email)
-            user = authenticate(request, username=user.username, password=password)
-            
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    messages.success(request, f'Welcome back, {user.first_name}!')
-                    
-                    # Redirect to next page if specified, otherwise dashboard
-                    next_page = request.GET.get('next', 'dashboard')
-                    return redirect(next_page)
-                else:
-                    messages.error(request, 'Your account has been disabled. Please contact support.')
-            else:
-                messages.error(request, 'Invalid email or password. Please try again.')
-                
-        except User.DoesNotExist:
-            messages.error(request, 'No account found with this email address.')
-        except Exception as e:
-            messages.error(request, f'Login error: {str(e)}')
-    
+
+        # Try authenticate by username first, then fallback to email
+        user = authenticate(request, username=identifier, password=password)
+        if user is None:
+            try:
+                user_obj = User.objects.get(email__iexact=identifier)
+                user = authenticate(request, username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                user = None
+
+        if user is None:
+            messages.error(request, 'Invalid credentials.')
+            return render(request, 'registration/login_simple.html')
+
+        if not user.is_active:
+            messages.error(request, 'Your account is disabled. Please contact support.')
+            return render(request, 'registration/login_simple.html')
+
+        login(request, user)
+        messages.success(request, f'Welcome back, {user.get_full_name() or user.username}!')
+        next_page = request.GET.get('next') or 'dashboard'
+        return redirect(next_page)
+
     return render(request, 'registration/login_simple.html')
 
 
 def register_view(request):
-    """User registration with comprehensive validation and database integration"""
+    """Simple registration: email unique, strong password, auto-login."""
     if request.user.is_authenticated:
         return redirect('dashboard')
-    
+
     if request.method == 'POST':
-        # Get form data
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
         email = request.POST.get('email', '').strip().lower()
         password1 = request.POST.get('password1', '')
         password2 = request.POST.get('password2', '')
-        
-        # Validation
+
         errors = []
-        
         if not first_name:
             errors.append('First name is required.')
         if not last_name:
             errors.append('Last name is required.')
         if not email:
             errors.append('Email is required.')
-        elif not email or '@' not in email:
+        elif '@' not in email or '.' not in email:
             errors.append('Please enter a valid email address.')
-        elif User.objects.filter(email=email).exists():
+        elif User.objects.filter(email__iexact=email).exists():
             errors.append('An account with this email already exists.')
-        
-        if not password1:
-            errors.append('Password is required.')
-        elif len(password1) < 8:
-            errors.append('Password must be at least 8 characters long.')
+
+        if not password1 or not password2:
+            errors.append('Both password fields are required.')
         elif password1 != password2:
             errors.append('Passwords do not match.')
-        
+        elif len(password1) < 8:
+            errors.append('Password must be at least 8 characters long.')
+
         if errors:
             for error in errors:
                 messages.error(request, error)
             return render(request, 'registration/signup_new.html')
-        
+
         try:
-            # Create user
-            username = email  # Use email as username
+            username = email  # use email as username for simplicity
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password1,
                 first_name=first_name,
                 last_name=last_name,
-                is_active=True
+                is_active=True,
             )
-            
-            # Create user profile
-            UserProfile.objects.get_or_create(
-                user=user,
-                defaults={
-                    'phone_number': '',
-                    'address': '',
-                    'village': '',
-                    'district': '',
-                    'state': '',
-                    'country': 'India',
-                    'pincode': '',
-                    'land_area': 0,
-                    'primary_crop': '',
-                    'farm_type': 'individual',
-                    'experience_years': 'beginner',
-                    'preferred_language': 'english',
-                    'sms_notifications': True,
-                    'email_notifications': True
-                }
-            )
-            
-            # Log the user in
+
+            UserProfile.objects.get_or_create(user=user)
+
             login(request, user)
-            messages.success(request, f'Welcome to Farmazee, {user.first_name}! Your account has been created successfully.')
+            messages.success(request, f'Welcome to Farmazee, {user.get_full_name() or user.username}!')
             return redirect('dashboard')
-            
-        except Exception as e:
-            messages.error(request, f'Error creating account: {str(e)}')
-    
+        except Exception as exc:
+            messages.error(request, f'Could not create account: {exc}')
+
     return render(request, 'registration/signup_new.html')
 
 
