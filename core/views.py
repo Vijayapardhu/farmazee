@@ -256,3 +256,34 @@ def crops_list(request):
 def crops_detail(request, pk: int):
     """Fallback view for deprecated crops detail; redirect to marketplace products."""
     return redirect('marketplace:products')
+
+
+# Temporary compatibility views to satisfy legacy 'community' namespace links
+def community_home(request):
+    """Fallback for community home; redirect to dashboard or home."""
+    return redirect('dashboard' if request.user.is_authenticated else 'home')
+
+
+def community_topic_detail(request, pk: int):
+    """Fallback for community topic detail; redirect to community home fallback."""
+    return redirect('dashboard' if request.user.is_authenticated else 'home')
+
+
+def community_question_detail(request, pk: int):
+    """Fallback for community question detail; redirect to community home fallback."""
+    return redirect('dashboard' if request.user.is_authenticated else 'home')
+
+
+def community_ask_question(request):
+    """Fallback for community ask question; redirect to community home fallback."""
+    return redirect('dashboard' if request.user.is_authenticated else 'home')
+
+
+def community_events(request):
+    """Fallback for community events list; redirect to community home fallback."""
+    return redirect('dashboard' if request.user.is_authenticated else 'home')
+
+
+def community_event_detail(request, pk: int):
+    """Fallback for community event detail; redirect to community home fallback."""
+    return redirect('dashboard' if request.user.is_authenticated else 'home')

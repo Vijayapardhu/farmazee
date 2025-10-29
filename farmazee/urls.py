@@ -33,6 +33,18 @@ urlpatterns = [
     path('ai-chatbot/', include('ai_chatbot.urls')),
     path('problems/', include('farmer_problems.urls')),
     path('api/', include('core.api_urls')),
+    # Legacy 'community' namespace compatibility to avoid NoReverseMatch in templates
+    path(
+        'community/',
+        include(([
+            path('', core_views.community_home, name='home'),
+            path('topic/<int:pk>/', core_views.community_topic_detail, name='topic_detail'),
+            path('question/<int:pk>/', core_views.community_question_detail, name='question_detail'),
+            path('ask/', core_views.community_ask_question, name='ask_question'),
+            path('events/', core_views.community_events, name='events'),
+            path('event/<int:pk>/', core_views.community_event_detail, name='event_detail'),
+        ], 'community'), namespace='community'),
+    ),
 ]
 
 # Custom error handlers
