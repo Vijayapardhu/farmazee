@@ -1,0 +1,167 @@
+response.status_code)"                                                          
+C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\allauth\account\app_settings.py:53: UserWarning: settings.ACCOUNT_LOGIN_ATTEMPTS_LIMIT/TIMEOUT is deprecated, use: settings.ACCOUNT_RATE_LIMITS['login_failed']       
+  warnings.warn(
+ERROR Internal Server Error: /login/
+Traceback (most recent call last):
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\urls\base.py", line 71, in reverse                                     
+    extra, resolver = resolver.namespace_dict[ns]
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^
+KeyError: 'crops'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner                         
+    response = get_response(request)
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response                     
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)     
+  File "C:\Users\PARDHU\Desktop\farmazee\core\views.py", line 139, in login_view
+    return render(request, 'registration/login_new.html')
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\shortcuts.py", line 24, in render                                      
+    content = loader.render_to_string(template_name, context, request, using=using)                                                                             
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\loader.py", line 62, in render_to_string                      
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\backends\django.py", line 61, in render                       
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 175, in render                                 
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 167, in _render                                
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 1005, in render                                
+    return SafeString("".join([node.render_annotated(context) for node in self]))                                                                               
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 966, in render_annotated                       
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\loader_tags.py", line 157, in render                          
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 167, in _render                                
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 1005, in render                                
+    return SafeString("".join([node.render_annotated(context) for node in self]))                                                                               
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 966, in render_annotated                       
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\defaulttags.py", line 321, in render                          
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 1005, in render                                
+    return SafeString("".join([node.render_annotated(context) for node in self]))                                                                               
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 966, in render_annotated                       
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\defaulttags.py", line 471, in render                          
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app) 
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\urls\base.py", line 82, in reverse                                     
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'crops' is not a registered namespace    
+Traceback (most recent call last):
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\urls\base.py", line 71, in reverse                                     
+    extra, resolver = resolver.namespace_dict[ns]
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^
+KeyError: 'crops'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\PARDHU\Desktop\farmazee\manage.py", line 22, in <module>       
+    main()
+    ~~~~^^
+  File "C:\Users\PARDHU\Desktop\farmazee\manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line   
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\__init__.py", line 436, in execute                     
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\base.py", line 412, in run_from_argv                   
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\base.py", line 458, in execute                         
+    output = self.handle(*args, **options)
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\commands\shell.py", line 117, in handle                
+    exec(options["command"], globals())
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 1, in <module>
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\test\client.py", line 927, in get                                      
+    response = super().get(path, data=data, secure=secure, headers=headers, **extra)                                                                            
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\test\client.py", line 457, in get                                      
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<6 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\test\client.py", line 609, in generic                                  
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\test\client.py", line 891, in request                                  
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\test\client.py", line 738, in check_exception                          
+    raise exc_value
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner                         
+    response = get_response(request)
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response                     
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)     
+  File "C:\Users\PARDHU\Desktop\farmazee\core\views.py", line 139, in login_view
+    return render(request, 'registration/login_new.html')
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\shortcuts.py", line 24, in render                                      
+    content = loader.render_to_string(template_name, context, request, using=using)                                                                             
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\loader.py", line 62, in render_to_string                      
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\backends\django.py", line 61, in render                       
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 175, in render                                 
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 167, in _render                                
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 1005, in render                                
+    return SafeString("".join([node.render_annotated(context) for node in self]))                                                                               
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 966, in render_annotated                       
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\loader_tags.py", line 157, in render                          
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 167, in _render                                
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 1005, in render                                
+    return SafeString("".join([node.render_annotated(context) for node in self]))                                                                               
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 966, in render_annotated                       
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\defaulttags.py", line 321, in render                          
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 1005, in render                                
+    return SafeString("".join([node.render_annotated(context) for node in self]))                                                                               
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\base.py", line 966, in render_annotated                       
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\template\defaulttags.py", line 471, in render                          
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app) 
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\urls\base.py", line 82, in reverse                                     
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'crops' is not a registered namespace    

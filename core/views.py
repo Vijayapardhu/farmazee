@@ -100,36 +100,134 @@ def contact(request):
     }
     return render(request, 'core/contact.html', context)
 
-def signup(request):
-    """User registration"""
+def login_view(request):
+    """User login with proper error handling and database integration"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            try:
-                user = form.save()
-                # Create user profile
-                UserProfile.objects.get_or_create(user=user)
-                # Log the user in directly after successful creation
-                from django.contrib.auth import login
-                login(request, user)
-                messages.success(request, f'Welcome to Farmazee, {user.first_name}!')
-                return redirect('dashboard')
-            except Exception as e:
-                messages.error(request, f'Error creating account: {str(e)}')
-                return redirect('signup')
-    else:
-        form = CustomUserCreationForm()
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        if not email or not password:
+            messages.error(request, 'Please fill in all fields.')
+            return render(request, 'registration/login_simple.html')
+        
+        try:
+            # Find user by email (since we use email as username)
+            user = User.objects.get(email=email)
+            user = authenticate(request, username=user.username, password=password)
+            
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    messages.success(request, f'Welcome back, {user.first_name}!')
+                    
+                    # Redirect to next page if specified, otherwise dashboard
+                    next_page = request.GET.get('next', 'dashboard')
+                    return redirect(next_page)
+                else:
+                    messages.error(request, 'Your account has been disabled. Please contact support.')
+            else:
+                messages.error(request, 'Invalid email or password. Please try again.')
+                
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email address.')
+        except Exception as e:
+            messages.error(request, f'Login error: {str(e)}')
     
-    # Add Bootstrap classes to form fields
-    for field_name, field in form.fields.items():
-        field.widget.attrs['class'] = 'form-control'
-        if field.required:
-            field.widget.attrs['required'] = 'required'
+    return render(request, 'registration/login_simple.html')
+
+
+def register_view(request):
+    """User registration with comprehensive validation and database integration"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     
-    context = {
-        'form': form,
-    }
-    return render(request, 'registration/signup.html', context)
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+        
+        # Validation
+        errors = []
+        
+        if not first_name:
+            errors.append('First name is required.')
+        if not last_name:
+            errors.append('Last name is required.')
+        if not email:
+            errors.append('Email is required.')
+        elif not email or '@' not in email:
+            errors.append('Please enter a valid email address.')
+        elif User.objects.filter(email=email).exists():
+            errors.append('An account with this email already exists.')
+        
+        if not password1:
+            errors.append('Password is required.')
+        elif len(password1) < 8:
+            errors.append('Password must be at least 8 characters long.')
+        elif password1 != password2:
+            errors.append('Passwords do not match.')
+        
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return render(request, 'registration/signup_new.html')
+        
+        try:
+            # Create user
+            username = email  # Use email as username
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1,
+                first_name=first_name,
+                last_name=last_name,
+                is_active=True
+            )
+            
+            # Create user profile
+            UserProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                    'phone_number': '',
+                    'address': '',
+                    'village': '',
+                    'district': '',
+                    'state': '',
+                    'country': 'India',
+                    'pincode': '',
+                    'land_area': 0,
+                    'primary_crop': '',
+                    'farm_type': 'individual',
+                    'experience_years': 'beginner',
+                    'preferred_language': 'english',
+                    'sms_notifications': True,
+                    'email_notifications': True
+                }
+            )
+            
+            # Log the user in
+            login(request, user)
+            messages.success(request, f'Welcome to Farmazee, {user.first_name}! Your account has been created successfully.')
+            return redirect('dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating account: {str(e)}')
+    
+    return render(request, 'registration/signup_new.html')
+
+
+def logout_view(request):
+    """User logout with proper cleanup"""
+    from django.contrib.auth import logout
+    logout(request)
+    messages.success(request, 'You have been logged out successfully.')
+    return redirect('home')
 
 def about(request):
     """About page"""

@@ -1,0 +1,29 @@
+tatus:', response.status_code)"                                                 
+C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\allauth\account\app_settings.py:53: UserWarning: settings.ACCOUNT_LOGIN_ATTEMPTS_LIMIT/TIMEOUT is deprecated, use: settings.ACCOUNT_RATE_LIMITS['login_failed']       
+  warnings.warn(
+Traceback (most recent call last):
+  File "C:\Users\PARDHU\Desktop\farmazee\manage.py", line 22, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\PARDHU\Desktop\farmazee\manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line   
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\__init__.py", line 436, in execute                     
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\base.py", line 412, in run_from_argv                   
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\base.py", line 458, in execute                         
+    output = self.handle(*args, **options)
+  File "C:\Users\PARDHU\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\management\commands\shell.py", line 117, in handle                
+    exec(options["command"], globals())
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 1, in <module>
+  File "C:\Users\PARDHU\Desktop\farmazee\core\views.py", line 105, in login_view
+    if request.user.is_authenticated:
+       ^^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'user'

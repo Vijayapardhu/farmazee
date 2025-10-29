@@ -1,0 +1,58 @@
+00/login/" -Method GET                                                          
+
+
+StatusCode        : 200
+StatusDescription : OK
+Content           :
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width,      
+                    initial-scale=1.0">
+                        <title>EduVision - Login</title>
+                        <link href="http...
+RawContent        : HTTP/1.1 200 OK
+                    X-Frame-Options: DENY
+                    Vary: Cookie
+                    X-Content-Type-Options: nosniff
+                    Referrer-Policy: same-origin
+                    Cross-Origin-Opener-Policy: same-origin
+                    Content-Length: 15929
+                    Content-Type: text/...
+Forms             : {}
+Headers           : {[X-Frame-Options, DENY], [Vary, Cookie],
+                    [X-Content-Type-Options, nosniff], [Referrer-Policy,        
+                    same-origin]...}
+Images            : {}
+InputFields       : {@{innerHTML=; innerText=; outerHTML=<INPUT type=hidden val
+                    ue=ZHxP4UYfXjKGx9PyizyUPzKSLRq8DBvyCv3L6OJdPPMPOpbznnXvAWTE 
+                    2iojKq0P name=csrfmiddlewaretoken>; outerText=;
+                    tagName=INPUT; type=hidden; value=ZHxP4UYfXjKGx9PyizyUPzKSL 
+                    Rq8DBvyCv3L6OJdPPMPOpbznnXvAWTE2iojKq0P;
+                    name=csrfmiddlewaretoken}, @{innerHTML=; innerText=;        
+                    outerHTML=<INPUT id=emailInput class=form-control
+                    autocomplete="off" placeholder="Email / Roll Number /       
+                    Employee ID">; outerText=; tagName=INPUT; id=emailInput;    
+                    class=form-control; autocomplete=off; placeholder=Email /   
+                    Roll Number / Employee ID}, @{innerHTML=; innerText=;       
+                    outerHTML=<INPUT id=passwordInput class=form-control        
+                    type=password value="" placeholder="Password (default:      
+                    aditya)">; outerText=; tagName=INPUT; id=passwordInput;     
+                    class=form-control; type=password; value=;
+                    placeholder=Password (default: aditya)}, @{innerHTML=;      
+                    innerText=; outerHTML=<INPUT id=otp1 class=otp-box
+                    maxLength=1 inputmode="numeric">; outerText=;
+                    tagName=INPUT; id=otp1; class=otp-box; maxLength=1;
+                    inputmode=numeric}...}
+Links             : {@{innerHTML=View Public Info; innerText=View Public Info;  
+                    outerHTML=<A style="COLOR: #667eea" href="/public/">View    
+                    Public Info</A>; outerText=View Public Info; tagName=A;     
+                    style=COLOR: #667eea; href=/public/}, @{innerHTML=Back to   
+                    Login; innerText=Back to Login; outerHTML=<A
+                    onclick="backToLogin(); return false;" style="COLOR:        
+                    #667eea" href="#">Back to Login</A>; outerText=Back to      
+                    Login; tagName=A; onclick=backToLogin(); return false;;     
+                    style=COLOR: #667eea; href=#}}
+ParsedHtml        : mshtml.HTMLDocumentClass
+RawContentLength  : 15929

@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <div class="logo-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h1 class="brand-name">Farmazee</h1>
+                        </div>
+                        <h2 class="fw-bold text-primary mb-2">Join Farmazee</h2>
+                        <p class="text-muted">Create your account and start your smart farming journey</p>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Signup Form -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- First Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">
+                                    <i class="fas fa-user me-2"></i>First Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       id="first_name" 
+                                       name="first_name" 
+                                       class="form-control" 
+                                       placeholder="Enter your first name"
+                                       required>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Last Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       id="last_name" 
+                                       name="last_name" 
+                                       class="form-control" 
+                                       placeholder="Enter your last name"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email" 
+                                   class="form-control" 
+                                   placeholder="Enter your email address"
+                                   required>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" 
+                                   id="password1" 
+                                   name="password1" 
+                                   class="form-control" 
+                                   placeholder="Create a strong password (min 8 characters)"
+                                   required>
+                            <div class="form-text">Password must be at least 8 characters long.</div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" 
+                                   id="password2" 
+                                   name="password2" 
+                                   class="form-control" 
+                                   placeholder="Confirm your password"
+                                   required>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="{% url 'terms_of_service' %}" target="_blank">Terms of Service</a> 
+                                and <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+
+                        <!-- Login Link -->
+                        <div class="text-center">
+                            <p class="mb-0">
+                                Already have an account? 
+                                <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Sign in here</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.brand-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #28a745;
+    margin: 0;
+}
+
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #218838, #1ea085);
+    transform: translateY(-1px);
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+</style>
+{% endblock %}

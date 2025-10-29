@@ -9,7 +9,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('crops', '0002_alter_cropmonitoring_growth_stage_and_more'),
         ('marketplace', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
@@ -31,7 +30,7 @@ class Migration(migrations.Migration):
                 ('history_date', models.DateTimeField(db_index=True)),
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('crop', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='crops.crop')),
+                ('crop_name', models.CharField(max_length=200, help_text='Crop name')),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -54,13 +53,13 @@ class Migration(migrations.Migration):
                 ('is_current', models.BooleanField(default=True, help_text='Is this the current price')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('crop', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='market_prices', to='crops.crop')),
+                ('crop_name', models.CharField(max_length=200, help_text='Crop name')),
             ],
             options={
                 'verbose_name': 'Market Price',
                 'verbose_name_plural': 'Market Prices',
                 'ordering': ['-price_date', '-created_at'],
-                'unique_together': {('crop', 'mandi_name', 'price_date')},
+                'unique_together': {('crop_name', 'mandi_name', 'price_date')},
             },
         ),
     ]

@@ -6,15 +6,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
-from core.views import signup
+from core.views import login_view, register_view, logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin-panel/', include('admin_panel.urls')),
     path('accounts/', include('allauth.urls')),
-    path('signup/', signup, name='signup'),
-    # Redirect users/register/ to signup/ for compatibility
-    path('users/register/', RedirectView.as_view(url='/signup/', permanent=False), name='users_register'),
+    path('login/', login_view, name='login'),
+    path('register/', register_view, name='register'),
+    path('logout/', logout_view, name='logout'),
+    path('signup/', register_view, name='signup'),  # Keep for backward compatibility
     path('', include('core.urls')),
     path('weather/', include('weather.urls')),
     path('marketplace/', include('marketplace.urls')),

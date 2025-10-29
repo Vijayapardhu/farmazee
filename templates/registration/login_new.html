@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In - Farmazee{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <div class="logo-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h1 class="brand-name">Farmazee</h1>
+                        </div>
+                        <h2 class="fw-bold text-primary mb-2">Welcome Back</h2>
+                        <p class="text-muted">Sign in to continue your farming journey</p>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Login Form -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email" 
+                                   class="form-control" 
+                                   placeholder="Enter your email address"
+                                   required>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input type="password" 
+                                   id="password" 
+                                   name="password" 
+                                   class="form-control" 
+                                   placeholder="Enter your password"
+                                   required>
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                        </div>
+
+                        <!-- Links -->
+                        <div class="text-center">
+                            <p class="mb-2">
+                                <a href="#" class="text-decoration-none">Forgot your password?</a>
+                            </p>
+                            <p class="mb-0">
+                                Don't have an account? 
+                                <a href="{% url 'register' %}" class="text-decoration-none fw-bold">Sign up here</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.brand-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #28a745;
+    margin: 0;
+}
+
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #218838, #1ea085);
+    transform: translateY(-1px);
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+</style>
+{% endblock %}
