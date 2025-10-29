@@ -5216,3 +5216,74 @@ INFO 2025-10-26 19:53:11,708 basehttp 11780 1932 "POST /yield-prediction/ HTTP/1
 INFO 2025-10-26 19:53:50,869 basehttp 11780 1932 "POST /yield-prediction/ HTTP/1.1" 200 25460
 INFO 2025-10-26 19:54:29,590 basehttp 11780 1932 "POST /yield-prediction/ HTTP/1.1" 200 25460
 INFO 2025-10-26 19:54:58,865 basehttp 11780 1932 "POST /yield-prediction/ HTTP/1.1" 200 25462
+INFO 2025-10-27 15:40:42,568 autoreload 7808 13388 Watching for file changes with StatReloader
+INFO 2025-10-27 15:40:51,033 basehttp 7808 8072 "GET / HTTP/1.1" 200 62377
+INFO 2025-10-27 15:40:51,098 basehttp 7808 25060 "GET /static/css/style.css HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,102 basehttp 7808 9104 "GET /static/css/dynamic-styles.css HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,105 basehttp 7808 25060 "GET /static/css/floating-ai.css HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,106 basehttp 7808 14980 "GET /static/css/language-selector.css HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,108 basehttp 7808 9104 "GET /static/css/enhanced-ui.css HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,111 basehttp 7808 25060 "GET /static/js/dynamic-settings.js HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,111 basehttp 7808 8304 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2025-10-27 15:40:51,115 basehttp 7808 9104 "GET /static/js/enhanced-ux.js HTTP/1.1" 304 0
+WARNING 2025-10-27 15:40:52,734 log 7808 25060 Not Found: /favicon.ico
+WARNING 2025-10-27 15:40:52,736 basehttp 7808 25060 "GET /favicon.ico HTTP/1.1" 404 7059
+INFO 2025-10-27 15:40:53,389 basehttp 7808 9104 "GET /api/weather/current/ HTTP/1.1" 200 533
+INFO 2025-10-27 15:40:53,406 basehttp 7808 9104 "GET /api/marketplace/prices/ HTTP/1.1" 200 518
+INFO 2025-10-27 15:40:54,210 basehttp 7808 9104 "GET /ai-chatbot/chat/ HTTP/1.1" 302 0
+INFO 2025-10-27 15:40:54,779 basehttp 7808 9104 "GET /accounts/login/?next=/ai-chatbot/chat/ HTTP/1.1" 200 26639
+INFO 2025-10-27 15:41:16,502 basehttp 7808 15580 - Broken pipe from ('127.0.0.1', 64975)
+INFO 2025-10-27 15:41:17,755 basehttp 7808 464 "GET /weather/ HTTP/1.1" 200 32512
+INFO 2025-10-27 15:41:24,483 basehttp 7808 464 "GET /yield-prediction/ HTTP/1.1" 200 24916
+INFO 2025-10-27 15:42:15,309 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25451
+INFO 2025-10-27 15:43:07,606 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25049
+INFO 2025-10-27 15:43:18,929 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25049
+INFO 2025-10-27 15:43:25,936 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25049
+INFO 2025-10-27 15:43:30,394 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25049
+INFO 2025-10-27 15:43:41,644 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25050
+INFO 2025-10-27 15:43:49,322 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25050
+INFO 2025-10-27 15:44:10,971 basehttp 7808 464 "POST /yield-prediction/ HTTP/1.1" 200 25461
+INFO 2025-10-27 15:46:20,579 basehttp 7808 464 "GET /planner/ HTTP/1.1" 200 23787
+INFO 2025-10-27 15:46:43,634 basehttp 7808 464 "POST /planner/ HTTP/1.1" 200 25306
+INFO 2025-10-28 16:03:34,203 autoreload 26532 13848 Watching for file changes with StatReloader
+INFO 2025-10-28 16:03:43,481 autoreload 26532 13848 C:\Users\vivek\OneDrive\Desktop\FARMAZEE Team 1\project\farmazee\ai_chatbot\views.py changed, reloading.
+INFO 2025-10-28 16:03:44,294 autoreload 19500 11672 Watching for file changes with StatReloader
+INFO 2025-10-28 16:04:03,379 autoreload 19500 11672 C:\Users\vivek\OneDrive\Desktop\FARMAZEE Team 1\project\farmazee\ai_chatbot\urls.py changed, reloading.
+INFO 2025-10-28 16:04:04,696 autoreload 17968 11036 Watching for file changes with StatReloader
+INFO 2025-10-28 16:04:06,930 basehttp 17968 21656 "GET / HTTP/1.1" 200 62377
+INFO 2025-10-28 16:04:06,975 basehttp 17968 21656 "GET /static/css/dynamic-styles.css HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,980 basehttp 17968 8612 "GET /static/css/floating-ai.css HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,981 basehttp 17968 21656 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,982 basehttp 17968 7348 "GET /static/css/enhanced-ui.css HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,982 basehttp 17968 25760 "GET /static/css/language-selector.css HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,984 basehttp 17968 26472 "GET /static/css/style.css HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,986 basehttp 17968 26572 "GET /static/js/dynamic-settings.js HTTP/1.1" 304 0
+INFO 2025-10-28 16:04:06,987 basehttp 17968 8612 "GET /static/js/enhanced-ux.js HTTP/1.1" 304 0
+WARNING 2025-10-28 16:04:08,430 log 17968 26572 Not Found: /favicon.ico
+WARNING 2025-10-28 16:04:08,431 basehttp 17968 26572 "GET /favicon.ico HTTP/1.1" 404 7059
+INFO 2025-10-28 16:04:09,054 basehttp 17968 8612 "GET /api/weather/current/ HTTP/1.1" 200 550
+INFO 2025-10-28 16:04:09,072 basehttp 17968 8612 "GET /api/marketplace/prices/ HTTP/1.1" 200 518
+INFO 2025-10-28 16:04:15,325 autoreload 17968 11036 C:\Users\vivek\OneDrive\Desktop\FARMAZEE Team 1\project\farmazee\ai_chatbot\views.py changed, reloading.
+INFO 2025-10-28 16:04:16,390 autoreload 9168 11892 Watching for file changes with StatReloader
+INFO 2025-10-28 16:07:30,957 basehttp 9168 20800 "GET /weather/ HTTP/1.1" 200 32512
+INFO 2025-10-28 16:07:30,957 basehttp 9168 10948 - Broken pipe from ('127.0.0.1', 50464)
+INFO 2025-10-28 16:07:48,834 basehttp 9168 20800 "GET /login/ HTTP/1.1" 200 23867
+INFO 2025-10-28 16:07:51,326 basehttp 9168 20800 "GET /signup/ HTTP/1.1" 200 26146
+INFO 2025-10-28 16:08:27,548 basehttp 9168 20800 "GET /login/ HTTP/1.1" 200 23867
+INFO 2025-10-28 16:08:33,235 basehttp 9168 20800 "GET /login/ HTTP/1.1" 200 23867
+INFO 2025-10-28 16:09:27,925 basehttp 9168 20800 "GET /planner/ HTTP/1.1" 200 23787
+INFO 2025-10-28 16:09:30,757 basehttp 9168 20800 "GET /schemes/ HTTP/1.1" 200 38291
+INFO 2025-10-28 16:10:16,486 basehttp 9168 20800 "GET /schemes/?category=infrastructure HTTP/1.1" 200 29415
+INFO 2025-10-28 16:10:29,219 basehttp 9168 20800 "GET /schemes/?category=loan HTTP/1.1" 200 29415
+INFO 2025-10-28 16:11:17,112 basehttp 9168 20800 "GET /schemes/?category=subsidy HTTP/1.1" 200 32284
+INFO 2025-10-28 16:11:47,825 basehttp 9168 20800 "GET /schemes/?category=insurance HTTP/1.1" 200 32272
+INFO 2025-10-28 16:11:48,824 basehttp 9168 20800 "GET /schemes/?search= HTTP/1.1" 200 38291
+INFO 2025-10-28 16:11:57,247 basehttp 9168 20800 "GET /planner/ HTTP/1.1" 200 23787
+INFO 2025-10-28 16:12:14,349 basehttp 9168 20800 "POST /planner/ HTTP/1.1" 200 24516
+INFO 2025-10-28 16:12:36,671 basehttp 9168 20800 "POST /planner/ HTTP/1.1" 200 25306
+INFO 2025-10-29 09:18:26,463 autoreload 9292 22744 Watching for file changes with StatReloader
+INFO 2025-10-29 09:18:42,103 basehttp 9292 18256 "GET / HTTP/1.1" 200 62377
+WARNING 2025-10-29 09:18:43,520 log 9292 21984 Not Found: /favicon.ico
+WARNING 2025-10-29 09:18:43,521 basehttp 9292 21984 "GET /favicon.ico HTTP/1.1" 404 7059
+INFO 2025-10-29 09:18:44,455 basehttp 9292 10500 "GET /api/weather/current/ HTTP/1.1" 200 550
+INFO 2025-10-29 09:18:44,470 basehttp 9292 10500 "GET /api/marketplace/prices/ HTTP/1.1" 200 518

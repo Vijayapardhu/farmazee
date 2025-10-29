@@ -216,6 +216,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
+# Chatbot mode toggles
+# When True, the chatbot will use simple rule-based responses and avoid external AI calls
+USE_RULE_BASED = os.getenv('USE_RULE_BASED', 'True').lower() in ['1', 'true', 'yes']
+
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

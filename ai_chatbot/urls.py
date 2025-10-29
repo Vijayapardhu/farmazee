@@ -10,4 +10,5 @@ urlpatterns = [
     path('history/', views.chat_history, name='history'),
     path('analytics/', views.query_analytics, name='analytics'),
     path('rate-response/', views.rate_response, name='rate_response'),
+    path('start-trial/', views.start_trial, name='start_trial'),
 ]

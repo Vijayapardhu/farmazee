@@ -9,9 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 from django.conf import settings
+from . import rule_based
 from django.utils import timezone
 from .models import ChatSession, ChatMessage, FarmerQuery, AIKnowledgeBase
 from .gemini_service import get_gemini_service
+import datetime
 
 
 def ai_chat_home(request):
@@ -133,9 +135,37 @@ def send_message(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@login_required
+@require_http_methods(["GET", "POST"])
+def start_trial(request):
+    """Start a 14-day farmer trial stored in the user's session."""
+    try:
+        now = timezone.now()
+        expires_at = now + datetime.timedelta(days=14)
+
+        request.session['trial_active'] = True
+        request.session['trial_started_at'] = now.isoformat()
+        request.session['trial_expires_at'] = expires_at.isoformat()
+
+        return JsonResponse({
+            'success': True,
+            'trial_active': True,
+            'trial_started_at': now.isoformat(),
+            'trial_expires_at': expires_at.isoformat(),
+            'message': 'Your 14-day farmer trial has started.'
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 def get_ai_response(message, user):
     """Get AI response using Gemini AI or fallback to knowledge base"""
     try:
+        # Use deterministic rule-based mode if enabled (no AI/ML, offline-friendly)
+        if getattr(settings, 'USE_RULE_BASED', False):
+            rb = rule_based.reply(message, session_id="")
+            return rb.get('content', 'I can show topics with /menu')
+        
         # Try Gemini AI first
         if hasattr(settings, 'GEMINI_API_KEY') and settings.GEMINI_API_KEY:
             return get_gemini_response(message, user)
@@ -256,7 +286,146 @@ def get_fallback_response(message):
     """Get fallback response when AI is not available"""
     message_lower = message.lower()
     
+    # Trial onboarding intent
+    if any(phrase in message_lower for phrase in [
+        'free trial',
+        'trial',
+        'start trial',
+        'take a trial',
+        'trial as a farmer',
+        'try as a farmer'
+    ]):
+        return (
+            "Great! You can start your Farmazee Farmer Trial (14 days).\n\n"
+            "Steps:\n"
+            "• Click the link below to start your trial\n"
+            "• Explore AI chatbot, weather, soil tips and more\n"
+            "• You can upgrade anytime\n\n"
+            "Start your trial: /ai-chatbot/start-trial/\n"
+            "If the link doesn’t work, type: Start trial"
+        )
+
     # Simple keyword-based responses
+    if any(word in message_lower for word in ['machine learning', 'ml ', ' ml', 'build model', 'build a model', 'roadmap', 'chatbot', 'ai model']):
+        return """🧭 Step-by-Step Roadmap to Build a Machine Learning Model
+
+---
+
+🪜 Step 1: Understand What ML Means
+
+Machine Learning = teaching computers to learn from data and make predictions without hardcoding rules.
+
+For example:
+
+> You give past crop data (rainfall, soil, yield).
+The ML model learns the pattern.
+Then, for new data, it predicts the expected yield. 🌾
+
+---
+
+🧰 Step 2: Set Up Your Tools
+
+Install these locally (or use Google Colab online):
+
+```bash
+pip install numpy pandas matplotlib scikit-learn
+```
+
+Optional but helpful:
+- Jupyter Notebook → for testing ML code
+- VS Code or Cursor → for project development
+- Google Colab → for free GPU and cloud notebook
+
+---
+
+📚 Step 3: Learn the Basics
+
+Concept           | Why It’s Important
+------------------|-------------------
+Data (CSV files)  | Your model learns from data
+Features & Labels | Input (X) → Output (Y)
+Train & Test      | Model learns, then is tested
+Accuracy          | Measures how good your model is
+
+👉 Example (yield prediction):
+- Features: area, soil fertility, rainfall
+- Label: predicted yield
+
+---
+
+🧪 Step 4: Build Your First Model
+
+Example: Predict crop yield
+
+```python
+# Step 1: Import libraries
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# Step 2: Prepare data
+data = {
+    'area': [1, 2, 3, 4, 5],
+    'fertility': [1.2, 1.5, 1.7, 2.0, 2.2],
+    'yield': [1.3, 2.5, 3.0, 4.1, 4.8]
+}
+df = pd.DataFrame(data)
+
+# Step 3: Train model
+X = df[['area', 'fertility']]   # inputs
+y = df['yield']                 # output
+
+model = LinearRegression()
+model.fit(X, y)
+
+# Step 4: Predict yield for new data
+new_data = [[2.5, 1.8]]
+prediction = model.predict(new_data)
+
+print("Predicted Yield:", prediction[0])
+```
+
+✅ This small program trains a machine learning model and predicts output.
+
+---
+
+📊 Step 5: Try Different Models
+
+After LinearRegression, explore:
+- DecisionTreeClassifier (for categories)
+- KNeighborsClassifier (pattern matching)
+- RandomForestRegressor (advanced predictions)
+
+All are available in scikit-learn.
+
+---
+
+🔍 Step 6: Work With Real Data
+
+Practice using datasets from:
+- Kaggle.com
+- UCI Machine Learning Repository
+- Government portals (crop, weather, etc.)
+
+---
+
+🚀 Step 7: Create a Real Project
+
+Ideas:
+1. 🌾 Crop Yield Prediction (soil, rainfall, area)
+2. 🌧 Rainfall Prediction (past weather data)
+3. 🧑‍🎓 Student Score Prediction (study hours)
+4. 🏠 House Price Prediction (classic project)
+
+---
+
+🧠 Step 8: Advance to Deep Learning (Optional)
+
+When ready:
+- Learn TensorFlow or PyTorch
+- Study Neural Networks
+
+If you want, I can generate a starter notebook or Django view to integrate a simple ML demo into your app."""
+
     if any(word in message_lower for word in ['rice', 'paddy', 'వరి']):
         return """For rice cultivation in Telugu states:
         • Best sowing time: June-July (Kharif)
