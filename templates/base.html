@@ -193,14 +193,14 @@
                                     <i class="fas fa-user me-2"></i>Profile
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'account_logout' %}">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_login' %}">
+                            <a class="nav-link" href="{% url 'login' %}">
                                 <i class="fas fa-sign-in-alt me-1"></i>Login
                             </a>
                         </li>
@@ -484,6 +484,16 @@
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
+        function eraseTranslateCookies() {
+            // Clear Google Translate cookies so English truly resets
+            const domains = [window.location.hostname, `.${window.location.hostname}`];
+            ['googtrans', 'googtrans'].forEach((name) => {
+                domains.forEach((d) => {
+                    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${d}`;
+                });
+            });
+        }
+
         function translatePage(langCode) {
             const languageNames = {
                 'en': 'English',
@@ -509,17 +519,18 @@
 
             // Use googtrans URL fragment for translation
             if (langCode === 'en') {
-                // For English, remove translation fragment
+                // For English, remove translation fragment and clear cookies
+                eraseTranslateCookies();
                 window.location.hash = '';
                 setTimeout(() => {
                     location.reload();
-                }, 500);
+                }, 300);
             } else {
                 // For other languages, use googtrans
                 window.location.hash = `#googtrans(en|${langCode})`;
                 setTimeout(() => {
                     location.reload();
-                }, 500);
+                }, 300);
             }
 
             // Show success message

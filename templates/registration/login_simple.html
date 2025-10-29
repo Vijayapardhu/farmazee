@@ -23,15 +23,18 @@
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
+                            <label for="email" class="form-label">Email or Username</label>
+                            <input type="text" id="email" name="email" class="form-control" autocomplete="username" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                            <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" required>
                         </div>
 
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
                         <button type="submit" class="btn btn-primary w-100">Sign In</button>
                     </form>
                     
@@ -44,3 +47,5 @@
     </div>
 </div>
 {% endblock %}
+
+
